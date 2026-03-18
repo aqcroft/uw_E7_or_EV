@@ -1,0 +1,1191 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UW Tariff Comparison Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --uw-purple: #5c2d91;
+    --uw-purple-light: #7b4db0;
+    --uw-purple-pale: #f0ebf8;
+    --uw-green: #00a651;
+    --uw-green-light: #e6f7ef;
+    --uw-amber: #f5a623;
+    --uw-amber-light: #fef6e6;
+    --uw-red: #d0021b;
+    --uw-red-light: #fce8eb;
+    --uw-grey-dark: #1a1a2e;
+    --uw-grey-mid: #64748b;
+    --uw-grey-light: #f1f5f9;
+    --uw-border: #e2e8f0;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f8f6fc;
+    color: var(--uw-grey-dark);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  header {
+    background: var(--uw-purple);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(92,45,145,0.3);
+  }
+
+  .logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    background: white;
+    color: var(--uw-purple);
+    padding: 3px 10px;
+    border-radius: 5px;
+  }
+
+  header h1 {
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0.9;
+    letter-spacing: 0.2px;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--uw-border);
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--uw-purple);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--uw-purple-pale);
+  }
+
+  /* REGION SELECT */
+  select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--uw-border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--uw-grey-dark);
+    background: white;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c2d91' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+  }
+
+  select:focus { outline: none; border-color: var(--uw-purple); box-shadow: 0 0 0 3px rgba(92,45,145,0.1); }
+
+  /* SERVICE CHIPS */
+  .services-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .service-chip {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    border-radius: 30px;
+    border: 1.5px solid var(--uw-border);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-weight: 500;
+    font-size: 13px;
+    user-select: none;
+    background: white;
+    color: var(--uw-grey-mid);
+  }
+
+  .service-chip.locked {
+    background: var(--uw-purple);
+    border-color: var(--uw-purple);
+    color: white;
+    cursor: default;
+  }
+
+  .service-chip.active {
+    background: var(--uw-purple-pale);
+    border-color: var(--uw-purple);
+    color: var(--uw-purple);
+  }
+
+  .service-chip:not(.locked):hover {
+    border-color: var(--uw-purple-light);
+    color: var(--uw-purple);
+  }
+
+  .chip-icon { font-size: 15px; }
+
+  .bundle-indicator {
+    margin-top: 12px;
+    padding: 8px 14px;
+    background: var(--uw-purple-pale);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    color: var(--uw-purple);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .bundle-tier {
+    margin-left: auto;
+    background: var(--uw-purple);
+    color: white;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+  }
+
+  /* TARIFF TYPE TOGGLE */
+  .toggle-group {
+    display: flex;
+    background: var(--uw-grey-light);
+    border-radius: var(--radius-sm);
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    color: var(--uw-grey-mid);
+  }
+
+  .toggle-btn.active {
+    background: white;
+    color: var(--uw-purple);
+    font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+
+  /* USAGE INPUTS */
+  .inputs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .input-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .input-group.full { grid-column: 1 / -1; }
+
+  .input-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--uw-grey-mid);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .label-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .dot-day { background: #f5a623; }
+  .dot-night { background: #5c2d91; }
+  .dot-gas { background: #0ea5e9; }
+
+  input[type="number"] {
+    padding: 10px 14px;
+    border: 1.5px solid var(--uw-border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--uw-grey-dark);
+    width: 100%;
+    transition: border-color 0.15s;
+  }
+
+  input[type="number"]:focus {
+    outline: none;
+    border-color: var(--uw-purple);
+    box-shadow: 0 0 0 3px rgba(92,45,145,0.1);
+  }
+
+  .input-suffix {
+    font-size: 11px;
+    color: var(--uw-grey-mid);
+    margin-top: 2px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* NIGHT PERCENTAGE INDICATOR */
+  .night-pct-bar {
+    margin-top: 10px;
+    background: var(--uw-grey-light);
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .night-pct-fill {
+    height: 100%;
+    background: var(--uw-purple);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .night-pct-label {
+    font-size: 11px;
+    color: var(--uw-grey-mid);
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* RESULTS */
+  .results-wrapper { display: none; }
+  .results-wrapper.visible { display: block; }
+
+  .result-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .result-card {
+    border-radius: var(--radius);
+    border: 2px solid var(--uw-border);
+    padding: 16px;
+    position: relative;
+    transition: all 0.2s;
+    background: white;
+  }
+
+  .result-card.winner {
+    border-color: var(--uw-green);
+    background: var(--uw-green-light);
+  }
+
+  .result-card.loser {
+    opacity: 0.75;
+  }
+
+  .result-card.ev-card {
+    border-color: #e2e8f0;
+  }
+
+  .result-card.ev-card.winner {
+    border-color: var(--uw-green);
+    background: var(--uw-green-light);
+  }
+
+  .winner-badge {
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--uw-green);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .result-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--uw-grey-mid);
+    margin-bottom: 6px;
+  }
+
+  .result-tariff-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--uw-purple);
+    margin-bottom: 8px;
+  }
+
+  .result-annual {
+    font-family: 'DM Mono', monospace;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--uw-grey-dark);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-monthly {
+    font-size: 12px;
+    color: var(--uw-grey-mid);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .result-breakdown {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--uw-border);
+    font-size: 11px;
+    color: var(--uw-grey-mid);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .result-breakdown span {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .result-breakdown .label { font-family: 'DM Sans', sans-serif; }
+
+  /* SAVINGS BANNER */
+  .savings-banner {
+    background: var(--uw-purple);
+    color: white;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .savings-amount {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .savings-text { font-size: 13px; line-height: 1.4; opacity: 0.9; }
+  .savings-text strong { opacity: 1; }
+
+  /* CUTOFF BOX */
+  .cutoff-box {
+    background: var(--uw-amber-light);
+    border: 1.5px solid var(--uw-amber);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+
+  .cutoff-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--uw-amber);
+    margin-bottom: 8px;
+  }
+
+  .cutoff-content {
+    font-size: 13px;
+    color: var(--uw-grey-dark);
+    line-height: 1.5;
+  }
+
+  .cutoff-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--uw-grey-dark);
+    margin: 4px 0;
+  }
+
+  /* EV VARIABLE NOTE */
+  .ev-note {
+    background: var(--uw-red-light);
+    border: 1.5px solid #f5c6cb;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #721c24;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .ev-note.visible { display: block; }
+
+  /* GAS RESULT */
+  .gas-result {
+    background: #e8f4fd;
+    border: 1.5px solid #90cdf4;
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .gas-result.visible { display: block; }
+
+  .gas-result-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #0369a1;
+    margin-bottom: 8px;
+  }
+
+  .gas-result-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--uw-grey-dark);
+    font-family: 'DM Mono', monospace;
+  }
+
+  .gas-result-row .lbl { font-family: 'DM Sans', sans-serif; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--uw-grey-mid);
+  }
+
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-text { font-size: 14px; line-height: 1.5; }
+
+  /* RESPONSIVE */
+  @media (max-width: 520px) {
+    .result-cards { grid-template-columns: 1fr; }
+    .inputs-grid { grid-template-columns: 1fr; }
+    .result-annual { font-size: 22px; }
+    .savings-amount { font-size: 22px; }
+  }
+
+  .vat-note {
+    font-size: 10px;
+    color: var(--uw-grey-mid);
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 10px;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--uw-grey-mid);
+    margin-top: 8px;
+  }
+
+  .info-icon { font-size: 14px; }
+
+  .three-col { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 520px) { .three-col { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">UW</div>
+  <h1>Tariff Comparison Tool</h1>
+  <span class="badge">Partner Use</span>
+</header>
+
+<div class="container">
+
+  <!-- REGION -->
+  <div class="card">
+    <div class="card-title">📍 Region</div>
+    <select id="regionSelect">
+      <option value="">— Select region —</option>
+      <option value="10">10 · Eastern</option>
+      <option value="11">11 · East Midlands</option>
+      <option value="12">12 · London</option>
+      <option value="13">13 · Manweb</option>
+      <option value="14">14 · Midlands</option>
+      <option value="15">15 · Northern</option>
+      <option value="16">16 · Norweb</option>
+      <option value="17">17 · Scottish Hydro</option>
+      <option value="18">18 · Scottish Power</option>
+      <option value="19">19 · Seeboard</option>
+      <option value="20">20 · Southern</option>
+      <option value="21">21 · Swalec</option>
+      <option value="22">22 · Sweb</option>
+      <option value="23">23 · Yorkshire</option>
+    </select>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="card">
+    <div class="card-title">📦 Services in Bundle</div>
+    <div class="services-grid">
+      <div class="service-chip locked">
+        <span class="chip-icon">⚡</span> Energy
+      </div>
+      <div class="service-chip" id="chip-broadband">
+        <span class="chip-icon">🛜</span> Broadband
+      </div>
+      <div class="service-chip" id="chip-mobile1">
+        <span class="chip-icon">📱</span> Mobile 1
+      </div>
+      <div class="service-chip" id="chip-mobile2">
+        <span class="chip-icon">📱</span> Mobile 2
+      </div>
+      <div class="service-chip" id="chip-insurance">
+        <span class="chip-icon">🛡️</span> Insurance
+      </div>
+    </div>
+    <div class="bundle-indicator">
+      <span id="bundleText">Energy only — 1 service</span>
+      <span class="bundle-tier" id="bundleTier">Fixed Start 79 / EV Value</span>
+    </div>
+  </div>
+
+  <!-- TARIFF TYPE -->
+  <div class="card">
+    <div class="card-title">🔒 Tariff Type</div>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="btn-fixed">🔒 Fixed (ends Mar 2027)</button>
+      <button class="toggle-btn" id="btn-variable">📈 Variable EV</button>
+    </div>
+    <div class="ev-note visible" id="evNote" style="display:none">
+      ⚠️ The EV tariff is <strong>variable</strong> — prices may go up or down. Customers need an EV (or plug-in hybrid) and a smart meter in credit mode to be eligible.
+    </div>
+  </div>
+
+  <!-- USAGE INPUTS -->
+  <div class="card">
+    <div class="card-title">🔢 Annual Electricity Usage</div>
+    <div class="inputs-grid">
+      <div class="input-group">
+        <label class="input-label">
+          <span class="label-dot dot-day"></span> Day Usage
+        </label>
+        <input type="number" id="dayKwh" placeholder="e.g. 2800" min="0">
+        <div class="input-suffix">kWh / year</div>
+      </div>
+      <div class="input-group">
+        <label class="input-label">
+          <span class="label-dot dot-night"></span> Night Usage
+        </label>
+        <input type="number" id="nightKwh" placeholder="e.g. 1200" min="0">
+        <div class="input-suffix">kWh / year</div>
+      </div>
+    </div>
+    <div id="nightPctWrapper" style="display:none; margin-top:12px;">
+      <div class="night-pct-bar">
+        <div class="night-pct-fill" id="nightPctFill" style="width:0%"></div>
+      </div>
+      <div class="night-pct-label">
+        <span id="nightPctText">Night usage: —</span>
+        <span id="cutoffPctText" style="color: var(--uw-purple); font-weight:600;"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAS INPUT -->
+  <div class="card">
+    <div class="card-title">🔥 Gas Usage (optional)</div>
+    <div class="inputs-grid">
+      <div class="input-group">
+        <label class="input-label">
+          <span class="label-dot dot-gas"></span> Annual Gas Usage
+        </label>
+        <input type="number" id="gasKwh" placeholder="e.g. 12000" min="0">
+        <div class="input-suffix">kWh / year</div>
+      </div>
+      <div class="input-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
+        <div class="info-row">
+          <span class="info-icon">ℹ️</span>
+          <span>Adding gas applies the <strong>£13/yr dual fuel discount</strong> to each fuel</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results-wrapper" id="resultsWrapper">
+
+    <div class="ev-note" id="evVariableWarning">
+      ⚠️ <strong>EV is a variable tariff.</strong> These figures are based on current rates — they may change. Consider whether the price certainty of a fixed tariff is worth more to this customer than the current EV saving.
+    </div>
+
+    <!-- SAVINGS BANNER -->
+    <div class="savings-banner" id="savingsBanner" style="display:none">
+      <div>
+        <div style="font-size:11px; opacity:0.7; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:3px;">Best option saves</div>
+        <div class="savings-amount" id="savingsAmount">—</div>
+      </div>
+      <div class="savings-text" id="savingsText"></div>
+    </div>
+
+    <!-- RESULT CARDS -->
+    <div class="result-cards" id="resultCards">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="vat-note">All figures include 5% VAT</div>
+
+    <!-- CUTOFF BOX -->
+    <div class="cutoff-box" id="cutoffBox" style="display:none">
+      <div class="cutoff-title">⚡ E7 Break-Even Point — This Region</div>
+      <div class="cutoff-content" id="cutoffContent"></div>
+    </div>
+
+    <!-- GAS RESULT -->
+    <div class="gas-result" id="gasResultBox">
+      <div class="gas-result-title">🔥 Gas Cost (same tariff)</div>
+      <div id="gasResultContent"></div>
+    </div>
+
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">📊</div>
+    <div class="empty-text">Select a region and enter usage figures<br>to see the tariff comparison.</div>
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// ============================================================
+// TARIFF DATA (all ex-VAT, Direct Debit)
+// ============================================================
+
+const REGIONS = {
+  10: 'Eastern',
+  11: 'East Midlands',
+  12: 'London',
+  13: 'Manweb',
+  14: 'Midlands',
+  15: 'Northern',
+  16: 'Norweb',
+  17: 'Scottish Hydro',
+  18: 'Scottish Power',
+  19: 'Seeboard',
+  20: 'Southern',
+  21: 'Swalec',
+  22: 'Sweb',
+  23: 'Yorkshire'
+};
+
+// Fixed tariffs — DD only, ex-VAT
+// Structure: { gasSC, gasUnit, gdSC, gdUnit, e7SC, e7Day, e7Night }
+const FIXED_START = { // 1 service (energy only)
+  10: { gasSC:25.513, gasUnit:6.847, gdSC:49.511, gdUnit:28.112, e7SC:49.725, e7Day:38.717, e7Night:9.126 },
+  11: { gasSC:25.517, gasUnit:6.780, gdSC:48.967, gdUnit:26.848, e7SC:48.452, e7Day:36.970, e7Night:8.896 },
+  12: { gasSC:25.565, gasUnit:7.088, gdSC:40.019, gdUnit:28.091, e7SC:39.639, e7Day:38.590, e7Night:9.049 },
+  13: { gasSC:25.512, gasUnit:6.871, gdSC:64.784, gdUnit:29.451, e7SC:64.056, e7Day:40.186, e7Night:9.911 },
+  14: { gasSC:25.512, gasUnit:6.863, gdSC:54.611, gdUnit:27.096, e7SC:54.259, e7Day:37.331, e7Night:9.041 },
+  15: { gasSC:25.512, gasUnit:6.872, gdSC:58.988, gdUnit:27.023, e7SC:58.257, e7Day:37.210, e7Night:8.896 },
+  16: { gasSC:25.514, gasUnit:6.823, gdSC:42.974, gdUnit:27.826, e7SC:42.333, e7Day:37.971, e7Night:9.357 },
+  17: { gasSC:25.958, gasUnit:6.940, gdSC:53.300, gdUnit:28.635, e7SC:53.965, e7Day:37.274, e7Night:12.286 },
+  18: { gasSC:25.591, gasUnit:6.845, gdSC:58.767, gdUnit:27.737, e7SC:59.330, e7Day:37.827, e7Night:9.537 },
+  19: { gasSC:25.506, gasUnit:6.968, gdSC:50.045, gdUnit:28.362, e7SC:50.314, e7Day:39.033, e7Night:9.099 },
+  20: { gasSC:24.938, gasUnit:6.942, gdSC:48.201, gdUnit:27.828, e7SC:48.192, e7Day:38.342, e7Night:9.011 },
+  21: { gasSC:25.504, gasUnit:7.003, gdSC:52.648, gdUnit:28.145, e7SC:51.724, e7Day:38.835, e7Night:9.090 },
+  22: { gasSC:25.501, gasUnit:7.053, gdSC:53.239, gdUnit:28.148, e7SC:53.629, e7Day:38.814, e7Night:8.956 },
+  23: { gasSC:25.513, gasUnit:6.858, gdSC:59.051, gdUnit:27.116, e7SC:58.436, e7Day:37.327, e7Night:9.143 }
+};
+
+const FIXED_79 = { // 2 services
+  10: { gasSC:23.034, gasUnit:6.743, gdSC:47.032, gdUnit:27.682, e7SC:47.247, e7Day:38.023, e7Night:9.126 },
+  11: { gasSC:23.039, gasUnit:6.676, gdSC:46.489, gdUnit:26.436, e7SC:45.974, e7Day:36.304, e7Night:8.896 },
+  12: { gasSC:23.080, gasUnit:6.982, gdSC:37.534, gdUnit:27.670, e7SC:37.155, e7Day:37.914, e7Night:9.049 },
+  13: { gasSC:23.033, gasUnit:6.763, gdSC:62.305, gdUnit:28.989, e7SC:61.579, e7Day:39.443, e7Night:9.911 },
+  14: { gasSC:23.033, gasUnit:6.757, gdSC:52.132, gdUnit:26.676, e7SC:51.781, e7Day:36.652, e7Night:9.041 },
+  15: { gasSC:23.033, gasUnit:6.764, gdSC:56.509, gdUnit:26.600, e7SC:55.779, e7Day:36.527, e7Night:8.896 },
+  16: { gasSC:23.036, gasUnit:6.720, gdSC:40.495, gdUnit:27.406, e7SC:39.856, e7Day:37.295, e7Night:9.357 },
+  17: { gasSC:23.436, gasUnit:6.833, gdSC:50.778, gdUnit:28.195, e7SC:51.442, e7Day:36.564, e7Night:12.286 },
+  18: { gasSC:23.105, gasUnit:6.738, gdSC:56.281, gdUnit:27.304, e7SC:56.843, e7Day:37.130, e7Night:9.537 },
+  19: { gasSC:23.027, gasUnit:6.861, gdSC:47.566, gdUnit:27.928, e7SC:47.834, e7Day:38.336, e7Night:9.099 },
+  20: { gasSC:22.514, gasUnit:6.836, gdSC:45.776, gdUnit:27.404, e7SC:45.767, e7Day:37.659, e7Night:9.011 },
+  21: { gasSC:23.025, gasUnit:6.895, gdSC:50.169, gdUnit:27.713, e7SC:49.247, e7Day:38.138, e7Night:9.090 },
+  22: { gasSC:23.022, gasUnit:6.945, gdSC:50.760, gdUnit:27.716, e7SC:51.150, e7Day:38.118, e7Night:8.956 },
+  23: { gasSC:23.034, gasUnit:6.751, gdSC:56.573, gdUnit:26.692, e7SC:55.959, e7Day:36.640, e7Night:9.143 }
+};
+
+const FIXED_SAVER = { // 3+ services
+  10: { gasSC:19.120, gasUnit:6.240, gdSC:43.118, gdUnit:25.619, e7SC:43.332, e7Day:34.696, e7Night:9.126 },
+  11: { gasSC:19.125, gasUnit:6.177, gdSC:42.575, gdUnit:24.460, e7SC:42.062, e7Day:33.110, e7Night:8.896 },
+  12: { gasSC:19.156, gasUnit:6.473, gdSC:33.610, gdUnit:25.652, e7SC:33.234, e7Day:34.672, e7Night:9.049 },
+  13: { gasSC:19.119, gasUnit:6.245, gdSC:58.391, gdUnit:26.768, e7SC:57.667, e7Day:35.872, e7Night:9.911 },
+  14: { gasSC:19.120, gasUnit:6.247, gdSC:48.219, gdUnit:24.662, e7SC:47.868, e7Day:33.389, e7Night:9.041 },
+  15: { gasSC:19.119, gasUnit:6.249, gdSC:52.595, gdUnit:24.573, e7SC:51.867, e7Day:33.253, e7Night:8.896 },
+  16: { gasSC:19.122, gasUnit:6.225, gdSC:36.581, gdUnit:25.389, e7SC:35.946, e7Day:34.052, e7Night:9.357 },
+  17: { gasSC:19.454, gasUnit:6.320, gdSC:46.796, gdUnit:26.080, e7SC:47.457, e7Day:33.154, e7Night:12.286 },
+  18: { gasSC:19.179, gasUnit:6.225, gdSC:52.356, gdUnit:25.228, e7SC:52.915, e7Day:33.780, e7Night:9.537 },
+  19: { gasSC:19.113, gasUnit:6.350, gdSC:43.652, gdUnit:25.848, e7SC:43.920, e7Day:34.989, e7Night:9.099 },
+  20: { gasSC:18.686, gasUnit:6.328, gdSC:41.948, gdUnit:25.369, e7SC:41.939, e7Day:34.378, e7Night:9.011 },
+  21: { gasSC:19.111, gasUnit:6.379, gdSC:46.255, gdUnit:25.637, e7SC:45.336, e7Day:34.788, e7Night:9.090 },
+  22: { gasSC:19.108, gasUnit:6.424, gdSC:46.846, gdUnit:25.638, e7SC:47.235, e7Day:34.775, e7Night:8.956 },
+  23: { gasSC:19.120, gasUnit:6.236, gdSC:52.659, gdUnit:24.658, e7SC:52.047, e7Day:33.343, e7Night:9.143 }
+};
+
+// EV tariffs — DD, ex-VAT
+// Structure: { sc, peak, offPeak }
+const EV_VALUE = { // 1 service
+  10: { sc:47.152, peak:37.808, offPeak:8.095 },
+  11: { sc:47.076, peak:36.367, offPeak:8.095 },
+  12: { sc:44.280, peak:36.535, offPeak:8.095 },
+  13: { sc:66.732, peak:39.526, offPeak:8.095 },
+  14: { sc:50.984, peak:36.562, offPeak:8.095 },
+  15: { sc:57.142, peak:36.166, offPeak:8.095 },
+  16: { sc:48.901, peak:38.441, offPeak:8.095 },
+  17: { sc:59.767, peak:38.489, offPeak:8.095 },
+  18: { sc:55.488, peak:36.740, offPeak:8.095 },
+  19: { sc:46.572, peak:38.299, offPeak:8.095 },
+  20: { sc:43.415, peak:37.747, offPeak:8.095 },
+  21: { sc:49.143, peak:38.239, offPeak:8.095 },
+  22: { sc:52.810, peak:38.130, offPeak:8.095 },
+  23: { sc:56.106, peak:36.184, offPeak:8.095 }
+};
+
+const EV_GOLD = { // 2 services
+  10: { sc:47.152, peak:33.946, offPeak:7.619 },
+  11: { sc:47.076, peak:32.614, offPeak:7.619 },
+  12: { sc:44.280, peak:32.803, offPeak:7.619 },
+  13: { sc:66.732, peak:35.299, offPeak:7.619 },
+  14: { sc:50.984, peak:32.747, offPeak:7.619 },
+  15: { sc:57.142, peak:32.307, offPeak:7.619 },
+  16: { sc:48.901, peak:34.511, offPeak:7.619 },
+  17: { sc:59.767, peak:34.424, offPeak:7.619 },
+  18: { sc:55.488, peak:32.858, offPeak:7.619 },
+  19: { sc:46.572, peak:34.408, offPeak:7.619 },
+  20: { sc:43.415, peak:33.935, offPeak:7.619 },
+  21: { sc:49.143, peak:34.321, offPeak:7.619 },
+  22: { sc:52.810, peak:34.176, offPeak:7.619 },
+  23: { sc:56.106, peak:32.336, offPeak:7.619 }
+};
+
+const EV_DOUBLE_GOLD = { // 3+ services
+  10: { sc:47.152, peak:30.498, offPeak:6.571 },
+  11: { sc:47.076, peak:29.270, offPeak:6.571 },
+  12: { sc:44.280, peak:29.480, offPeak:6.571 },
+  13: { sc:66.732, peak:31.499, offPeak:6.571 },
+  14: { sc:50.984, peak:29.344, offPeak:6.571 },
+  15: { sc:57.142, peak:28.860, offPeak:6.571 },
+  16: { sc:48.901, peak:30.996, offPeak:6.571 },
+  17: { sc:59.767, peak:30.780, offPeak:6.571 },
+  18: { sc:55.488, peak:29.389, offPeak:6.571 },
+  19: { sc:46.572, peak:30.930, offPeak:6.571 },
+  20: { sc:43.415, peak:30.534, offPeak:6.571 },
+  21: { sc:49.143, peak:30.818, offPeak:6.571 },
+  22: { sc:52.810, peak:30.638, offPeak:6.571 },
+  23: { sc:56.106, peak:28.900, offPeak:6.571 }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  region: null,
+  services: { broadband: false, mobile1: false, mobile2: false, insurance: false },
+  tariffType: 'fixed',
+};
+
+const VAT = 1.05;
+const DUAL_FUEL_DISC_ELEC = 13.00; // inc VAT per year
+const DUAL_FUEL_DISC_GAS  = 13.00;
+
+// ============================================================
+// SERVICE CHIP LOGIC
+// ============================================================
+function toggleChip(id) {
+  state.services[id] = !state.services[id];
+  const el = document.getElementById('chip-' + id);
+  el.classList.toggle('active', state.services[id]);
+  updateBundleIndicator();
+  calculate();
+}
+
+function getServiceCount() {
+  return 1 + Object.values(state.services).filter(Boolean).length;
+}
+
+function getTierName(count) {
+  if (count >= 3) return 'Fixed Saver 79 / EV Double Gold';
+  if (count === 2) return 'Fixed 79 / EV Gold';
+  return 'Fixed Start 79 / EV Value';
+}
+
+function updateBundleIndicator() {
+  const count = getServiceCount();
+  const others = Object.values(state.services).filter(Boolean).length;
+  document.getElementById('bundleText').textContent =
+    count === 1 ? 'Energy only — 1 service' :
+    `Energy + ${others} other${others > 1 ? 's' : ''} — ${count} services`;
+  document.getElementById('bundleTier').textContent = getTierName(count);
+}
+
+// ============================================================
+// TARIFF TYPE
+// ============================================================
+function setTariffType(type) {
+  state.tariffType = type;
+  document.getElementById('btn-fixed').classList.toggle('active', type === 'fixed');
+  document.getElementById('btn-variable').classList.toggle('active', type === 'variable');
+  const evNote = document.getElementById('evNote');
+  evNote.style.display = type === 'variable' ? 'block' : 'none';
+  calculate();
+}
+
+// ============================================================
+// GET TARIFF DATA FOR CURRENT SELECTION
+// ============================================================
+function getFixedData(region) {
+  const count = getServiceCount();
+  if (count >= 3) return { data: FIXED_SAVER[region], name: 'Fixed Saver 79', tier: '3+ services' };
+  if (count === 2) return { data: FIXED_79[region], name: 'Fixed 79', tier: '2 services' };
+  return { data: FIXED_START[region], name: 'Fixed Start 79', tier: '1 service' };
+}
+
+function getEVData(region) {
+  const count = getServiceCount();
+  if (count >= 3) return { data: EV_DOUBLE_GOLD[region], name: 'EV Double Gold', tier: '3+ services' };
+  if (count === 2) return { data: EV_GOLD[region], name: 'EV Gold', tier: '2 services' };
+  return { data: EV_VALUE[region], name: 'EV Value', tier: '1 service' };
+}
+
+// ============================================================
+// COST CALCULATIONS
+// ============================================================
+function calcFixed(t, dayKwh, nightKwh, hasDualFuel) {
+  const scDisc = hasDualFuel ? (DUAL_FUEL_DISC_ELEC / VAT) / 365 : 0;
+
+  const gdAnnual = ((t.gdSC / 100) - scDisc) * 365 + (t.gdUnit / 100) * (dayKwh + nightKwh);
+  const e7Annual = ((t.e7SC / 100) - scDisc) * 365 + (t.e7Day / 100) * dayKwh + (t.e7Night / 100) * nightKwh;
+
+  return {
+    gd: gdAnnual * VAT,
+    e7: e7Annual * VAT,
+    gdRates: { sc: t.gdSC, unit: t.gdUnit },
+    e7Rates: { sc: t.e7SC, day: t.e7Day, night: t.e7Night }
+  };
+}
+
+function calcEV(t, dayKwh, nightKwh, hasDualFuel) {
+  const scDisc = hasDualFuel ? (DUAL_FUEL_DISC_ELEC / VAT) / 365 : 0;
+  const annual = ((t.sc / 100) - scDisc) * 365 + (t.peak / 100) * dayKwh + (t.offPeak / 100) * nightKwh;
+  return {
+    cost: annual * VAT,
+    rates: { sc: t.sc, peak: t.peak, offPeak: t.offPeak }
+  };
+}
+
+function calcGas(t, gasKwh, hasDualFuel) {
+  const scDisc = hasDualFuel ? (DUAL_FUEL_DISC_GAS / VAT) / 365 : 0;
+  const annual = ((t.gasSC / 100) - scDisc) * 365 + (t.gasUnit / 100) * gasKwh;
+  return annual * VAT;
+}
+
+// Break-even: what % of total kWh must be at night for E7 to match GD?
+// GD cost = SC_gd * 365 + unit * total
+// E7 cost = SC_e7 * 365 + day * (total - night) + night_rate * night
+// Solve for night where E7 = GD
+function calcBreakEven(t) {
+  // Let N = night kWh, T = total kWh
+  // E7 = e7SC*365 + e7Day*(T-N) + e7Night*N
+  // GD = gdSC*365 + gdUnit*T
+  // E7 < GD when:
+  // e7SC*365 + e7Day*T - e7Day*N + e7Night*N < gdSC*365 + gdUnit*T
+  // N*(e7Day - e7Night) > (e7SC - gdSC)*365 + (e7Day - gdUnit)*T
+  // We want the % at which they're equal, as a fraction of T:
+  // N/T = [(e7SC - gdSC)*365/T + (e7Day - gdUnit)] / (e7Day - e7Night)
+  // For a "general" break-even we solve symbolically (T cancels via pct)
+  // Let p = N/T (fraction)
+  // e7SC*365 + e7Day*T*(1-p) + e7Night*T*p = gdSC*365 + gdUnit*T
+  // p * T * (e7Night - e7Day) = gdSC*365 - e7SC*365 + gdUnit*T - e7Day*T
+  // p = [(gdSC - e7SC)*365/T + (gdUnit - e7Day)] / (e7Night - e7Day)
+  // This depends on T. For the "ready reckoner" we use a typical total of 4000 kWh.
+  const T = 4000;
+  const num = (t.gdSC - t.e7SC) * 365 / 100 + (t.gdUnit - t.e7Day) / 100 * T;
+  const den = (t.e7Night - t.e7Day) / 100 * T;
+  const p = num / den;
+  return Math.max(0, Math.min(1, p)) * 100;
+}
+
+// ============================================================
+// FORMAT HELPERS
+// ============================================================
+const £ = v => '£' + v.toFixed(2);
+const £0 = v => '£' + Math.round(v);
+const ppm = v => (v / 12).toFixed(2);
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderCard(cfg) {
+  return `
+    <div class="result-card ${cfg.winner ? 'winner' : 'loser'} ${cfg.ev ? 'ev-card' : ''}">
+      ${cfg.winner ? '<div class="winner-badge">✓ BEST OPTION</div>' : ''}
+      <div class="result-label">${cfg.label}</div>
+      <div class="result-tariff-name">${cfg.tariffName}</div>
+      <div class="result-annual">${£0(cfg.annual)}<span style="font-size:13px;color:var(--uw-grey-mid)">/yr</span></div>
+      <div class="result-monthly">≈ £${ppm(cfg.annual)}/month</div>
+      <div class="result-breakdown">
+        <span><span class="label">Standing charge</span><span>${(cfg.rates.sc / 100 * 365 * VAT).toFixed(2)}</span></span>
+        ${cfg.ev ? `
+        <span><span class="label">Peak (day) usage</span><span>${cfg.rates.peak.toFixed(3)}p</span></span>
+        <span><span class="label">Off-peak (night)</span><span>${cfg.rates.offPeak.toFixed(3)}p</span></span>
+        ` : cfg.e7 ? `
+        <span><span class="label">Day rate</span><span>${cfg.rates.day.toFixed(3)}p</span></span>
+        <span><span class="label">Night rate</span><span>${cfg.rates.night.toFixed(3)}p</span></span>
+        ` : `
+        <span><span class="label">Unit rate</span><span>${cfg.rates.unit.toFixed(3)}p</span></span>
+        `}
+        ${cfg.dualFuelDisc ? `<span style="color:var(--uw-green)"><span class="label">Dual fuel discount</span><span>-£13.00</span></span>` : ''}
+      </div>
+    </div>`;
+}
+
+function calculate() {
+  const region = parseInt(document.getElementById('regionSelect').value);
+  const dayKwh = parseFloat(document.getElementById('dayKwh').value) || 0;
+  const nightKwh = parseFloat(document.getElementById('nightKwh').value) || 0;
+  const gasKwh = parseFloat(document.getElementById('gasKwh').value) || 0;
+  const hasDualFuel = gasKwh > 0;
+  const totalKwh = dayKwh + nightKwh;
+
+  const hasUsage = dayKwh > 0 || nightKwh > 0;
+  const hasRegion = !isNaN(region) && region > 0;
+
+  // Night % bar
+  const nightPctWrapper = document.getElementById('nightPctWrapper');
+  if (hasUsage && totalKwh > 0) {
+    const nightPct = (nightKwh / totalKwh) * 100;
+    nightPctWrapper.style.display = 'block';
+    document.getElementById('nightPctFill').style.width = Math.min(nightPct, 100) + '%';
+    document.getElementById('nightPctText').textContent = `Night usage: ${nightPct.toFixed(1)}% of total`;
+  } else {
+    nightPctWrapper.style.display = 'none';
+  }
+
+  if (!hasRegion || !hasUsage) {
+    document.getElementById('resultsWrapper').classList.remove('visible');
+    document.getElementById('emptyState').style.display = 'block';
+    return;
+  }
+
+  document.getElementById('resultsWrapper').classList.add('visible');
+  document.getElementById('emptyState').style.display = 'none';
+
+  const fixedInfo = getFixedData(region);
+  const evInfo = getEVData(region);
+  const fixedT = fixedInfo.data;
+  const evT = evInfo.data;
+
+  // Calculate costs
+  const fixed = calcFixed(fixedT, dayKwh, nightKwh, hasDualFuel);
+  const evCost = calcEV(evT, dayKwh, nightKwh, hasDualFuel);
+
+  let cards = [];
+
+  if (state.tariffType === 'fixed') {
+    // Show GD vs E7 on fixed tariff
+    const results = [
+      { label: 'General Domestic', tariffName: fixedInfo.name + ' (Standard)', annual: fixed.gd, rates: { sc: fixedT.gdSC, unit: fixedT.gdUnit }, winner: false, e7: false, ev: false },
+      { label: 'Economy 7', tariffName: fixedInfo.name + ' (E7)', annual: fixed.e7, rates: { sc: fixedT.e7SC, day: fixedT.e7Day, night: fixedT.e7Night }, winner: false, e7: true, ev: false }
+    ];
+    results[0].dualFuelDisc = hasDualFuel;
+    results[1].dualFuelDisc = hasDualFuel;
+
+    // Find winner
+    const minCost = Math.min(fixed.gd, fixed.e7);
+    results.forEach(r => { r.winner = Math.abs(r.annual - minCost) < 0.01; });
+
+    cards = results;
+
+    // Savings banner
+    const saving = Math.abs(fixed.gd - fixed.e7);
+    const winner = fixed.e7 < fixed.gd ? 'Economy 7' : 'General Domestic';
+    document.getElementById('savingsBanner').style.display = saving > 1 ? 'flex' : 'none';
+    document.getElementById('savingsAmount').textContent = £0(saving) + '/yr';
+    document.getElementById('savingsText').innerHTML =
+      `<strong>${winner}</strong> is the better profile<br>on <strong>${fixedInfo.name}</strong> for this usage pattern`;
+
+    // EV variable warning — hidden in fixed mode
+    document.getElementById('evVariableWarning').style.display = 'none';
+
+    // Cutoff box
+    const cutoffPct = calcBreakEven(fixedT);
+    document.getElementById('cutoffBox').style.display = 'block';
+    const nightPct = totalKwh > 0 ? (nightKwh / totalKwh * 100) : null;
+    const customerStatus = nightPct !== null
+      ? (nightPct >= cutoffPct
+        ? `✅ This customer uses <strong>${nightPct.toFixed(1)}%</strong> at night — above the break-even, so <strong>E7 is the better profile</strong>.`
+        : `❌ This customer uses <strong>${nightPct.toFixed(1)}%</strong> at night — below the break-even, so <strong>General Domestic is the better profile</strong>.`)
+      : '';
+    document.getElementById('cutoffContent').innerHTML =
+      `<div class="cutoff-pct">${cutoffPct.toFixed(1)}%</div>
+       <div>At least <strong>${cutoffPct.toFixed(1)}%</strong> of electricity must be used at night for E7 to beat the standard rate in this region on ${fixedInfo.name}.</div>
+       <div style="margin-top:6px; font-size:12px; color:var(--uw-grey-mid)">(Based on 4,000 kWh typical annual usage as a ready reckoner)</div>
+       ${nightPct !== null ? `<div style="margin-top:8px">${customerStatus}</div>` : ''}`;
+    document.getElementById('cutoffPctText').textContent = `Break-even: ${cutoffPct.toFixed(1)}%`;
+
+  } else {
+    // Variable EV mode: show EV vs Fixed GD vs Fixed E7
+    const results = [
+      { label: 'EV Tariff (Variable)', tariffName: evInfo.name, annual: evCost.cost, rates: { sc: evT.sc, peak: evT.peak, offPeak: evT.offPeak }, winner: false, ev: true, e7: false },
+      { label: 'General Domestic (Fixed)', tariffName: fixedInfo.name, annual: fixed.gd, rates: { sc: fixedT.gdSC, unit: fixedT.gdUnit }, winner: false, ev: false, e7: false },
+      { label: 'Economy 7 (Fixed)', tariffName: fixedInfo.name + ' E7', annual: fixed.e7, rates: { sc: fixedT.e7SC, day: fixedT.e7Day, night: fixedT.e7Night }, winner: false, ev: false, e7: true },
+    ];
+    results[0].dualFuelDisc = hasDualFuel;
+    results[1].dualFuelDisc = hasDualFuel;
+    results[2].dualFuelDisc = hasDualFuel;
+
+    const minCost = Math.min(...results.map(r => r.annual));
+    results.forEach(r => { r.winner = Math.abs(r.annual - minCost) < 0.01; });
+
+    cards = results;
+
+    // Savings banner vs most expensive
+    const maxCost = Math.max(...results.map(r => r.annual));
+    const saving = maxCost - minCost;
+    const winnerName = results.find(r => r.winner)?.label || '';
+    document.getElementById('savingsBanner').style.display = saving > 1 ? 'flex' : 'none';
+    document.getElementById('savingsAmount').textContent = £0(saving) + '/yr';
+    document.getElementById('savingsText').innerHTML =
+      `<strong>${winnerName}</strong> is cheapest vs the most expensive option shown`;
+
+    document.getElementById('evVariableWarning').style.display = 'block';
+
+    // Cutoff box (fixed only context)
+    document.getElementById('cutoffBox').style.display = 'none';
+    document.getElementById('cutoffPctText').textContent = '';
+  }
+
+  // Render result cards
+  // In EV mode we have 3 cards — make grid 3-col on wider screens
+  const resultCardsEl = document.getElementById('resultCards');
+  resultCardsEl.className = 'result-cards' + (state.tariffType === 'variable' ? ' three-col' : '');
+  resultCardsEl.innerHTML = cards.map(renderCard).join('');
+
+  // Gas result
+  const gasBox = document.getElementById('gasResultBox');
+  if (hasDualFuel && gasKwh > 0) {
+    const gasAnnual = calcGas(fixedInfo.data, gasKwh, hasDualFuel);
+    gasBox.classList.add('visible');
+    document.getElementById('gasResultContent').innerHTML = `
+      <div class="gas-result-row" style="margin-bottom:4px">
+        <span class="lbl">Annual gas cost (${fixedInfo.name})</span>
+        <span>${£0(gasAnnual)}</span>
+      </div>
+      <div class="gas-result-row" style="margin-bottom:4px">
+        <span class="lbl">≈ per month</span>
+        <span>£${ppm(gasAnnual)}</span>
+      </div>
+      <div class="gas-result-row" style="font-size:11px; color:#0369a1; margin-top:4px">
+        <span class="lbl">Dual fuel discount already applied (£13/yr)</span>
+        <span>✓</span>
+      </div>
+      <div class="gas-result-row" style="font-size:11px; color:#0369a1">
+        <span class="lbl">Unit rate</span>
+        <span>${fixedInfo.data.gasUnit.toFixed(3)}p/kWh</span>
+      </div>`;
+  } else {
+    gasBox.classList.remove('visible');
+  }
+}
+
+// ============================================================
+// EVENT LISTENERS
+// ============================================================
+document.getElementById('regionSelect').addEventListener('change', function() {
+  state.region = parseInt(this.value) || null;
+  calculate();
+});
+
+['broadband','mobile1','mobile2','insurance'].forEach(function(id) {
+  document.getElementById('chip-' + id).addEventListener('click', function() {
+    toggleChip(id);
+  });
+});
+
+document.getElementById('btn-fixed').addEventListener('click', function() {
+  setTariffType('fixed');
+});
+document.getElementById('btn-variable').addEventListener('click', function() {
+  setTariffType('variable');
+});
+
+document.getElementById('dayKwh').addEventListener('input', calculate);
+document.getElementById('nightKwh').addEventListener('input', calculate);
+document.getElementById('gasKwh').addEventListener('input', calculate);
+
+// Initial render
+calculate();
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>
