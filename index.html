@@ -155,6 +155,7 @@ input[type="number"] {
   font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500;
   color: var(--dk); width: 100%; transition: border-color 0.15s;
 }
+input[type="number"]::placeholder { color: #cbd5e1; }
 input[type="number"]:focus {
   outline: none; border-color: var(--p);
   box-shadow: 0 0 0 3px rgba(92,45,145,0.1);
@@ -413,21 +414,6 @@ input[type="number"]:focus {
   <div class="card locked-overlay" id="lo-usage">
     <div class="ct">🔢 Electricity Usage</div>
 
-    <div class="presets">
-      <button class="preset" id="preset-low">
-        <div class="pl">Low</div>
-        <div class="ps">2,200 kWh · 1 bed</div>
-      </button>
-      <button class="preset" id="preset-medium">
-        <div class="pl">Medium</div>
-        <div class="ps">3,900 kWh · 2–3 bed</div>
-      </button>
-      <button class="preset" id="preset-high">
-        <div class="pl">High</div>
-        <div class="ps">6,700 kWh · 4+ bed</div>
-      </button>
-    </div>
-
     <div class="ig" style="margin-bottom:10px">
       <div class="igrp">
         <label class="ilbl"><span class="dot dd"></span> Day Usage <span style="font-weight:400;text-transform:none;font-size:9px">(7am – midnight)</span></label>
@@ -445,6 +431,26 @@ input[type="number"]:focus {
       <label class="ilbl"><span class="dot dev"></span> EV Charging <span style="font-weight:400;text-transform:none;font-size:9px">(assumed all off-peak, midnight – 5am)</span></label>
       <input type="number" id="evKwh" placeholder="e.g. 1800 · optional" min="0">
       <div class="isfx">kWh / year · leave blank if no EV</div>
+    </div>
+
+    <div style="margin-top:16px; display:flex; align-items:center; gap:10px;">
+      <div style="flex:1; height:1px; background:var(--bdr)"></div>
+      <span style="font-size:10.5px; color:var(--gmid); white-space:nowrap; font-weight:500">Don't know your usage? Use an estimate:</span>
+      <div style="flex:1; height:1px; background:var(--bdr)"></div>
+    </div>
+    <div class="presets" style="margin-top:10px; margin-bottom:0">
+      <button class="preset" id="preset-low">
+        <div class="pl">Low</div>
+        <div class="ps">2,200 kWh · 1 bed</div>
+      </button>
+      <button class="preset" id="preset-medium">
+        <div class="pl">Medium</div>
+        <div class="ps">3,900 kWh · 2–3 bed</div>
+      </button>
+      <button class="preset" id="preset-high">
+        <div class="pl">High</div>
+        <div class="ps">6,700 kWh · 4+ bed</div>
+      </button>
     </div>
 
     <div class="nbwrap" id="nbWrap" style="display:none">
@@ -813,7 +819,7 @@ function calculate() {
   var totOffPeak = nigK + evK;
   var beEVpct = (beEVkwh/totK*100);
 
-  document.getElementById('nbBe').textContent = 'E7 break-even: ' + beE7pct.toFixed(1) + '%';
+  document.getElementById('nbBe').textContent = 'E7 break-even: ' + beE7pct.toFixed(1) + '% at night';
 
   // WWIT
   var e7Above = nigK >= beE7kwh;
@@ -882,11 +888,11 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
   var beEVPct = beEV/totK*100;
 
   document.getElementById('chartLegend').innerHTML =
-    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day usage</div>' +
     '<div class="cleg"><div class="cleg-sq" style="background:#7c3aed"></div>Night usage (home)</div>' +
-    (evK > 0 ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV charging</div>' : '') +
-    '<div class="cleg"><div class="cleg-dash" style="border-color:#7c3aed"></div>E7 break-even (' + beE7Pct.toFixed(1) + '%)</div>' +
-    '<div class="cleg"><div class="cleg-dash" style="border-color:#059669"></div>EV break-even (' + beEVPct.toFixed(1) + '%)</div>';
+    (evK > 0 ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV charging (off-peak)</div>' : '') +
+    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day usage</div>' +
+    '<div class="cleg"><div class="cleg-dash" style="border-color:#7c3aed"></div>E7 break-even: need <strong>' + beE7Pct.toFixed(1) + '% of electricity at night</strong></div>' +
+    '<div class="cleg"><div class="cleg-dash" style="border-color:#059669"></div>EV break-even: need ' + beEVPct.toFixed(1) + '% off-peak</div>';
 
   var beLinePlugin = {
     id: 'beLines',
@@ -918,12 +924,12 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
     data: {
       labels: labels,
       datasets: [
-        { label:'Day', data: dayData.map(function(d,i){ return totK>0?(d/totK*100):0; }),
-          backgroundColor:'#f59e0b', borderRadius:3, stack:'s' },
         { label:'Night', data: nightData.map(function(d){ return totK>0?(d/totK*100):0; }),
           backgroundColor:'#7c3aed', borderRadius:3, stack:'s' },
         { label:'EV charging', data: evData.map(function(d){ return totK>0?(d/totK*100):0; }),
-          backgroundColor:'#059669', borderRadius:3, stack:'s' }
+          backgroundColor:'#059669', borderRadius:3, stack:'s' },
+        { label:'Day', data: dayData.map(function(d,i){ return totK>0?(d/totK*100):0; }),
+          backgroundColor:'#f59e0b', borderRadius:3, stack:'s' }
       ]
     },
     options: {
