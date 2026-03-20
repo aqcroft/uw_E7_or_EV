@@ -6,548 +6,347 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UW Tariff Comparison Tool</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
-  :root {
-    --uw-purple: #5c2d91;
-    --uw-purple-light: #7b4db0;
-    --uw-purple-pale: #f0ebf8;
-    --uw-green: #00a651;
-    --uw-green-light: #e6f7ef;
-    --uw-amber: #f5a623;
-    --uw-amber-light: #fef6e6;
-    --uw-red: #d0021b;
-    --uw-red-light: #fce8eb;
-    --uw-grey-dark: #1a1a2e;
-    --uw-grey-mid: #64748b;
-    --uw-grey-light: #f1f5f9;
-    --uw-border: #e2e8f0;
-    --radius: 10px;
-    --radius-sm: 6px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: #f8f6fc;
-    color: var(--uw-grey-dark);
-    min-height: 100vh;
-    font-size: 14px;
-  }
-
-  header {
-    background: var(--uw-purple);
-    color: white;
-    padding: 14px 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 12px rgba(92,45,145,0.3);
-  }
-
-  .logo {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    background: white;
-    color: var(--uw-purple);
-    padding: 3px 10px;
-    border-radius: 5px;
-  }
-
-  header h1 {
-    font-size: 15px;
-    font-weight: 500;
-    opacity: 0.9;
-    letter-spacing: 0.2px;
-  }
-
-  .badge {
-    margin-left: auto;
-    background: rgba(255,255,255,0.15);
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-  }
-
-  .container {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 20px 16px 40px;
-  }
-
-  .card {
-    background: white;
-    border-radius: var(--radius);
-    border: 1px solid var(--uw-border);
-    padding: 18px;
-    margin-bottom: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  }
-
-  .card-title {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--uw-purple);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .card-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--uw-purple-pale);
-  }
-
-  /* REGION SELECT */
-  select {
-    width: 100%;
-    padding: 10px 14px;
-    border: 1.5px solid var(--uw-border);
-    border-radius: var(--radius-sm);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--uw-grey-dark);
-    background: white;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c2d91' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-  }
-
-  select:focus { outline: none; border-color: var(--uw-purple); box-shadow: 0 0 0 3px rgba(92,45,145,0.1); }
-
-  /* SERVICE CHIPS */
-  .services-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .service-chip {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 14px;
-    border-radius: 30px;
-    border: 1.5px solid var(--uw-border);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    font-weight: 500;
-    font-size: 13px;
-    user-select: none;
-    background: white;
-    color: var(--uw-grey-mid);
-  }
-
-  .service-chip.locked {
-    background: var(--uw-purple);
-    border-color: var(--uw-purple);
-    color: white;
-    cursor: default;
-  }
-
-  .service-chip.active {
-    background: var(--uw-purple-pale);
-    border-color: var(--uw-purple);
-    color: var(--uw-purple);
-  }
-
-  .service-chip:not(.locked):hover {
-    border-color: var(--uw-purple-light);
-    color: var(--uw-purple);
-  }
-
-  .chip-icon { font-size: 15px; }
-
-  .bundle-indicator {
-    margin-top: 12px;
-    padding: 8px 14px;
-    background: var(--uw-purple-pale);
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    color: var(--uw-purple);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .bundle-tier {
-    margin-left: auto;
-    background: var(--uw-purple);
-    color: white;
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-  }
-
-  /* TARIFF TYPE TOGGLE */
-  .toggle-group {
-    display: flex;
-    background: var(--uw-grey-light);
-    border-radius: var(--radius-sm);
-    padding: 3px;
-    gap: 3px;
-  }
-
-  .toggle-btn {
-    flex: 1;
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: transparent;
-    color: var(--uw-grey-mid);
-  }
-
-  .toggle-btn.active {
-    background: white;
-    color: var(--uw-purple);
-    font-weight: 600;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  }
-
-  /* USAGE INPUTS */
-  .inputs-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .input-group { display: flex; flex-direction: column; gap: 6px; }
-
-  .input-group.full { grid-column: 1 / -1; }
-
-  .input-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--uw-grey-mid);
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-
-  .label-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .dot-day { background: #f5a623; }
-  .dot-night { background: #5c2d91; }
-  .dot-gas { background: #0ea5e9; }
-
-  input[type="number"] {
-    padding: 10px 14px;
-    border: 1.5px solid var(--uw-border);
-    border-radius: var(--radius-sm);
-    font-family: 'DM Mono', monospace;
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--uw-grey-dark);
-    width: 100%;
-    transition: border-color 0.15s;
-  }
-
-  input[type="number"]:focus {
-    outline: none;
-    border-color: var(--uw-purple);
-    box-shadow: 0 0 0 3px rgba(92,45,145,0.1);
-  }
-
-  .input-suffix {
-    font-size: 11px;
-    color: var(--uw-grey-mid);
-    margin-top: 2px;
-    font-family: 'DM Mono', monospace;
-  }
-
-  /* NIGHT PERCENTAGE INDICATOR */
-  .night-pct-bar {
-    margin-top: 10px;
-    background: var(--uw-grey-light);
-    border-radius: 4px;
-    height: 6px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .night-pct-fill {
-    height: 100%;
-    background: var(--uw-purple);
-    border-radius: 4px;
-    transition: width 0.3s ease;
-  }
-
-  .night-pct-label {
-    font-size: 11px;
-    color: var(--uw-grey-mid);
-    margin-top: 5px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  /* RESULTS */
-  .results-wrapper { display: none; }
-  .results-wrapper.visible { display: block; }
-
-  .result-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-
-  .result-card {
-    border-radius: var(--radius);
-    border: 2px solid var(--uw-border);
-    padding: 16px;
-    position: relative;
-    transition: all 0.2s;
-    background: white;
-  }
-
-  .result-card.winner {
-    border-color: var(--uw-green);
-    background: var(--uw-green-light);
-  }
-
-  .result-card.loser {
-    opacity: 0.75;
-  }
-
-  .result-card.ev-card {
-    border-color: #e2e8f0;
-  }
-
-  .result-card.ev-card.winner {
-    border-color: var(--uw-green);
-    background: var(--uw-green-light);
-  }
-
-  .winner-badge {
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--uw-green);
-    color: white;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 10px;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-
-  .result-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--uw-grey-mid);
-    margin-bottom: 6px;
-  }
-
-  .result-tariff-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--uw-purple);
-    margin-bottom: 8px;
-  }
-
-  .result-annual {
-    font-family: 'DM Mono', monospace;
-    font-size: 26px;
-    font-weight: 500;
-    color: var(--uw-grey-dark);
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-
-  .result-monthly {
-    font-size: 12px;
-    color: var(--uw-grey-mid);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .result-breakdown {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--uw-border);
-    font-size: 11px;
-    color: var(--uw-grey-mid);
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  .result-breakdown span {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'DM Mono', monospace;
-  }
-
-  .result-breakdown .label { font-family: 'DM Sans', sans-serif; }
-
-  /* SAVINGS BANNER */
-  .savings-banner {
-    background: var(--uw-purple);
-    color: white;
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-
-  .savings-amount {
-    font-family: 'DM Mono', monospace;
-    font-size: 28px;
-    font-weight: 500;
-    white-space: nowrap;
-  }
-
-  .savings-text { font-size: 13px; line-height: 1.4; opacity: 0.9; }
-  .savings-text strong { opacity: 1; }
-
-  /* CUTOFF BOX */
-  .cutoff-box {
-    background: var(--uw-amber-light);
-    border: 1.5px solid var(--uw-amber);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 14px;
-  }
-
-  .cutoff-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--uw-amber);
-    margin-bottom: 8px;
-  }
-
-  .cutoff-content {
-    font-size: 13px;
-    color: var(--uw-grey-dark);
-    line-height: 1.5;
-  }
-
-  .cutoff-pct {
-    font-family: 'DM Mono', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--uw-grey-dark);
-    margin: 4px 0;
-  }
-
-  /* EV VARIABLE NOTE */
-  .ev-note {
-    background: var(--uw-red-light);
-    border: 1.5px solid #f5c6cb;
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 12px;
-    color: #721c24;
-    margin-bottom: 14px;
-    display: none;
-  }
-
-  .ev-note.visible { display: block; }
-
-  /* GAS RESULT */
-  .gas-result {
-    background: #e8f4fd;
-    border: 1.5px solid #90cdf4;
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    display: none;
-  }
-
-  .gas-result.visible { display: block; }
-
-  .gas-result-title {
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: #0369a1;
-    margin-bottom: 8px;
-  }
-
-  .gas-result-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--uw-grey-dark);
-    font-family: 'DM Mono', monospace;
-  }
-
-  .gas-result-row .lbl { font-family: 'DM Sans', sans-serif; }
-
-  /* EMPTY STATE */
-  .empty-state {
-    text-align: center;
-    padding: 30px 20px;
-    color: var(--uw-grey-mid);
-  }
-
-  .empty-icon { font-size: 36px; margin-bottom: 10px; }
-  .empty-text { font-size: 14px; line-height: 1.5; }
-
-  /* RESPONSIVE */
-  @media (max-width: 520px) {
-    .result-cards { grid-template-columns: 1fr; }
-    .inputs-grid { grid-template-columns: 1fr; }
-    .result-annual { font-size: 22px; }
-    .savings-amount { font-size: 22px; }
-  }
-
-  .vat-note {
-    font-size: 10px;
-    color: var(--uw-grey-mid);
-    text-align: right;
-    margin-top: -10px;
-    margin-bottom: 10px;
-  }
-
-  .info-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    color: var(--uw-grey-mid);
-    margin-top: 8px;
-  }
-
-  .info-icon { font-size: 14px; }
-
-  .three-col { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width: 520px) { .three-col { grid-template-columns: 1fr; } }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --p:    #5c2d91;
+  --pd:   #2a0f52;
+  --pch:  #7040a8;
+  --ppal: #f0ebf8;
+  --grn:  #00a651;
+  --grnl: #e6f7ef;
+  --amb:  #d97706;
+  --ambl: #fef3c7;
+  --blu:  #0369a1;
+  --blul: #e0f2fe;
+  --red:  #b91c1c;
+  --redl: #fee2e2;
+  --gmid: #64748b;
+  --glit: #f1f5f9;
+  --bdr:  #e2e8f0;
+  --dk:   #1a1a2e;
+  --r:    10px;
+  --rs:   6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #f5f3fa;
+  color: var(--dk);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+header {
+  background: var(--pd);
+  color: white;
+  padding: 12px 20px;
+  display: flex; align-items: center; gap: 12px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 16px rgba(42,15,82,0.45);
+}
+.logo {
+  font-size: 19px; font-weight: 700;
+  background: white; color: var(--pd);
+  padding: 3px 9px; border-radius: 5px;
+}
+header h1 { font-size: 13px; font-weight: 500; opacity: 0.85; }
+.hbadge {
+  margin-left: auto;
+  background: rgba(255,200,0,0.18); border: 1px solid rgba(255,200,0,0.35);
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 10px; font-weight: 600; color: #fde68a;
+}
+
+.wrap { max-width: 820px; margin: 0 auto; padding: 16px 14px 60px; }
+
+.card {
+  background: white; border-radius: var(--r);
+  border: 1px solid var(--bdr); padding: 15px 17px;
+  margin-bottom: 11px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.ct {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.9px; color: var(--p); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ct::after { content:''; flex:1; height:1px; background:var(--ppal); }
+
+/* LOCKED OVERLAY */
+.locked-overlay {
+  position: relative;
+}
+.locked-overlay::after {
+  content: 'Select a region first';
+  position: absolute; inset: 0;
+  background: rgba(245,243,250,0.85);
+  border-radius: var(--r);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: var(--gmid);
+  pointer-events: all;
+  cursor: not-allowed;
+}
+.locked-overlay.unlocked::after { display: none; pointer-events: none; }
+
+select {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--bdr); border-radius: var(--rs);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  color: var(--dk); background: white; cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235c2d91' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  transition: border-color 0.15s;
+}
+select:focus { outline: none; border-color: var(--p); box-shadow: 0 0 0 3px rgba(92,45,145,0.1); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 13px; border-radius: 30px;
+  border: 1.5px solid var(--bdr); cursor: pointer;
+  transition: all 0.15s; font-weight: 500; font-size: 13px;
+  user-select: none; background: white; color: var(--gmid);
+}
+.chip.locked-chip { background: var(--pd); border-color: var(--pd); color: white; cursor: default; }
+.chip.on { background: var(--pch); border-color: var(--pch); color: white; font-weight: 600; }
+.chip:not(.locked-chip):not(.on):hover { border-color: var(--p); color: var(--p); }
+
+.bundle-bar {
+  margin-top: 10px; padding: 7px 12px;
+  background: var(--ppal); border-radius: var(--rs);
+  font-size: 11.5px; color: var(--p); font-weight: 600;
+  display: flex; align-items: center;
+}
+.btier {
+  margin-left: auto; background: var(--p); color: white;
+  padding: 2px 9px; border-radius: 12px; font-size: 10px;
+}
+
+.presets { display: flex; gap: 7px; margin-bottom: 13px; }
+.preset {
+  flex: 1; padding: 8px 6px;
+  border: 1.5px solid var(--bdr); border-radius: var(--rs);
+  background: white; cursor: pointer; transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif; text-align: center;
+}
+.preset:hover, .preset.on { border-color: var(--p); background: var(--ppal); }
+.pl { font-size: 12px; font-weight: 700; color: var(--p); }
+.ps { font-size: 10px; color: var(--gmid); margin-top: 1px; }
+
+.ig { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ig3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.igrp { display: flex; flex-direction: column; gap: 5px; }
+.ilbl {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.6px; color: var(--gmid);
+  display: flex; align-items: center; gap: 5px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dd { background: #d97706; }
+.dn { background: var(--p); }
+.dev { background: var(--grn); }
+
+input[type="number"] {
+  padding: 9px 12px;
+  border: 1.5px solid var(--bdr); border-radius: var(--rs);
+  font-family: 'DM Mono', monospace; font-size: 15px; font-weight: 500;
+  color: var(--dk); width: 100%; transition: border-color 0.15s;
+}
+input[type="number"]:focus {
+  outline: none; border-color: var(--p);
+  box-shadow: 0 0 0 3px rgba(92,45,145,0.1);
+}
+.isfx { font-size: 10px; color: var(--gmid); font-family: 'DM Mono', monospace; }
+
+.nbwrap { margin-top: 10px; }
+.nbbg { background: var(--glit); border-radius: 4px; height: 5px; overflow: hidden; }
+.nbfill { height: 100%; background: var(--p); border-radius: 4px; transition: width 0.3s; }
+.nbrow { font-size: 10px; color: var(--gmid); margin-top: 4px; display: flex; justify-content: space-between; }
+.bel { color: var(--p); font-weight: 700; }
+
+/* FV PILL */
+.fvpill {
+  display: inline-flex; background: var(--glit);
+  border-radius: 30px; padding: 3px; gap: 2px;
+}
+.fvb {
+  padding: 6px 18px; border-radius: 20px; border: none;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s; color: var(--gmid);
+  background: transparent;
+}
+.fvb.af { background: var(--p); color: white; box-shadow: 0 1px 4px rgba(92,45,145,0.3); }
+.fvb.av { background: var(--amb); color: white; box-shadow: 0 1px 4px rgba(217,119,6,0.3); }
+
+.svtnote {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--ambl); border: 1.5px solid #fcd34d;
+  border-radius: var(--rs); font-size: 11px; color: #78350f;
+  display: none;
+}
+.svtnote.show { display: block; }
+
+/* RESULTS */
+.res { display: none; }
+.res.show { display: block; }
+
+/* 3-col grid */
+.cgrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.col-header {
+  text-align: center; padding-bottom: 6px;
+}
+.fv-col-header {
+  grid-column: 1 / 3;
+  display: flex; align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 10px;
+}
+.ev-col-header {
+  display: flex; align-items: center; justify-content: center;
+  padding-bottom: 6px;
+}
+.ev-col-lbl {
+  font-size: 11px; font-weight: 700; color: var(--grn);
+  display: flex; align-items: center; gap: 5px;
+}
+.evtime { font-size: 9px; color: var(--gmid); font-weight: 400; }
+
+.rc {
+  border-radius: var(--r); border: 2px solid var(--bdr);
+  padding: 14px 12px; background: white; position: relative;
+  transition: border-color 0.2s, background 0.2s;
+}
+.rc.win { border-color: var(--grn); background: var(--grnl); }
+.rc.ev-card { border-color: #a7f3d0; }
+.rc.ev-card.win { border-color: var(--grn); background: var(--grnl); }
+
+.wpill {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: var(--grn); color: white;
+  font-size: 9px; font-weight: 700; padding: 2px 9px;
+  border-radius: 10px; letter-spacing: 0.4px; white-space: nowrap;
+}
+.pbadge {
+  display: inline-block; font-size: 9.5px; font-weight: 700;
+  padding: 2px 8px; border-radius: 10px; margin-bottom: 7px;
+}
+.bs { background: #dbeafe; color: #1e40af; }
+.be7 { background: #ede9fe; color: #5b21b6; }
+.bev { background: #d1fae5; color: #065f35; }
+
+.ctn { font-size: 10.5px; color: var(--gmid); margin-bottom: 8px; font-weight: 500; line-height: 1.3; }
+.can {
+  font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500;
+  color: var(--dk); line-height: 1; margin-bottom: 2px;
+}
+.cmo { font-size: 11px; color: var(--gmid); font-family: 'DM Mono', monospace; margin-bottom: 9px; }
+.crates {
+  border-top: 1px solid var(--bdr); padding-top: 8px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.rr { display: flex; justify-content: space-between; font-size: 10px; color: var(--gmid); }
+.rr .rv { font-family: 'DM Mono', monospace; color: var(--dk); font-size: 10.5px; }
+
+.vat-note { font-size: 10px; color: var(--gmid); text-align: right; margin-bottom: 12px; }
+
+/* SAVINGS */
+.sbanner {
+  background: var(--pd); color: white;
+  border-radius: var(--r); padding: 12px 16px;
+  display: none; align-items: center; gap: 14px; margin-bottom: 11px;
+}
+.sbanner.show { display: flex; }
+.samt { font-family: 'DM Mono', monospace; font-size: 22px; white-space: nowrap; }
+.stxt { font-size: 12px; line-height: 1.5; opacity: 0.9; }
+
+/* WHAT WOULD IT TAKE */
+.wwit {
+  background: white; border-radius: var(--r);
+  border: 1px solid var(--bdr); overflow: hidden;
+  margin-bottom: 11px;
+}
+.wwit-title {
+  background: var(--pd); color: white;
+  padding: 10px 16px; font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.7px;
+}
+.wwit-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
+
+.be-row {
+  padding: 12px 14px; border-radius: var(--rs);
+  border: 1.5px solid var(--bdr); background: var(--glit);
+}
+.be-row.above { border-color: var(--grn); background: var(--grnl); }
+.be-row.below { border-color: #fca5a5; background: var(--redl); }
+
+.be-top {
+  display: flex; align-items: baseline;
+  justify-content: space-between; margin-bottom: 6px;
+}
+.be-label { font-size: 11px; font-weight: 700; color: var(--gmid); text-transform: uppercase; letter-spacing: 0.5px; }
+.be-verdict {
+  font-size: 11px; font-weight: 700;
+  padding: 2px 9px; border-radius: 10px;
+}
+.vabove { background: var(--grn); color: white; }
+.vbelow { background: var(--red); color: white; }
+.vnone  { background: var(--gmid); color: white; }
+
+.be-nums {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;
+  margin-bottom: 8px;
+}
+.be-num { text-align: center; }
+.be-num-val { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 500; color: var(--dk); }
+.be-num-lbl { font-size: 9.5px; color: var(--gmid); margin-top: 2px; }
+
+.be-saving {
+  font-size: 12px; font-weight: 600; text-align: center;
+  padding: 6px; border-radius: var(--rs);
+}
+.be-saving.saves { background: var(--grnl); color: #065f35; }
+.be-saving.costs { background: var(--redl); color: var(--red); }
+.be-saving.even  { background: var(--glit); color: var(--gmid); }
+
+/* CHART */
+.chart-wrap {
+  background: white; border-radius: var(--r);
+  border: 1px solid var(--bdr); padding: 16px;
+  margin-bottom: 11px;
+}
+.chart-title {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.9px; color: var(--p); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.chart-title::after { content:''; flex:1; height:1px; background:var(--ppal); }
+
+.chart-legend {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  font-size: 11px; color: var(--gmid); margin-bottom: 12px;
+}
+.cleg { display: flex; align-items: center; gap: 5px; }
+.cleg-sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.cleg-dash {
+  width: 20px; height: 0; border-top: 2px dashed;
+  flex-shrink: 0;
+}
+
+@media (max-width: 520px) {
+  .cgrid { grid-template-columns: 1fr 1fr; }
+  .rc.ev-card { grid-column: 1 / 3; }
+  .ig { grid-template-columns: 1fr; }
+  .ig3 { grid-template-columns: 1fr; }
+  .be-nums { grid-template-columns: 1fr 1fr; }
+  .can { font-size: 18px; }
+}
 </style>
 </head>
 <body>
@@ -555,16 +354,16 @@
 <header>
   <div class="logo">UW</div>
   <h1>Tariff Comparison Tool</h1>
-  <span class="badge">Partner Use</span>
+  <span class="hbadge">⚠ Jan 2026 rates · verify variable</span>
 </header>
 
-<div class="container">
+<div class="wrap">
 
   <!-- REGION -->
   <div class="card">
-    <div class="card-title">📍 Region</div>
+    <div class="ct">📍 Region</div>
     <select id="regionSelect">
-      <option value="">— Select region —</option>
+      <option value="">— Select your region to begin —</option>
       <option value="10">10 · Eastern</option>
       <option value="11">11 · East Midlands</option>
       <option value="12">12 · London</option>
@@ -583,606 +382,670 @@
   </div>
 
   <!-- SERVICES -->
-  <div class="card">
-    <div class="card-title">📦 Services in Bundle</div>
-    <div class="services-grid">
-      <div class="service-chip locked">
-        <span class="chip-icon">⚡</span> Energy
-      </div>
-      <div class="service-chip" id="chip-broadband">
-        <span class="chip-icon">🛜</span> Broadband
-      </div>
-      <div class="service-chip" id="chip-mobile1">
-        <span class="chip-icon">📱</span> Mobile 1
-      </div>
-      <div class="service-chip" id="chip-mobile2">
-        <span class="chip-icon">📱</span> Mobile 2
-      </div>
-      <div class="service-chip" id="chip-insurance">
-        <span class="chip-icon">🛡️</span> Insurance
-      </div>
+  <div class="card locked-overlay" id="lo-services">
+    <div class="ct">📦 Services in Bundle</div>
+    <div class="chips">
+      <div class="chip locked-chip">⚡ Energy</div>
+      <div class="chip" id="chip-broadband">🛜 Broadband</div>
+      <div class="chip" id="chip-mobile1">📱 Mobile 1</div>
+      <div class="chip" id="chip-mobile2">📱 Mobile 2</div>
+      <div class="chip" id="chip-insurance">🛡️ Insurance</div>
     </div>
-    <div class="bundle-indicator">
+    <div class="bundle-bar">
       <span id="bundleText">Energy only — 1 service</span>
-      <span class="bundle-tier" id="bundleTier">Fixed Start 79 / EV Value</span>
+      <span class="btier" id="bundleTier">Fixed Start / Value</span>
     </div>
   </div>
 
   <!-- TARIFF TYPE -->
-  <div class="card">
-    <div class="card-title">🔒 Tariff Type</div>
-    <div class="toggle-group">
-      <button class="toggle-btn active" id="btn-fixed">🔒 Fixed (ends Mar 2027)</button>
-      <button class="toggle-btn" id="btn-variable">📈 Variable EV</button>
+  <div class="card locked-overlay" id="lo-tariff">
+    <div class="ct">⚡ Tariff Type</div>
+    <div class="fvpill">
+      <button class="fvb af" id="btn-fixed">🔒 Fixed (ends Mar 2027)</button>
+      <button class="fvb" id="btn-variable">📈 Variable</button>
     </div>
-    <div class="ev-note visible" id="evNote" style="display:none">
-      ⚠️ The EV tariff is <strong>variable</strong> — prices may go up or down. Customers need an EV (or plug-in hybrid) and a smart meter in credit mode to be eligible.
-    </div>
-  </div>
-
-  <!-- USAGE INPUTS -->
-  <div class="card">
-    <div class="card-title">🔢 Annual Electricity Usage</div>
-    <div class="inputs-grid">
-      <div class="input-group">
-        <label class="input-label">
-          <span class="label-dot dot-day"></span> Day Usage
-        </label>
-        <input type="number" id="dayKwh" placeholder="e.g. 2800" min="0">
-        <div class="input-suffix">kWh / year</div>
-      </div>
-      <div class="input-group">
-        <label class="input-label">
-          <span class="label-dot dot-night"></span> Night Usage
-        </label>
-        <input type="number" id="nightKwh" placeholder="e.g. 1200" min="0">
-        <div class="input-suffix">kWh / year</div>
-      </div>
-    </div>
-    <div id="nightPctWrapper" style="display:none; margin-top:12px;">
-      <div class="night-pct-bar">
-        <div class="night-pct-fill" id="nightPctFill" style="width:0%"></div>
-      </div>
-      <div class="night-pct-label">
-        <span id="nightPctText">Night usage: —</span>
-        <span id="cutoffPctText" style="color: var(--uw-purple); font-weight:600;"></span>
-      </div>
+    <div class="svtnote" id="svtNote">
+      ⚠️ <strong>Variable rates shown are January 2026.</strong> Confirm current rates before presenting to a customer — these change quarterly.
     </div>
   </div>
 
-  <!-- GAS INPUT -->
-  <div class="card">
-    <div class="card-title">🔥 Gas Usage (optional)</div>
-    <div class="inputs-grid">
-      <div class="input-group">
-        <label class="input-label">
-          <span class="label-dot dot-gas"></span> Annual Gas Usage
-        </label>
-        <input type="number" id="gasKwh" placeholder="e.g. 12000" min="0">
-        <div class="input-suffix">kWh / year</div>
+  <!-- USAGE -->
+  <div class="card locked-overlay" id="lo-usage">
+    <div class="ct">🔢 Electricity Usage</div>
+
+    <div class="presets">
+      <button class="preset" id="preset-low">
+        <div class="pl">Low</div>
+        <div class="ps">2,200 kWh · 1 bed</div>
+      </button>
+      <button class="preset" id="preset-medium">
+        <div class="pl">Medium</div>
+        <div class="ps">3,900 kWh · 2–3 bed</div>
+      </button>
+      <button class="preset" id="preset-high">
+        <div class="pl">High</div>
+        <div class="ps">6,700 kWh · 4+ bed</div>
+      </button>
+    </div>
+
+    <div class="ig" style="margin-bottom:10px">
+      <div class="igrp">
+        <label class="ilbl"><span class="dot dd"></span> Day Usage <span style="font-weight:400;text-transform:none;font-size:9px">(7am – midnight)</span></label>
+        <input type="number" id="dayKwh" placeholder="e.g. 2262" min="0">
+        <div class="isfx">kWh / year</div>
       </div>
-      <div class="input-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
-        <div class="info-row">
-          <span class="info-icon">ℹ️</span>
-          <span>Adding gas applies the <strong>£13/yr dual fuel discount</strong> to each fuel</span>
-        </div>
+      <div class="igrp">
+        <label class="ilbl"><span class="dot dn"></span> Night Usage <span style="font-weight:400;text-transform:none;font-size:9px">(midnight – 7am)</span></label>
+        <input type="number" id="nightKwh" placeholder="e.g. 1638" min="0">
+        <div class="isfx">kWh / year</div>
+      </div>
+    </div>
+
+    <div class="igrp">
+      <label class="ilbl"><span class="dot dev"></span> EV Charging <span style="font-weight:400;text-transform:none;font-size:9px">(assumed all off-peak, midnight – 5am)</span></label>
+      <input type="number" id="evKwh" placeholder="e.g. 1800 · optional" min="0">
+      <div class="isfx">kWh / year · leave blank if no EV</div>
+    </div>
+
+    <div class="nbwrap" id="nbWrap" style="display:none">
+      <div class="nbbg"><div class="nbfill" id="nbFill" style="width:0%"></div></div>
+      <div class="nbrow">
+        <span id="nbPct">Night: —</span>
+        <span id="nbBe" class="bel"></span>
       </div>
     </div>
   </div>
 
   <!-- RESULTS -->
-  <div class="results-wrapper" id="resultsWrapper">
-
-    <div class="ev-note" id="evVariableWarning">
-      ⚠️ <strong>EV is a variable tariff.</strong> These figures are based on current rates — they may change. Consider whether the price certainty of a fixed tariff is worth more to this customer than the current EV saving.
-    </div>
+  <div class="res" id="resSection">
 
     <!-- SAVINGS BANNER -->
-    <div class="savings-banner" id="savingsBanner" style="display:none">
+    <div class="sbanner" id="sBanner">
       <div>
-        <div style="font-size:11px; opacity:0.7; text-transform:uppercase; letter-spacing:0.6px; margin-bottom:3px;">Best option saves</div>
-        <div class="savings-amount" id="savingsAmount">—</div>
+        <div style="font-size:9px;opacity:0.6;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:2px">Cheapest option saves</div>
+        <div class="samt" id="sAmt">—</div>
       </div>
-      <div class="savings-text" id="savingsText"></div>
+      <div class="stxt" id="sTxt"></div>
     </div>
 
-    <!-- RESULT CARDS -->
-    <div class="result-cards" id="resultCards">
-      <!-- Populated by JS -->
+    <!-- 3-COL CARDS -->
+    <div class="cgrid">
+      <div class="fv-col-header">
+        <div class="fvpill" style="transform:scale(0.9)">
+          <button class="fvb af" id="btn-fixed2">🔒 Fixed</button>
+          <button class="fvb" id="btn-variable2">📈 Variable</button>
+        </div>
+      </div>
+      <div class="ev-col-header">
+        <div class="ev-col-lbl">🚗 EV Tariff <span class="evtime">midnight–5am</span></div>
+      </div>
+
+      <div class="rc" id="card-std"></div>
+      <div class="rc" id="card-e7"></div>
+      <div class="rc ev-card" id="card-ev"></div>
     </div>
 
-    <div class="vat-note">All figures include 5% VAT</div>
+    <div class="vat-note">All figures include 5% VAT · Direct Debit rates</div>
 
-    <!-- CUTOFF BOX -->
-    <div class="cutoff-box" id="cutoffBox" style="display:none">
-      <div class="cutoff-title">⚡ E7 Break-Even Point — This Region</div>
-      <div class="cutoff-content" id="cutoffContent"></div>
+    <!-- WHAT WOULD IT TAKE -->
+    <div class="wwit" id="wwit">
+      <div class="wwit-title">📐 What would it take?</div>
+      <div class="wwit-body" id="wwit-body"></div>
     </div>
 
-    <!-- GAS RESULT -->
-    <div class="gas-result" id="gasResultBox">
-      <div class="gas-result-title">🔥 Gas Cost (same tariff)</div>
-      <div id="gasResultContent"></div>
+    <!-- CHART -->
+    <div class="chart-wrap" id="chartWrap">
+      <div class="chart-title">📊 Usage vs Break-Even</div>
+      <div class="chart-legend" id="chartLegend"></div>
+      <div style="position:relative;width:100%;height:220px">
+        <canvas id="beChart"></canvas>
+      </div>
     </div>
 
   </div>
 
-  <!-- EMPTY STATE -->
-  <div class="empty-state" id="emptyState">
-    <div class="empty-icon">📊</div>
-    <div class="empty-text">Select a region and enter usage figures<br>to see the tariff comparison.</div>
+  <div id="emptyState" style="text-align:center;padding:40px 20px;color:var(--gmid)">
+    <div style="font-size:40px;margin-bottom:12px">📊</div>
+    <div style="font-size:13px;line-height:1.6">Select a region to begin.<br>All other inputs will unlock once a region is chosen.</div>
   </div>
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-// ============================================================
-// TARIFF DATA (all ex-VAT, Direct Debit)
-// ============================================================
 
-const REGIONS = {
-  10: 'Eastern',
-  11: 'East Midlands',
-  12: 'London',
-  13: 'Manweb',
-  14: 'Midlands',
-  15: 'Northern',
-  16: 'Norweb',
-  17: 'Scottish Hydro',
-  18: 'Scottish Power',
-  19: 'Seeboard',
-  20: 'Southern',
-  21: 'Swalec',
-  22: 'Sweb',
-  23: 'Yorkshire'
+// ── TARIFF DATA (DD, ex-VAT) ──────────────────────────────────────────────
+var FS = {
+  10:{gdsc:49.511,gdu:28.112,e7sc:49.725,e7d:38.717,e7n:9.126},
+  11:{gdsc:48.967,gdu:26.848,e7sc:48.452,e7d:36.970,e7n:8.896},
+  12:{gdsc:40.019,gdu:28.091,e7sc:39.639,e7d:38.590,e7n:9.049},
+  13:{gdsc:64.784,gdu:29.451,e7sc:64.056,e7d:40.186,e7n:9.911},
+  14:{gdsc:54.611,gdu:27.096,e7sc:54.259,e7d:37.331,e7n:9.041},
+  15:{gdsc:58.988,gdu:27.023,e7sc:58.257,e7d:37.210,e7n:8.896},
+  16:{gdsc:42.974,gdu:27.826,e7sc:42.333,e7d:37.971,e7n:9.357},
+  17:{gdsc:53.300,gdu:28.635,e7sc:53.965,e7d:37.274,e7n:12.286},
+  18:{gdsc:58.767,gdu:27.737,e7sc:59.330,e7d:37.827,e7n:9.537},
+  19:{gdsc:50.045,gdu:28.362,e7sc:50.314,e7d:39.033,e7n:9.099},
+  20:{gdsc:48.201,gdu:27.828,e7sc:48.192,e7d:38.342,e7n:9.011},
+  21:{gdsc:52.648,gdu:28.145,e7sc:51.724,e7d:38.835,e7n:9.090},
+  22:{gdsc:53.239,gdu:28.148,e7sc:53.629,e7d:38.814,e7n:8.956},
+  23:{gdsc:59.051,gdu:27.116,e7sc:58.436,e7d:37.327,e7n:9.143}
+};
+var F79 = {
+  10:{gdsc:47.032,gdu:27.682,e7sc:47.247,e7d:38.023,e7n:9.126},
+  11:{gdsc:46.489,gdu:26.436,e7sc:45.974,e7d:36.304,e7n:8.896},
+  12:{gdsc:37.534,gdu:27.670,e7sc:37.155,e7d:37.914,e7n:9.049},
+  13:{gdsc:62.305,gdu:28.989,e7sc:61.579,e7d:39.443,e7n:9.911},
+  14:{gdsc:52.132,gdu:26.676,e7sc:51.781,e7d:36.652,e7n:9.041},
+  15:{gdsc:56.509,gdu:26.600,e7sc:55.779,e7d:36.527,e7n:8.896},
+  16:{gdsc:40.495,gdu:27.406,e7sc:39.856,e7d:37.295,e7n:9.357},
+  17:{gdsc:50.778,gdu:28.195,e7sc:51.442,e7d:36.564,e7n:12.286},
+  18:{gdsc:56.281,gdu:27.304,e7sc:56.843,e7d:37.130,e7n:9.537},
+  19:{gdsc:47.566,gdu:27.928,e7sc:47.834,e7d:38.336,e7n:9.099},
+  20:{gdsc:45.776,gdu:27.404,e7sc:45.767,e7d:37.659,e7n:9.011},
+  21:{gdsc:50.169,gdu:27.713,e7sc:49.247,e7d:38.138,e7n:9.090},
+  22:{gdsc:50.760,gdu:27.716,e7sc:51.150,e7d:38.118,e7n:8.956},
+  23:{gdsc:56.573,gdu:26.692,e7sc:55.959,e7d:36.640,e7n:9.143}
+};
+var FSav = {
+  10:{gdsc:43.118,gdu:25.619,e7sc:43.332,e7d:34.696,e7n:9.126},
+  11:{gdsc:42.575,gdu:24.460,e7sc:42.062,e7d:33.110,e7n:8.896},
+  12:{gdsc:33.610,gdu:25.652,e7sc:33.234,e7d:34.672,e7n:9.049},
+  13:{gdsc:58.391,gdu:26.768,e7sc:57.667,e7d:35.872,e7n:9.911},
+  14:{gdsc:48.219,gdu:24.662,e7sc:47.868,e7d:33.389,e7n:9.041},
+  15:{gdsc:52.595,gdu:24.573,e7sc:51.867,e7d:33.253,e7n:8.896},
+  16:{gdsc:36.581,gdu:25.389,e7sc:35.946,e7d:34.052,e7n:9.357},
+  17:{gdsc:46.796,gdu:26.080,e7sc:47.457,e7d:33.154,e7n:12.286},
+  18:{gdsc:52.356,gdu:25.228,e7sc:52.915,e7d:33.780,e7n:9.537},
+  19:{gdsc:43.652,gdu:25.848,e7sc:43.920,e7d:34.989,e7n:9.099},
+  20:{gdsc:41.948,gdu:25.369,e7sc:41.939,e7d:34.378,e7n:9.011},
+  21:{gdsc:46.255,gdu:25.637,e7sc:45.336,e7d:34.788,e7n:9.090},
+  22:{gdsc:46.846,gdu:25.638,e7sc:47.235,e7d:34.775,e7n:8.956},
+  23:{gdsc:52.659,gdu:24.658,e7sc:52.047,e7d:33.343,e7n:9.143}
+};
+var VV = {
+  10:{gdsc:46.848,gdu:26.555,e7sc:47.158,e7d:39.490,e7n:5.772},
+  11:{gdsc:47.648,gdu:25.608,e7sc:47.074,e7d:38.171,e7n:5.605},
+  12:{gdsc:44.733,gdu:25.712,e7sc:44.280,e7d:37.393,e7n:6.911},
+  13:{gdsc:67.497,gdu:27.704,e7sc:66.730,e7d:38.212,e7n:9.911},
+  14:{gdsc:51.374,gdu:25.702,e7sc:50.986,e7d:38.495,e7n:5.426},
+  15:{gdsc:57.900,gdu:25.473,e7sc:57.138,e7d:36.200,e7n:8.050},
+  16:{gdsc:49.604,gdu:27.092,e7sc:48.900,e7d:37.528,e7n:9.357},
+  17:{gdsc:58.977,gdu:27.011,e7sc:59.766,e7d:35.455,e7n:12.286},
+  18:{gdsc:54.744,gdu:25.887,e7sc:55.491,e7d:35.696,e7n:9.537},
+  19:{gdsc:46.212,gdu:26.922,e7sc:46.573,e7d:39.729,e7n:6.121},
+  20:{gdsc:43.393,gdu:26.501,e7sc:43.414,e7d:39.036,e7n:6.316},
+  21:{gdsc:50.105,gdu:26.839,e7sc:49.142,e7d:39.319,e7n:6.605},
+  22:{gdsc:52.349,gdu:26.818,e7sc:52.809,e7d:39.073,e7n:6.794},
+  23:{gdsc:56.741,gdu:25.416,e7sc:56.106,e7d:38.318,e7n:5.149}
+};
+var VG = {
+  10:{gdsc:44.369,gdu:26.555,e7sc:44.679,e7d:39.490,e7n:5.772},
+  11:{gdsc:45.169,gdu:25.608,e7sc:44.596,e7d:38.171,e7n:5.605},
+  12:{gdsc:42.254,gdu:25.712,e7sc:41.801,e7d:37.393,e7n:6.911},
+  13:{gdsc:65.018,gdu:27.704,e7sc:64.251,e7d:38.212,e7n:9.911},
+  14:{gdsc:48.895,gdu:25.702,e7sc:48.508,e7d:38.495,e7n:5.426},
+  15:{gdsc:55.421,gdu:25.473,e7sc:54.659,e7d:36.200,e7n:8.050},
+  16:{gdsc:47.125,gdu:27.092,e7sc:46.421,e7d:37.528,e7n:9.357},
+  17:{gdsc:56.498,gdu:27.011,e7sc:57.287,e7d:35.455,e7n:12.286},
+  18:{gdsc:52.265,gdu:25.887,e7sc:53.012,e7d:35.696,e7n:9.537},
+  19:{gdsc:43.733,gdu:26.922,e7sc:44.094,e7d:39.729,e7n:6.121},
+  20:{gdsc:40.914,gdu:26.501,e7sc:40.936,e7d:39.036,e7n:6.316},
+  21:{gdsc:47.626,gdu:26.839,e7sc:46.663,e7d:39.319,e7n:6.605},
+  22:{gdsc:49.870,gdu:26.818,e7sc:50.330,e7d:39.073,e7n:6.794},
+  23:{gdsc:54.262,gdu:25.416,e7sc:53.627,e7d:38.318,e7n:5.149}
+};
+var VDG = {
+  10:{gdsc:40.455,gdu:26.555,e7sc:40.765,e7d:39.490,e7n:5.772},
+  11:{gdsc:41.255,gdu:25.608,e7sc:40.682,e7d:38.171,e7n:5.605},
+  12:{gdsc:38.340,gdu:25.712,e7sc:37.887,e7d:37.393,e7n:6.911},
+  13:{gdsc:61.104,gdu:27.704,e7sc:60.338,e7d:38.212,e7n:9.911},
+  14:{gdsc:44.981,gdu:25.702,e7sc:44.594,e7d:38.495,e7n:5.426},
+  15:{gdsc:51.507,gdu:25.473,e7sc:50.745,e7d:36.200,e7n:8.050},
+  16:{gdsc:43.211,gdu:27.092,e7sc:42.508,e7d:37.528,e7n:9.357},
+  17:{gdsc:52.584,gdu:27.011,e7sc:53.373,e7d:35.455,e7n:12.286},
+  18:{gdsc:48.351,gdu:25.887,e7sc:49.098,e7d:35.696,e7n:9.537},
+  19:{gdsc:39.819,gdu:26.922,e7sc:40.180,e7d:39.729,e7n:6.121},
+  20:{gdsc:37.000,gdu:26.501,e7sc:37.022,e7d:39.036,e7n:6.316},
+  21:{gdsc:43.712,gdu:26.839,e7sc:42.749,e7d:39.319,e7n:6.605},
+  22:{gdsc:45.956,gdu:26.818,e7sc:46.416,e7d:39.073,e7n:6.794},
+  23:{gdsc:50.348,gdu:25.416,e7sc:49.713,e7d:38.318,e7n:5.149}
+};
+var EVV  = {10:{sc:47.152,pk:37.808,op:8.095},11:{sc:47.076,pk:36.367,op:8.095},12:{sc:44.280,pk:36.535,op:8.095},13:{sc:66.732,pk:39.526,op:8.095},14:{sc:50.984,pk:36.562,op:8.095},15:{sc:57.142,pk:36.166,op:8.095},16:{sc:48.901,pk:38.441,op:8.095},17:{sc:59.767,pk:38.489,op:8.095},18:{sc:55.488,pk:36.740,op:8.095},19:{sc:46.572,pk:38.299,op:8.095},20:{sc:43.415,pk:37.747,op:8.095},21:{sc:49.143,pk:38.239,op:8.095},22:{sc:52.810,pk:38.130,op:8.095},23:{sc:56.106,pk:36.184,op:8.095}};
+var EVG  = {10:{sc:47.152,pk:33.946,op:7.619},11:{sc:47.076,pk:32.614,op:7.619},12:{sc:44.280,pk:32.803,op:7.619},13:{sc:66.732,pk:35.299,op:7.619},14:{sc:50.984,pk:32.747,op:7.619},15:{sc:57.142,pk:32.307,op:7.619},16:{sc:48.901,pk:34.511,op:7.619},17:{sc:59.767,pk:34.424,op:7.619},18:{sc:55.488,pk:32.858,op:7.619},19:{sc:46.572,pk:34.408,op:7.619},20:{sc:43.415,pk:33.935,op:7.619},21:{sc:49.143,pk:34.321,op:7.619},22:{sc:52.810,pk:34.176,op:7.619},23:{sc:56.106,pk:32.336,op:7.619}};
+var EVDG = {10:{sc:47.152,pk:30.498,op:6.571},11:{sc:47.076,pk:29.270,op:6.571},12:{sc:44.280,pk:29.480,op:6.571},13:{sc:66.732,pk:31.499,op:6.571},14:{sc:50.984,pk:29.344,op:6.571},15:{sc:57.142,pk:28.860,op:6.571},16:{sc:48.901,pk:30.996,op:6.571},17:{sc:59.767,pk:30.780,op:6.571},18:{sc:55.488,pk:29.389,op:6.571},19:{sc:46.572,pk:30.930,op:6.571},20:{sc:43.415,pk:30.534,op:6.571},21:{sc:49.143,pk:30.818,op:6.571},22:{sc:52.810,pk:30.638,op:6.571},23:{sc:56.106,pk:28.900,op:6.571}};
+
+var PRESETS = {
+  low:    {day:1276,  night:924},
+  medium: {day:2262,  night:1638},
+  high:   {day:3886,  night:2814}
 };
 
-// Fixed tariffs — DD only, ex-VAT
-// Structure: { gasSC, gasUnit, gdSC, gdUnit, e7SC, e7Day, e7Night }
-const FIXED_START = { // 1 service (energy only)
-  10: { gasSC:25.513, gasUnit:6.847, gdSC:49.511, gdUnit:28.112, e7SC:49.725, e7Day:38.717, e7Night:9.126 },
-  11: { gasSC:25.517, gasUnit:6.780, gdSC:48.967, gdUnit:26.848, e7SC:48.452, e7Day:36.970, e7Night:8.896 },
-  12: { gasSC:25.565, gasUnit:7.088, gdSC:40.019, gdUnit:28.091, e7SC:39.639, e7Day:38.590, e7Night:9.049 },
-  13: { gasSC:25.512, gasUnit:6.871, gdSC:64.784, gdUnit:29.451, e7SC:64.056, e7Day:40.186, e7Night:9.911 },
-  14: { gasSC:25.512, gasUnit:6.863, gdSC:54.611, gdUnit:27.096, e7SC:54.259, e7Day:37.331, e7Night:9.041 },
-  15: { gasSC:25.512, gasUnit:6.872, gdSC:58.988, gdUnit:27.023, e7SC:58.257, e7Day:37.210, e7Night:8.896 },
-  16: { gasSC:25.514, gasUnit:6.823, gdSC:42.974, gdUnit:27.826, e7SC:42.333, e7Day:37.971, e7Night:9.357 },
-  17: { gasSC:25.958, gasUnit:6.940, gdSC:53.300, gdUnit:28.635, e7SC:53.965, e7Day:37.274, e7Night:12.286 },
-  18: { gasSC:25.591, gasUnit:6.845, gdSC:58.767, gdUnit:27.737, e7SC:59.330, e7Day:37.827, e7Night:9.537 },
-  19: { gasSC:25.506, gasUnit:6.968, gdSC:50.045, gdUnit:28.362, e7SC:50.314, e7Day:39.033, e7Night:9.099 },
-  20: { gasSC:24.938, gasUnit:6.942, gdSC:48.201, gdUnit:27.828, e7SC:48.192, e7Day:38.342, e7Night:9.011 },
-  21: { gasSC:25.504, gasUnit:7.003, gdSC:52.648, gdUnit:28.145, e7SC:51.724, e7Day:38.835, e7Night:9.090 },
-  22: { gasSC:25.501, gasUnit:7.053, gdSC:53.239, gdUnit:28.148, e7SC:53.629, e7Day:38.814, e7Night:8.956 },
-  23: { gasSC:25.513, gasUnit:6.858, gdSC:59.051, gdUnit:27.116, e7SC:58.436, e7Day:37.327, e7Night:9.143 }
+var VAT = 1.05;
+var state = {
+  region: 0,
+  services: {broadband:false,mobile1:false,mobile2:false,insurance:false},
+  fv: 'fixed'
 };
+var chartInst = null;
 
-const FIXED_79 = { // 2 services
-  10: { gasSC:23.034, gasUnit:6.743, gdSC:47.032, gdUnit:27.682, e7SC:47.247, e7Day:38.023, e7Night:9.126 },
-  11: { gasSC:23.039, gasUnit:6.676, gdSC:46.489, gdUnit:26.436, e7SC:45.974, e7Day:36.304, e7Night:8.896 },
-  12: { gasSC:23.080, gasUnit:6.982, gdSC:37.534, gdUnit:27.670, e7SC:37.155, e7Day:37.914, e7Night:9.049 },
-  13: { gasSC:23.033, gasUnit:6.763, gdSC:62.305, gdUnit:28.989, e7SC:61.579, e7Day:39.443, e7Night:9.911 },
-  14: { gasSC:23.033, gasUnit:6.757, gdSC:52.132, gdUnit:26.676, e7SC:51.781, e7Day:36.652, e7Night:9.041 },
-  15: { gasSC:23.033, gasUnit:6.764, gdSC:56.509, gdUnit:26.600, e7SC:55.779, e7Day:36.527, e7Night:8.896 },
-  16: { gasSC:23.036, gasUnit:6.720, gdSC:40.495, gdUnit:27.406, e7SC:39.856, e7Day:37.295, e7Night:9.357 },
-  17: { gasSC:23.436, gasUnit:6.833, gdSC:50.778, gdUnit:28.195, e7SC:51.442, e7Day:36.564, e7Night:12.286 },
-  18: { gasSC:23.105, gasUnit:6.738, gdSC:56.281, gdUnit:27.304, e7SC:56.843, e7Day:37.130, e7Night:9.537 },
-  19: { gasSC:23.027, gasUnit:6.861, gdSC:47.566, gdUnit:27.928, e7SC:47.834, e7Day:38.336, e7Night:9.099 },
-  20: { gasSC:22.514, gasUnit:6.836, gdSC:45.776, gdUnit:27.404, e7SC:45.767, e7Day:37.659, e7Night:9.011 },
-  21: { gasSC:23.025, gasUnit:6.895, gdSC:50.169, gdUnit:27.713, e7SC:49.247, e7Day:38.138, e7Night:9.090 },
-  22: { gasSC:23.022, gasUnit:6.945, gdSC:50.760, gdUnit:27.716, e7SC:51.150, e7Day:38.118, e7Night:8.956 },
-  23: { gasSC:23.034, gasUnit:6.751, gdSC:56.573, gdUnit:26.692, e7SC:55.959, e7Day:36.640, e7Night:9.143 }
-};
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function svc() { return 1 + Object.values(state.services).filter(Boolean).length; }
 
-const FIXED_SAVER = { // 3+ services
-  10: { gasSC:19.120, gasUnit:6.240, gdSC:43.118, gdUnit:25.619, e7SC:43.332, e7Day:34.696, e7Night:9.126 },
-  11: { gasSC:19.125, gasUnit:6.177, gdSC:42.575, gdUnit:24.460, e7SC:42.062, e7Day:33.110, e7Night:8.896 },
-  12: { gasSC:19.156, gasUnit:6.473, gdSC:33.610, gdUnit:25.652, e7SC:33.234, e7Day:34.672, e7Night:9.049 },
-  13: { gasSC:19.119, gasUnit:6.245, gdSC:58.391, gdUnit:26.768, e7SC:57.667, e7Day:35.872, e7Night:9.911 },
-  14: { gasSC:19.120, gasUnit:6.247, gdSC:48.219, gdUnit:24.662, e7SC:47.868, e7Day:33.389, e7Night:9.041 },
-  15: { gasSC:19.119, gasUnit:6.249, gdSC:52.595, gdUnit:24.573, e7SC:51.867, e7Day:33.253, e7Night:8.896 },
-  16: { gasSC:19.122, gasUnit:6.225, gdSC:36.581, gdUnit:25.389, e7SC:35.946, e7Day:34.052, e7Night:9.357 },
-  17: { gasSC:19.454, gasUnit:6.320, gdSC:46.796, gdUnit:26.080, e7SC:47.457, e7Day:33.154, e7Night:12.286 },
-  18: { gasSC:19.179, gasUnit:6.225, gdSC:52.356, gdUnit:25.228, e7SC:52.915, e7Day:33.780, e7Night:9.537 },
-  19: { gasSC:19.113, gasUnit:6.350, gdSC:43.652, gdUnit:25.848, e7SC:43.920, e7Day:34.989, e7Night:9.099 },
-  20: { gasSC:18.686, gasUnit:6.328, gdSC:41.948, gdUnit:25.369, e7SC:41.939, e7Day:34.378, e7Night:9.011 },
-  21: { gasSC:19.111, gasUnit:6.379, gdSC:46.255, gdUnit:25.637, e7SC:45.336, e7Day:34.788, e7Night:9.090 },
-  22: { gasSC:19.108, gasUnit:6.424, gdSC:46.846, gdUnit:25.638, e7SC:47.235, e7Day:34.775, e7Night:8.956 },
-  23: { gasSC:19.120, gasUnit:6.236, gdSC:52.659, gdUnit:24.658, e7SC:52.047, e7Day:33.343, e7Night:9.143 }
-};
-
-// EV tariffs — DD, ex-VAT
-// Structure: { sc, peak, offPeak }
-const EV_VALUE = { // 1 service
-  10: { sc:47.152, peak:37.808, offPeak:8.095 },
-  11: { sc:47.076, peak:36.367, offPeak:8.095 },
-  12: { sc:44.280, peak:36.535, offPeak:8.095 },
-  13: { sc:66.732, peak:39.526, offPeak:8.095 },
-  14: { sc:50.984, peak:36.562, offPeak:8.095 },
-  15: { sc:57.142, peak:36.166, offPeak:8.095 },
-  16: { sc:48.901, peak:38.441, offPeak:8.095 },
-  17: { sc:59.767, peak:38.489, offPeak:8.095 },
-  18: { sc:55.488, peak:36.740, offPeak:8.095 },
-  19: { sc:46.572, peak:38.299, offPeak:8.095 },
-  20: { sc:43.415, peak:37.747, offPeak:8.095 },
-  21: { sc:49.143, peak:38.239, offPeak:8.095 },
-  22: { sc:52.810, peak:38.130, offPeak:8.095 },
-  23: { sc:56.106, peak:36.184, offPeak:8.095 }
-};
-
-const EV_GOLD = { // 2 services
-  10: { sc:47.152, peak:33.946, offPeak:7.619 },
-  11: { sc:47.076, peak:32.614, offPeak:7.619 },
-  12: { sc:44.280, peak:32.803, offPeak:7.619 },
-  13: { sc:66.732, peak:35.299, offPeak:7.619 },
-  14: { sc:50.984, peak:32.747, offPeak:7.619 },
-  15: { sc:57.142, peak:32.307, offPeak:7.619 },
-  16: { sc:48.901, peak:34.511, offPeak:7.619 },
-  17: { sc:59.767, peak:34.424, offPeak:7.619 },
-  18: { sc:55.488, peak:32.858, offPeak:7.619 },
-  19: { sc:46.572, peak:34.408, offPeak:7.619 },
-  20: { sc:43.415, peak:33.935, offPeak:7.619 },
-  21: { sc:49.143, peak:34.321, offPeak:7.619 },
-  22: { sc:52.810, peak:34.176, offPeak:7.619 },
-  23: { sc:56.106, peak:32.336, offPeak:7.619 }
-};
-
-const EV_DOUBLE_GOLD = { // 3+ services
-  10: { sc:47.152, peak:30.498, offPeak:6.571 },
-  11: { sc:47.076, peak:29.270, offPeak:6.571 },
-  12: { sc:44.280, peak:29.480, offPeak:6.571 },
-  13: { sc:66.732, peak:31.499, offPeak:6.571 },
-  14: { sc:50.984, peak:29.344, offPeak:6.571 },
-  15: { sc:57.142, peak:28.860, offPeak:6.571 },
-  16: { sc:48.901, peak:30.996, offPeak:6.571 },
-  17: { sc:59.767, peak:30.780, offPeak:6.571 },
-  18: { sc:55.488, peak:29.389, offPeak:6.571 },
-  19: { sc:46.572, peak:30.930, offPeak:6.571 },
-  20: { sc:43.415, peak:30.534, offPeak:6.571 },
-  21: { sc:49.143, peak:30.818, offPeak:6.571 },
-  22: { sc:52.810, peak:30.638, offPeak:6.571 },
-  23: { sc:56.106, peak:28.900, offPeak:6.571 }
-};
-
-// ============================================================
-// STATE
-// ============================================================
-const state = {
-  region: null,
-  services: { broadband: false, mobile1: false, mobile2: false, insurance: false },
-  tariffType: 'fixed',
-};
-
-const VAT = 1.05;
-const DUAL_FUEL_DISC_ELEC = 13.00; // inc VAT per year
-const DUAL_FUEL_DISC_GAS  = 13.00;
-
-// ============================================================
-// SERVICE CHIP LOGIC
-// ============================================================
-function toggleChip(id) {
-  state.services[id] = !state.services[id];
-  const el = document.getElementById('chip-' + id);
-  el.classList.toggle('active', state.services[id]);
-  updateBundleIndicator();
-  calculate();
-}
-
-function getServiceCount() {
-  return 1 + Object.values(state.services).filter(Boolean).length;
-}
-
-function getTierName(count) {
-  if (count >= 3) return 'Fixed Saver 79 / EV Double Gold';
-  if (count === 2) return 'Fixed 79 / EV Gold';
-  return 'Fixed Start 79 / EV Value';
-}
-
-function updateBundleIndicator() {
-  const count = getServiceCount();
-  const others = Object.values(state.services).filter(Boolean).length;
-  document.getElementById('bundleText').textContent =
-    count === 1 ? 'Energy only — 1 service' :
-    `Energy + ${others} other${others > 1 ? 's' : ''} — ${count} services`;
-  document.getElementById('bundleTier').textContent = getTierName(count);
-}
-
-// ============================================================
-// TARIFF TYPE
-// ============================================================
-function setTariffType(type) {
-  state.tariffType = type;
-  document.getElementById('btn-fixed').classList.toggle('active', type === 'fixed');
-  document.getElementById('btn-variable').classList.toggle('active', type === 'variable');
-  const evNote = document.getElementById('evNote');
-  evNote.style.display = type === 'variable' ? 'block' : 'none';
-  calculate();
-}
-
-// ============================================================
-// GET TARIFF DATA FOR CURRENT SELECTION
-// ============================================================
-function getFixedData(region) {
-  const count = getServiceCount();
-  if (count >= 3) return { data: FIXED_SAVER[region], name: 'Fixed Saver 79', tier: '3+ services' };
-  if (count === 2) return { data: FIXED_79[region], name: 'Fixed 79', tier: '2 services' };
-  return { data: FIXED_START[region], name: 'Fixed Start 79', tier: '1 service' };
-}
-
-function getEVData(region) {
-  const count = getServiceCount();
-  if (count >= 3) return { data: EV_DOUBLE_GOLD[region], name: 'EV Double Gold', tier: '3+ services' };
-  if (count === 2) return { data: EV_GOLD[region], name: 'EV Gold', tier: '2 services' };
-  return { data: EV_VALUE[region], name: 'EV Value', tier: '1 service' };
-}
-
-// ============================================================
-// COST CALCULATIONS
-// ============================================================
-function calcFixed(t, dayKwh, nightKwh, hasDualFuel) {
-  const scDisc = hasDualFuel ? (DUAL_FUEL_DISC_ELEC / VAT) / 365 : 0;
-
-  const gdAnnual = ((t.gdSC / 100) - scDisc) * 365 + (t.gdUnit / 100) * (dayKwh + nightKwh);
-  const e7Annual = ((t.e7SC / 100) - scDisc) * 365 + (t.e7Day / 100) * dayKwh + (t.e7Night / 100) * nightKwh;
-
+function getTariff(r) {
+  var n = svc();
+  var fix = n>=3 ? FSav[r] : n===2 ? F79[r] : FS[r];
+  var fixName = n>=3 ? 'Fixed Saver 79' : n===2 ? 'Fixed 79' : 'Fixed Start 79';
+  var vari = n>=3 ? VDG[r] : n===2 ? VG[r] : VV[r];
+  var varName = n>=3 ? 'Var. Double Gold' : n===2 ? 'Variable Gold' : 'Variable Value';
+  var ev = n>=3 ? EVDG[r] : n===2 ? EVG[r] : EVV[r];
+  var evName = n>=3 ? 'EV Double Gold' : n===2 ? 'EV Gold' : 'EV Value';
   return {
-    gd: gdAnnual * VAT,
-    e7: e7Annual * VAT,
-    gdRates: { sc: t.gdSC, unit: t.gdUnit },
-    e7Rates: { sc: t.e7SC, day: t.e7Day, night: t.e7Night }
+    t: state.fv==='fixed' ? fix : vari,
+    name: state.fv==='fixed' ? fixName : varName,
+    ev: ev, evName: evName
   };
 }
 
-function calcEV(t, dayKwh, nightKwh, hasDualFuel) {
-  const scDisc = hasDualFuel ? (DUAL_FUEL_DISC_ELEC / VAT) / 365 : 0;
-  const annual = ((t.sc / 100) - scDisc) * 365 + (t.peak / 100) * dayKwh + (t.offPeak / 100) * nightKwh;
-  return {
-    cost: annual * VAT,
-    rates: { sc: t.sc, peak: t.peak, offPeak: t.offPeak }
-  };
+function calcStd(t, dayK, nightK) {
+  return ((t.gdsc/100)*365 + (t.gdu/100)*(dayK+nightK)) * VAT;
+}
+function calcE7(t, dayK, nightK) {
+  return ((t.e7sc/100)*365 + (t.e7d/100)*dayK + (t.e7n/100)*nightK) * VAT;
+}
+function calcEV(ev, dayK, nightK, evK) {
+  return ((ev.sc/100)*365 + (ev.pk/100)*dayK + (ev.op/100)*(nightK+evK)) * VAT;
 }
 
-function calcGas(t, gasKwh, hasDualFuel) {
-  const scDisc = hasDualFuel ? (DUAL_FUEL_DISC_GAS / VAT) / 365 : 0;
-  const annual = ((t.gasSC / 100) - scDisc) * 365 + (t.gasUnit / 100) * gasKwh;
-  return annual * VAT;
+// Break-even night kWh where E7=Std
+function beE7(t, total) {
+  var num = (t.gdsc/100)*365 + (t.gdu/100)*total - (t.e7sc/100)*365 - (t.e7d/100)*total;
+  var den = (t.e7n - t.e7d)/100;
+  return num / den;
+}
+// Break-even off-peak kWh where EV=Std
+function beEV(t, ev, total) {
+  var num = (t.gdsc/100)*365 + (t.gdu/100)*total - (ev.sc/100)*365 - (ev.pk/100)*total;
+  var den = (ev.op - ev.pk)/100;
+  return num / den;
 }
 
-// Break-even: what % of total kWh must be at night for E7 to match GD?
-// GD cost = SC_gd * 365 + unit * total
-// E7 cost = SC_e7 * 365 + day * (total - night) + night_rate * night
-// Solve for night where E7 = GD
-function calcBreakEven(t) {
-  // Let N = night kWh, T = total kWh
-  // E7 = e7SC*365 + e7Day*(T-N) + e7Night*N
-  // GD = gdSC*365 + gdUnit*T
-  // E7 < GD when:
-  // e7SC*365 + e7Day*T - e7Day*N + e7Night*N < gdSC*365 + gdUnit*T
-  // N*(e7Day - e7Night) > (e7SC - gdSC)*365 + (e7Day - gdUnit)*T
-  // We want the % at which they're equal, as a fraction of T:
-  // N/T = [(e7SC - gdSC)*365/T + (e7Day - gdUnit)] / (e7Day - e7Night)
-  // For a "general" break-even we solve symbolically (T cancels via pct)
-  // Let p = N/T (fraction)
-  // e7SC*365 + e7Day*T*(1-p) + e7Night*T*p = gdSC*365 + gdUnit*T
-  // p * T * (e7Night - e7Day) = gdSC*365 - e7SC*365 + gdUnit*T - e7Day*T
-  // p = [(gdSC - e7SC)*365/T + (gdUnit - e7Day)] / (e7Night - e7Day)
-  // This depends on T. For the "ready reckoner" we use a typical total of 4000 kWh.
-  const T = 4000;
-  const num = (t.gdSC - t.e7SC) * 365 / 100 + (t.gdUnit - t.e7Day) / 100 * T;
-  const den = (t.e7Night - t.e7Day) / 100 * T;
-  const p = num / den;
-  return Math.max(0, Math.min(1, p)) * 100;
+function fmt0(v) { return '\u00a3' + Math.round(v); }
+function fmtPm(v) { return '\u00a3' + (v/12).toFixed(2); }
+function fmtP(v) { return v.toFixed(3) + 'p'; }
+function fmtPv(v) { return (v*VAT).toFixed(2) + 'p'; }
+
+// ── RENDER CARD ───────────────────────────────────────────────────────────
+function rcard(id, cfg) {
+  var el = document.getElementById(id);
+  el.className = 'rc' + (id==='card-ev' ? ' ev-card' : '') + (cfg.win ? ' win' : '');
+  var h = cfg.win ? '<div class="wpill">\u2713 Best option</div>' : '';
+  h += '<div class="pbadge ' + cfg.bc + '">' + cfg.profile + '</div>';
+  h += '<div class="ctn">' + cfg.name + '</div>';
+  h += '<div class="can">' + fmt0(cfg.cost) + '<span style="font-size:11px;color:var(--gmid)">/yr</span></div>';
+  h += '<div class="cmo">\u2248 ' + fmtPm(cfg.cost) + '/mo</div>';
+  h += '<div class="crates">';
+  cfg.rates.forEach(function(r) {
+    h += '<div class="rr"><span>' + r[0] + '</span><span class="rv">' + r[1] + '</span></div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
 }
 
-// ============================================================
-// FORMAT HELPERS
-// ============================================================
-const £ = v => '£' + v.toFixed(2);
-const £0 = v => '£' + Math.round(v);
-const ppm = v => (v / 12).toFixed(2);
-
-// ============================================================
-// RENDER
-// ============================================================
-function renderCard(cfg) {
-  return `
-    <div class="result-card ${cfg.winner ? 'winner' : 'loser'} ${cfg.ev ? 'ev-card' : ''}">
-      ${cfg.winner ? '<div class="winner-badge">✓ BEST OPTION</div>' : ''}
-      <div class="result-label">${cfg.label}</div>
-      <div class="result-tariff-name">${cfg.tariffName}</div>
-      <div class="result-annual">${£0(cfg.annual)}<span style="font-size:13px;color:var(--uw-grey-mid)">/yr</span></div>
-      <div class="result-monthly">≈ £${ppm(cfg.annual)}/month</div>
-      <div class="result-breakdown">
-        <span><span class="label">Standing charge</span><span>${(cfg.rates.sc / 100 * 365 * VAT).toFixed(2)}</span></span>
-        ${cfg.ev ? `
-        <span><span class="label">Peak (day) usage</span><span>${cfg.rates.peak.toFixed(3)}p</span></span>
-        <span><span class="label">Off-peak (night)</span><span>${cfg.rates.offPeak.toFixed(3)}p</span></span>
-        ` : cfg.e7 ? `
-        <span><span class="label">Day rate</span><span>${cfg.rates.day.toFixed(3)}p</span></span>
-        <span><span class="label">Night rate</span><span>${cfg.rates.night.toFixed(3)}p</span></span>
-        ` : `
-        <span><span class="label">Unit rate</span><span>${cfg.rates.unit.toFixed(3)}p</span></span>
-        `}
-        ${cfg.dualFuelDisc ? `<span style="color:var(--uw-green)"><span class="label">Dual fuel discount</span><span>-£13.00</span></span>` : ''}
-      </div>
-    </div>`;
-}
-
-function calculate() {
-  const region = parseInt(document.getElementById('regionSelect').value);
-  const dayKwh = parseFloat(document.getElementById('dayKwh').value) || 0;
-  const nightKwh = parseFloat(document.getElementById('nightKwh').value) || 0;
-  const gasKwh = parseFloat(document.getElementById('gasKwh').value) || 0;
-  const hasDualFuel = gasKwh > 0;
-  const totalKwh = dayKwh + nightKwh;
-
-  const hasUsage = dayKwh > 0 || nightKwh > 0;
-  const hasRegion = !isNaN(region) && region > 0;
-
-  // Night % bar
-  const nightPctWrapper = document.getElementById('nightPctWrapper');
-  if (hasUsage && totalKwh > 0) {
-    const nightPct = (nightKwh / totalKwh) * 100;
-    nightPctWrapper.style.display = 'block';
-    document.getElementById('nightPctFill').style.width = Math.min(nightPct, 100) + '%';
-    document.getElementById('nightPctText').textContent = `Night usage: ${nightPct.toFixed(1)}% of total`;
+// ── RENDER WWIT ROW ───────────────────────────────────────────────────────
+function wwRow(cfg) {
+  var cls = cfg.hasUsage ? (cfg.above ? 'above' : 'below') : '';
+  var h = '<div class="be-row ' + cls + '">';
+  h += '<div class="be-top">';
+  h += '<span class="be-label">' + cfg.title + '</span>';
+  if (cfg.hasUsage) {
+    h += '<span class="be-verdict ' + (cfg.above ? 'vabove' : 'vbelow') + '">' +
+         (cfg.above ? '\u2713 Works for you' : '\u2717 Not worth it') + '</span>';
   } else {
-    nightPctWrapper.style.display = 'none';
+    h += '<span class="be-verdict vnone">Enter usage to see</span>';
+  }
+  h += '</div>';
+  h += '<div class="be-nums">';
+  h += '<div class="be-num"><div class="be-num-val">' + cfg.actual + '</div><div class="be-num-lbl">Your off-peak kWh</div></div>';
+  h += '<div class="be-num"><div class="be-num-val">' + cfg.needed + '</div><div class="be-num-lbl">Break-even kWh</div></div>';
+  h += '<div class="be-num"><div class="be-num-val">' + cfg.pct + '</div><div class="be-num-lbl">Break-even %</div></div>';
+  h += '</div>';
+  if (cfg.hasUsage) {
+    var scls = cfg.above ? 'saves' : 'costs';
+    var stxt = cfg.above
+      ? 'Saves ' + fmt0(Math.abs(cfg.saving)) + '/yr vs standard'
+      : 'Costs ' + fmt0(Math.abs(cfg.saving)) + '/yr more than standard';
+    h += '<div class="be-saving ' + scls + '">' + stxt + '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+// ── CALCULATE ─────────────────────────────────────────────────────────────
+function calculate() {
+  var r    = state.region;
+  var dayK = parseFloat(document.getElementById('dayKwh').value)  || 0;
+  var nigK = parseFloat(document.getElementById('nightKwh').value) || 0;
+  var evK  = parseFloat(document.getElementById('evKwh').value)   || 0;
+  var totK = dayK + nigK;
+  var hasUsage = totK > 0;
+
+  // Night bar
+  var nbWrap = document.getElementById('nbWrap');
+  if (hasUsage) {
+    var pct = (nigK/totK)*100;
+    nbWrap.style.display = 'block';
+    document.getElementById('nbFill').style.width = Math.min(pct,100)+'%';
+    document.getElementById('nbPct').textContent = 'Night usage: ' + pct.toFixed(1) + '%';
+  } else {
+    nbWrap.style.display = 'none';
   }
 
-  if (!hasRegion || !hasUsage) {
-    document.getElementById('resultsWrapper').classList.remove('visible');
-    document.getElementById('emptyState').style.display = 'block';
+  if (r <= 0 || !hasUsage) {
+    document.getElementById('resSection').classList.remove('show');
+    document.getElementById('emptyState').style.display = r <= 0 ? 'block' : 'none';
+    if (r > 0 && !hasUsage) document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('nbBe').textContent = '';
     return;
   }
 
-  document.getElementById('resultsWrapper').classList.add('visible');
+  document.getElementById('resSection').classList.add('show');
   document.getElementById('emptyState').style.display = 'none';
 
-  const fixedInfo = getFixedData(region);
-  const evInfo = getEVData(region);
-  const fixedT = fixedInfo.data;
-  const evT = evInfo.data;
+  var ti = getTariff(r);
+  var t = ti.t, ev = ti.ev;
 
-  // Calculate costs
-  const fixed = calcFixed(fixedT, dayKwh, nightKwh, hasDualFuel);
-  const evCost = calcEV(evT, dayKwh, nightKwh, hasDualFuel);
+  var stdCost = calcStd(t, dayK, nigK);
+  var e7Cost  = calcE7(t, dayK, nigK);
+  var evCost  = calcEV(ev, dayK, nigK, evK);
 
-  let cards = [];
+  var allC = [stdCost, e7Cost, evCost];
+  var minC = Math.min.apply(null, allC);
 
-  if (state.tariffType === 'fixed') {
-    // Show GD vs E7 on fixed tariff
-    const results = [
-      { label: 'General Domestic', tariffName: fixedInfo.name + ' (Standard)', annual: fixed.gd, rates: { sc: fixedT.gdSC, unit: fixedT.gdUnit }, winner: false, e7: false, ev: false },
-      { label: 'Economy 7', tariffName: fixedInfo.name + ' (E7)', annual: fixed.e7, rates: { sc: fixedT.e7SC, day: fixedT.e7Day, night: fixedT.e7Night }, winner: false, e7: true, ev: false }
-    ];
-    results[0].dualFuelDisc = hasDualFuel;
-    results[1].dualFuelDisc = hasDualFuel;
+  // Cards
+  rcard('card-std', {
+    profile:'Standard (flat rate 24/7)', bc:'bs', name: ti.name,
+    cost: stdCost, win: Math.abs(stdCost-minC)<0.01,
+    rates: [
+      ['Standing charge', fmtPv(t.gdsc)+'/day'],
+      ['Unit rate (any time)', fmtPv(t.gdu)+'/kWh']
+    ]
+  });
+  rcard('card-e7', {
+    profile:'Economy 7 Profile (midnight–7am)', bc:'be7', name: ti.name,
+    cost: e7Cost, win: Math.abs(e7Cost-minC)<0.01,
+    rates: [
+      ['Standing charge', fmtPv(t.e7sc)+'/day'],
+      ['Day rate (7am–midnight)', fmtPv(t.e7d)+'/kWh'],
+      ['Night rate (midnight–7am)', fmtPv(t.e7n)+'/kWh']
+    ]
+  });
+  rcard('card-ev', {
+    profile:'EV Tariff (midnight–5am)', bc:'bev', name: ti.evName + ' · variable',
+    cost: evCost, win: Math.abs(evCost-minC)<0.01,
+    rates: [
+      ['Standing charge', fmtPv(ev.sc)+'/day'],
+      ['Peak rate (5am–midnight)', fmtPv(ev.pk)+'/kWh'],
+      ['Off-peak (midnight–5am)', fmtPv(ev.op)+'/kWh'],
+      evK > 0 ? ['EV charging kWh', evK+' kWh/yr'] : null
+    ].filter(Boolean)
+  });
 
-    // Find winner
-    const minCost = Math.min(fixed.gd, fixed.e7);
-    results.forEach(r => { r.winner = Math.abs(r.annual - minCost) < 0.01; });
-
-    cards = results;
-
-    // Savings banner
-    const saving = Math.abs(fixed.gd - fixed.e7);
-    const winner = fixed.e7 < fixed.gd ? 'Economy 7' : 'General Domestic';
-    document.getElementById('savingsBanner').style.display = saving > 1 ? 'flex' : 'none';
-    document.getElementById('savingsAmount').textContent = £0(saving) + '/yr';
-    document.getElementById('savingsText').innerHTML =
-      `<strong>${winner}</strong> is the better profile<br>on <strong>${fixedInfo.name}</strong> for this usage pattern`;
-
-    // EV variable warning — hidden in fixed mode
-    document.getElementById('evVariableWarning').style.display = 'none';
-
-    // Cutoff box
-    const cutoffPct = calcBreakEven(fixedT);
-    document.getElementById('cutoffBox').style.display = 'block';
-    const nightPct = totalKwh > 0 ? (nightKwh / totalKwh * 100) : null;
-    const customerStatus = nightPct !== null
-      ? (nightPct >= cutoffPct
-        ? `✅ This customer uses <strong>${nightPct.toFixed(1)}%</strong> at night — above the break-even, so <strong>E7 is the better profile</strong>.`
-        : `❌ This customer uses <strong>${nightPct.toFixed(1)}%</strong> at night — below the break-even, so <strong>General Domestic is the better profile</strong>.`)
-      : '';
-    document.getElementById('cutoffContent').innerHTML =
-      `<div class="cutoff-pct">${cutoffPct.toFixed(1)}%</div>
-       <div>At least <strong>${cutoffPct.toFixed(1)}%</strong> of electricity must be used at night for E7 to beat the standard rate in this region on ${fixedInfo.name}.</div>
-       <div style="margin-top:6px; font-size:12px; color:var(--uw-grey-mid)">(Based on 4,000 kWh typical annual usage as a ready reckoner)</div>
-       ${nightPct !== null ? `<div style="margin-top:8px">${customerStatus}</div>` : ''}`;
-    document.getElementById('cutoffPctText').textContent = `Break-even: ${cutoffPct.toFixed(1)}%`;
-
+  // Savings banner
+  var maxC = Math.max.apply(null, allC);
+  var saving = maxC - minC;
+  var names = ['Standard on '+ti.name, 'Economy 7 on '+ti.name, ti.evName+' EV tariff'];
+  var winIdx = allC.indexOf(minC);
+  var ban = document.getElementById('sBanner');
+  if (saving > 1) {
+    ban.classList.add('show');
+    document.getElementById('sAmt').textContent = fmt0(saving)+'/yr';
+    document.getElementById('sTxt').innerHTML = '<strong>' + names[winIdx] + '</strong><br>is cheapest vs the most expensive option';
   } else {
-    // Variable EV mode: show EV vs Fixed GD vs Fixed E7
-    const results = [
-      { label: 'EV Tariff (Variable)', tariffName: evInfo.name, annual: evCost.cost, rates: { sc: evT.sc, peak: evT.peak, offPeak: evT.offPeak }, winner: false, ev: true, e7: false },
-      { label: 'General Domestic (Fixed)', tariffName: fixedInfo.name, annual: fixed.gd, rates: { sc: fixedT.gdSC, unit: fixedT.gdUnit }, winner: false, ev: false, e7: false },
-      { label: 'Economy 7 (Fixed)', tariffName: fixedInfo.name + ' E7', annual: fixed.e7, rates: { sc: fixedT.e7SC, day: fixedT.e7Day, night: fixedT.e7Night }, winner: false, ev: false, e7: true },
-    ];
-    results[0].dualFuelDisc = hasDualFuel;
-    results[1].dualFuelDisc = hasDualFuel;
-    results[2].dualFuelDisc = hasDualFuel;
-
-    const minCost = Math.min(...results.map(r => r.annual));
-    results.forEach(r => { r.winner = Math.abs(r.annual - minCost) < 0.01; });
-
-    cards = results;
-
-    // Savings banner vs most expensive
-    const maxCost = Math.max(...results.map(r => r.annual));
-    const saving = maxCost - minCost;
-    const winnerName = results.find(r => r.winner)?.label || '';
-    document.getElementById('savingsBanner').style.display = saving > 1 ? 'flex' : 'none';
-    document.getElementById('savingsAmount').textContent = £0(saving) + '/yr';
-    document.getElementById('savingsText').innerHTML =
-      `<strong>${winnerName}</strong> is cheapest vs the most expensive option shown`;
-
-    document.getElementById('evVariableWarning').style.display = 'block';
-
-    // Cutoff box (fixed only context)
-    document.getElementById('cutoffBox').style.display = 'none';
-    document.getElementById('cutoffPctText').textContent = '';
+    ban.classList.remove('show');
   }
 
-  // Render result cards
-  // In EV mode we have 3 cards — make grid 3-col on wider screens
-  const resultCardsEl = document.getElementById('resultCards');
-  resultCardsEl.className = 'result-cards' + (state.tariffType === 'variable' ? ' three-col' : '');
-  resultCardsEl.innerHTML = cards.map(renderCard).join('');
+  // Break-even calcs
+  var beE7kwh = beE7(t, totK);
+  var beE7pct = (beE7kwh/totK*100);
+  var beEVkwh = beEV(t, ev, totK);
+  var totOffPeak = nigK + evK;
+  var beEVpct = (beEVkwh/totK*100);
 
-  // Gas result
-  const gasBox = document.getElementById('gasResultBox');
-  if (hasDualFuel && gasKwh > 0) {
-    const gasAnnual = calcGas(fixedInfo.data, gasKwh, hasDualFuel);
-    gasBox.classList.add('visible');
-    document.getElementById('gasResultContent').innerHTML = `
-      <div class="gas-result-row" style="margin-bottom:4px">
-        <span class="lbl">Annual gas cost (${fixedInfo.name})</span>
-        <span>${£0(gasAnnual)}</span>
-      </div>
-      <div class="gas-result-row" style="margin-bottom:4px">
-        <span class="lbl">≈ per month</span>
-        <span>£${ppm(gasAnnual)}</span>
-      </div>
-      <div class="gas-result-row" style="font-size:11px; color:#0369a1; margin-top:4px">
-        <span class="lbl">Dual fuel discount already applied (£13/yr)</span>
-        <span>✓</span>
-      </div>
-      <div class="gas-result-row" style="font-size:11px; color:#0369a1">
-        <span class="lbl">Unit rate</span>
-        <span>${fixedInfo.data.gasUnit.toFixed(3)}p/kWh</span>
-      </div>`;
-  } else {
-    gasBox.classList.remove('visible');
+  document.getElementById('nbBe').textContent = 'E7 break-even: ' + beE7pct.toFixed(1) + '%';
+
+  // WWIT
+  var e7Above = nigK >= beE7kwh;
+  var evAbove = totOffPeak >= beEVkwh;
+  var e7Saving = stdCost - e7Cost;
+  var evSaving = stdCost - evCost;
+
+  var wwHtml = wwRow({
+    title: 'Economy 7 Profile vs Standard',
+    hasUsage: true,
+    above: e7Above,
+    actual: Math.round(nigK),
+    needed: Math.round(beE7kwh),
+    pct: beE7pct.toFixed(1)+'%',
+    saving: e7Saving
+  });
+
+  var evTitle = evK > 0
+    ? 'EV Tariff vs Standard (home night + EV charging)'
+    : 'EV Tariff vs Standard';
+  wwHtml += wwRow({
+    title: evTitle,
+    hasUsage: true,
+    above: evAbove,
+    actual: Math.round(totOffPeak),
+    needed: Math.round(beEVkwh),
+    pct: beEVpct.toFixed(1)+'%',
+    saving: evSaving
+  });
+
+  if (evK > 0) {
+    var evNoCarK = nigK;
+    var evNoCarAbove = evNoCarK >= beEVkwh;
+    var evNoCarSaving = stdCost - calcEV(ev, dayK, nigK, 0);
+    wwHtml += wwRow({
+      title: 'EV Tariff vs Standard (without EV charging)',
+      hasUsage: true,
+      above: evNoCarAbove,
+      actual: Math.round(evNoCarK),
+      needed: Math.round(beEVkwh),
+      pct: beEVpct.toFixed(1)+'%',
+      saving: evNoCarSaving
+    });
   }
+
+  document.getElementById('wwit-body').innerHTML = wwHtml;
+
+  // CHART
+  renderChart(dayK, nigK, evK, beE7kwh, beEVkwh, totK);
 }
 
-// ============================================================
-// EVENT LISTENERS
-// ============================================================
-document.getElementById('regionSelect').addEventListener('change', function() {
-  state.region = parseInt(this.value) || null;
-  calculate();
-});
+// ── CHART ─────────────────────────────────────────────────────────────────
+function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
+  if (chartInst) { chartInst.destroy(); chartInst = null; }
 
+  var totOffPeak = nigK + evK;
+  var labels = evK > 0
+    ? ['Standard\n(all day)', 'Economy 7\nProfile', 'EV Tariff\n(+ EV charging)']
+    : ['Standard\n(all day)', 'Economy 7\nProfile', 'EV Tariff'];
+
+  var dayData   = [totK,  dayK,  dayK];
+  var nightData = [0,     nigK,  nigK];
+  var evData    = [0,     0,     evK];
+
+  var beE7Pct = beE7/totK*100;
+  var beEVPct = beEV/totK*100;
+
+  document.getElementById('chartLegend').innerHTML =
+    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day usage</div>' +
+    '<div class="cleg"><div class="cleg-sq" style="background:#7c3aed"></div>Night usage (home)</div>' +
+    (evK > 0 ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV charging</div>' : '') +
+    '<div class="cleg"><div class="cleg-dash" style="border-color:#7c3aed"></div>E7 break-even (' + beE7Pct.toFixed(1) + '%)</div>' +
+    '<div class="cleg"><div class="cleg-dash" style="border-color:#059669"></div>EV break-even (' + beEVPct.toFixed(1) + '%)</div>';
+
+  var beLinePlugin = {
+    id: 'beLines',
+    afterDraw: function(chart) {
+      var ctx = chart.ctx;
+      var yScale = chart.scales.y;
+      var xScale = chart.scales.x;
+
+      function drawLine(pct, color) {
+        var yPx = yScale.getPixelForValue(pct);
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5,4]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.moveTo(xScale.left, yPx);
+        ctx.lineTo(xScale.right, yPx);
+        ctx.stroke();
+        ctx.restore();
+      }
+      drawLine(beE7Pct, '#7c3aed');
+      drawLine(beEVPct, '#059669');
+    }
+  };
+
+  chartInst = new Chart(document.getElementById('beChart'), {
+    type: 'bar',
+    plugins: [beLinePlugin],
+    data: {
+      labels: labels,
+      datasets: [
+        { label:'Day', data: dayData.map(function(d,i){ return totK>0?(d/totK*100):0; }),
+          backgroundColor:'#f59e0b', borderRadius:3, stack:'s' },
+        { label:'Night', data: nightData.map(function(d){ return totK>0?(d/totK*100):0; }),
+          backgroundColor:'#7c3aed', borderRadius:3, stack:'s' },
+        { label:'EV charging', data: evData.map(function(d){ return totK>0?(d/totK*100):0; }),
+          backgroundColor:'#059669', borderRadius:3, stack:'s' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: { font: { size: 11 }, autoSkip: false },
+          grid: { display: false }
+        },
+        y: {
+          stacked: true,
+          min: 0, max: 100,
+          ticks: { callback: function(v){ return v+'%'; }, font: { size: 11 } },
+          title: { display: true, text: '% of total usage', font: { size: 10 } }
+        }
+      }
+    }
+  });
+}
+
+// ── LOCK/UNLOCK ───────────────────────────────────────────────────────────
+function setLock(unlocked) {
+  ['lo-services','lo-tariff','lo-usage'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (unlocked) el.classList.add('unlocked');
+    else el.classList.remove('unlocked');
+  });
+}
+
+// ── SERVICE CHIPS ─────────────────────────────────────────────────────────
 ['broadband','mobile1','mobile2','insurance'].forEach(function(id) {
-  document.getElementById('chip-' + id).addEventListener('click', function() {
-    toggleChip(id);
+  document.getElementById('chip-'+id).addEventListener('click', function() {
+    if (!state.region) return;
+    state.services[id] = !state.services[id];
+    this.classList.toggle('on', state.services[id]);
+    updateBundle(); calculate();
   });
 });
 
-document.getElementById('btn-fixed').addEventListener('click', function() {
-  setTariffType('fixed');
-});
-document.getElementById('btn-variable').addEventListener('click', function() {
-  setTariffType('variable');
+function updateBundle() {
+  var n = svc(), o = n-1;
+  document.getElementById('bundleText').textContent =
+    n===1 ? 'Energy only \u2014 1 service'
+          : 'Energy + '+o+' other'+(o>1?'s':'')+' \u2014 '+n+' services';
+  var tier = n>=3 ? 'Saver / Double Gold' : n===2 ? 'Fixed 79 / Gold' : 'Fixed Start / Value';
+  document.getElementById('bundleTier').textContent = tier;
+}
+
+// ── REGION ────────────────────────────────────────────────────────────────
+document.getElementById('regionSelect').addEventListener('change', function() {
+  state.region = parseInt(this.value) || 0;
+  setLock(state.region > 0);
+  if (state.region <= 0) {
+    document.getElementById('resSection').classList.remove('show');
+    document.getElementById('emptyState').style.display = 'block';
+  }
+  calculate();
 });
 
-document.getElementById('dayKwh').addEventListener('input', calculate);
-document.getElementById('nightKwh').addEventListener('input', calculate);
-document.getElementById('gasKwh').addEventListener('input', calculate);
+// ── INPUTS ────────────────────────────────────────────────────────────────
+['dayKwh','nightKwh','evKwh'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', function() {
+    if (id !== 'evKwh') clearPresets();
+    calculate();
+  });
+});
 
-// Initial render
+// ── PRESETS ───────────────────────────────────────────────────────────────
+function clearPresets() {
+  ['low','medium','high'].forEach(function(k){
+    document.getElementById('preset-'+k).classList.remove('on');
+  });
+}
+['low','medium','high'].forEach(function(key) {
+  document.getElementById('preset-'+key).addEventListener('click', function() {
+    if (!state.region) return;
+    var p = PRESETS[key];
+    document.getElementById('dayKwh').value   = p.day;
+    document.getElementById('nightKwh').value = p.night;
+    clearPresets();
+    this.classList.add('on');
+    calculate();
+  });
+});
+
+// ── FV TOGGLE (synced between top and results) ────────────────────────────
+function setFV(v) {
+  state.fv = v;
+  ['btn-fixed','btn-fixed2'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.className = 'fvb' + (v==='fixed' ? ' af' : '');
+  });
+  ['btn-variable','btn-variable2'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.className = 'fvb' + (v==='variable' ? ' av' : '');
+  });
+  document.getElementById('svtNote').classList.toggle('show', v==='variable');
+  calculate();
+}
+['btn-fixed','btn-fixed2'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('click', function(){ setFV('fixed'); });
+});
+['btn-variable','btn-variable2'].forEach(function(id) {
+  var el = document.getElementById(id);
+  if (el) el.addEventListener('click', function(){ setFV('variable'); });
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+setLock(false);
 calculate();
 
 }); // end DOMContentLoaded
