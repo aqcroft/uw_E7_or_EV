@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -868,10 +867,10 @@ function calculate() {
 
   // All three tariffs include EV charging kWh — charged at each tariff's appropriate rate
   // Standard: EV kWh at flat rate (no off-peak benefit)
-  // E7: EV kWh at night rate (assumed overnight — same window as EV tariff)
-  // EV: EV kWh at off-peak rate
+  // E7: EV kWh at DAY rate — without EV tariff there's no off-peak benefit for EV charging
+  // EV: EV kWh at off-peak rate (the whole point of the EV tariff)
   var stdCost = calcStd(t, dayK, nigK + evKeff);
-  var e7Cost  = calcE7(t, dayK, nigK + evKeff);
+  var e7Cost  = calcE7(t, dayK + evKeff, nigK);
   var evCost  = calcEV(ev, dayK, nigK, evKeff);
 
   var allC = evOn ? [stdCost, e7Cost, evCost] : [stdCost, e7Cost];
@@ -1054,8 +1053,8 @@ function calculate() {
   var e7ScPerKwh = totK > 0 ? ((t.e7sc/100)*365*VAT / totK) : 0;
   var evScPerKwh = totK > 0 ? ((ev.sc/100)*365*VAT / totK) : 0;
   var stdDayCost  = (t.gdu/100 * totK * VAT) + (t.gdsc/100)*365*VAT;  // full std cost
-  var e7DayCost   = (t.e7d/100 * dayK) * VAT + (t.e7sc/100)*365*VAT;
-  var e7NightCost = (t.e7n/100 * (nigK+evKeff)) * VAT;
+  var e7DayCost   = (t.e7d/100 * (dayK + evKeff)) * VAT + (t.e7sc/100)*365*VAT;
+  var e7NightCost = (t.e7n/100 * nigK) * VAT;
   var evDayCost   = (ev.pk/100 * dayK) * VAT + (ev.sc/100)*365*VAT;
   var evNightCost = (ev.op/100 * nigK) * VAT;
   var evEvCost2   = (ev.op/100 * evKeff) * VAT;
