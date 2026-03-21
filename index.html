@@ -65,7 +65,7 @@ header h1 { font-size: 13px; font-weight: 500; opacity: 0.85; }
 .card {
   background: white; border-radius: var(--r);
   border: 1px solid var(--bdr); padding: 15px 17px;
-  margin-bottom: 11px;
+  margin-bottom: 9px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 .ct {
@@ -242,7 +242,7 @@ input[type="number"]:focus {
 .be7 { background: #ede9fe; color: #5b21b6; }
 .bev { background: #d1fae5; color: #065f35; }
 
-.ctn { font-size: 10.5px; color: var(--gmid); margin-bottom: 8px; font-weight: 500; line-height: 1.3; }
+.ctn { font-size: 9.5px; color: var(--gmid); font-weight: 500; line-height: 1.2; }
 .can {
   font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500;
   color: var(--dk); line-height: 1; margin-bottom: 2px;
@@ -261,7 +261,7 @@ input[type="number"]:focus {
 .sbanner {
   background: var(--pd); color: white;
   border-radius: var(--r); padding: 12px 16px;
-  display: none; align-items: center; gap: 14px; margin-bottom: 11px;
+  display: none; align-items: center; gap: 14px; margin-bottom: 9px;
 }
 .sbanner.show { display: flex; }
 .samt { font-family: 'DM Mono', monospace; font-size: 22px; white-space: nowrap; }
@@ -271,7 +271,7 @@ input[type="number"]:focus {
 .wwit {
   background: white; border-radius: var(--r);
   border: 1px solid var(--bdr); overflow: hidden;
-  margin-bottom: 11px;
+  margin-bottom: 9px;
 }
 .wwit-title {
   background: var(--pd); color: white;
@@ -320,7 +320,7 @@ input[type="number"]:focus {
 .chart-wrap {
   background: white; border-radius: var(--r);
   border: 1px solid var(--bdr); padding: 16px;
-  margin-bottom: 11px;
+  margin-bottom: 9px;
 }
 .chart-title {
   font-size: 10px; font-weight: 700; text-transform: uppercase;
@@ -348,6 +348,20 @@ input[type="number"]:focus {
   .be-nums { grid-template-columns: 1fr 1fr; }
   .can { font-size: 18px; }
 }
+
+.pct-card {
+  border-radius: var(--r); border: 1px solid var(--bdr);
+  padding: 12px; background: var(--glit); text-align: center;
+}
+.pct-card.pct-win { border-color: var(--grn); background: var(--grnl); }
+.pct-card.pct-lose { border-color: #fca5a5; background: var(--redl); }
+.pct-row { display: flex; justify-content: center; gap: 14px; margin: 6px 0; flex-wrap: wrap; }
+.pct-item { text-align: center; }
+.pct-val { font-size: 18px; font-weight: 700; color: var(--dk); line-height: 1; }
+.pct-lbl { font-size: 9.5px; color: var(--gmid); margin-top: 2px; display: flex; align-items: center; justify-content: center; gap: 3px; }
+.pct-be { font-size: 10.5px; color: var(--gmid); margin: 5px 0 3px; }
+.pct-verdict { font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 10px; display: inline-block; margin: 3px 0; }
+.pct-saving { font-size: 12px; font-weight: 700; margin-top: 3px; }
 </style>
 </head>
 <body>
@@ -384,80 +398,80 @@ input[type="number"]:focus {
 
   <!-- SERVICES -->
   <div class="card locked-overlay" id="lo-services">
-    <div class="ct">📦 Services in Bundle</div>
-    <div class="chips">
+    <div class="ct">📦 Services</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;align-items:center">
       <div class="chip locked-chip">⚡ Energy</div>
       <div class="chip" id="chip-broadband">🛜 Broadband</div>
-      <div class="chip" id="chip-mobile1">📱 Mobile 1</div>
-      <div class="chip" id="chip-mobile2">📱 Mobile 2</div>
+      <div class="chip" id="chip-mobile1">📱 Sim 1</div>
+      <div class="chip" id="chip-mobile2">📱 Sim 2</div>
       <div class="chip" id="chip-insurance">🛡️ Insurance</div>
-    </div>
-    <div class="bundle-bar">
-      <span id="bundleText">Energy only — 1 service</span>
-      <span class="btier" id="bundleTier">Fixed Start / Value</span>
-    </div>
-  </div>
-
-  <!-- TARIFF TYPE -->
-  <div class="card locked-overlay" id="lo-tariff">
-    <div class="ct">⚡ Tariff Type</div>
-    <div class="fvpill">
-      <button class="fvb af" id="btn-fixed">🔒 Fixed (ends Mar 2027)</button>
-      <button class="fvb" id="btn-variable">📈 Variable</button>
-    </div>
-    <div class="svtnote" id="svtNote">
-      ⚠️ <strong>Variable rates shown are January 2026.</strong> Confirm current rates before presenting to a customer — these change quarterly.
+      <div style="margin-left:auto;width:136px;flex-shrink:0;background:var(--ppal);border:1px solid #d8caee;border-radius:8px;padding:6px 12px;display:flex;flex-direction:column;gap:2px;justify-content:center">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gmid)">Tariffs</div>
+        <div style="font-size:10.5px;font-weight:600;color:var(--p);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="bundleTierFixed" style="font-size:10px">Fixed: Fixed Start</div>
+        <div style="font-size:10.5px;font-weight:600;color:var(--amb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="bundleTierVar" style="font-size:10px">Variable: Value</div>
+      </div>
     </div>
   </div>
+  <div id="lo-tariff"></div>
 
   <!-- USAGE -->
   <div class="card locked-overlay" id="lo-usage">
     <div class="ct">🔢 Electricity Usage</div>
 
-    <div class="ig" style="margin-bottom:10px">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;align-items:start" id="usageGrid">
       <div class="igrp">
-        <label class="ilbl"><span class="dot dd"></span> Day Usage <span style="font-weight:400;text-transform:none;font-size:9px">(7am – midnight)</span></label>
+        <label class="ilbl"><span class="dot dd"></span> Day <span style="font-weight:400;text-transform:none;font-size:9px">(7am–midnight)</span></label>
         <input type="number" id="dayKwh" placeholder="e.g. 2262" min="0">
         <div class="isfx">kWh / year</div>
       </div>
       <div class="igrp">
-        <label class="ilbl"><span class="dot dn"></span> Night Usage <span style="font-weight:400;text-transform:none;font-size:9px">(midnight – 7am)</span></label>
+        <label class="ilbl"><span class="dot dn"></span> Night <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–7am)</span></label>
         <input type="number" id="nightKwh" placeholder="e.g. 1638" min="0">
+        <div class="isfx">kWh / year</div>
+      </div>
+      <div class="igrp" id="lo-ev" style="opacity:0;pointer-events:none;transition:opacity 0.2s">
+        <label class="ilbl"><span class="dot dev"></span> 🚗 EV charging <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span></label>
+        <input type="number" id="evKwh" placeholder="e.g. 1800" min="0">
         <div class="isfx">kWh / year</div>
       </div>
     </div>
 
-    <div class="igrp">
-      <label class="ilbl"><span class="dot dev"></span> EV Charging <span style="font-weight:400;text-transform:none;font-size:9px">(assumed all off-peak, midnight – 5am)</span></label>
-      <input type="number" id="evKwh" placeholder="e.g. 1800 · optional" min="0">
-      <div class="isfx">kWh / year · leave blank if no EV</div>
+    <div style="margin-top:12px">
+      <details id="usageEstDetails">
+        <summary style="font-size:10.5px;color:var(--gmid);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:6px">
+          <span id="estimSummaryArrow" style="font-size:10px;transition:transform 0.2s">▶</span>
+          <span>Don't know your usage? Use a typical estimate</span>
+        </summary>
+        <div class="presets" style="margin-top:8px;margin-bottom:0">
+          <button class="preset" id="preset-low">
+            <div class="pl">Low</div>
+            <div class="ps">2,200 kWh · 1 bed</div>
+          </button>
+          <button class="preset" id="preset-medium">
+            <div class="pl">Medium</div>
+            <div class="ps">3,900 kWh · 2–3 bed</div>
+          </button>
+          <button class="preset" id="preset-high">
+            <div class="pl">High</div>
+            <div class="ps">6,700 kWh · 4+ bed</div>
+          </button>
+        </div>
+      </details>
     </div>
 
-    <div style="margin-top:16px; display:flex; align-items:center; gap:10px;">
-      <div style="flex:1; height:1px; background:var(--bdr)"></div>
-      <span style="font-size:10.5px; color:var(--gmid); white-space:nowrap; font-weight:500">Don't know your usage? Use an estimate:</span>
-      <div style="flex:1; height:1px; background:var(--bdr)"></div>
-    </div>
-    <div class="presets" style="margin-top:10px; margin-bottom:0">
-      <button class="preset" id="preset-low">
-        <div class="pl">Low</div>
-        <div class="ps">2,200 kWh · 1 bed</div>
-      </button>
-      <button class="preset" id="preset-medium">
-        <div class="pl">Medium</div>
-        <div class="ps">3,900 kWh · 2–3 bed</div>
-      </button>
-      <button class="preset" id="preset-high">
-        <div class="pl">High</div>
-        <div class="ps">6,700 kWh · 4+ bed</div>
-      </button>
-    </div>
-
-    <div class="nbwrap" id="nbWrap" style="display:none">
-      <div class="nbbg"><div class="nbfill" id="nbFill" style="width:0%"></div></div>
-      <div class="nbrow">
-        <span id="nbPct">Night: —</span>
+    <div id="nbWrap" style="display:none;margin-top:12px">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);margin-bottom:5px;display:flex;justify-content:space-between">
+        <span id="nbPct">Night usage: —</span>
         <span id="nbBe" class="bel"></span>
+      </div>
+      <div style="position:relative;background:var(--glit);border-radius:6px;height:18px;overflow:visible">
+        <div id="nbFill" style="height:100%;background:var(--p);border-radius:6px;transition:width 0.3s;width:0%"></div>
+        <div id="nbMarker" style="position:absolute;top:-4px;bottom:-4px;width:2px;background:#1a1a2e;border-radius:2px;transition:left 0.3s;left:35%">
+          <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;font-weight:700;background:#1a1a2e;color:white;padding:1px 5px;border-radius:3px" id="nbMarkerLbl">35%</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--gmid);margin-top:4px">
+        <span>0%</span><span style="color:var(--dk);font-weight:600" id="nbZone"></span><span>100%</span>
       </div>
     </div>
   </div>
@@ -465,38 +479,47 @@ input[type="number"]:focus {
   <!-- RESULTS -->
   <div class="res" id="resSection">
 
-    <!-- SAVINGS BANNER -->
-    <div class="sbanner" id="sBanner">
-      <div>
-        <div style="font-size:9px;opacity:0.6;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:2px">Cheapest option saves</div>
-        <div class="samt" id="sAmt">—</div>
+    <!-- COMBINED CONTROL + SAVINGS BAR -->
+    <div style="background:var(--pd);border-radius:var(--r);padding:10px 14px;margin-bottom:9px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div id="sBanner" style="display:none;flex:1;min-width:0">
+        <div style="font-size:9px;opacity:0.6;text-transform:uppercase;letter-spacing:0.6px;color:white;margin-bottom:1px">Cheapest option saves</div>
+        <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap">
+          <span class="samt" id="sAmt" style="font-size:20px;color:white;font-family:monospace;font-weight:500">—</span>
+          <span class="stxt" id="sTxt" style="font-size:11px;opacity:0.8;color:white"></span>
+        </div>
       </div>
-      <div class="stxt" id="sTxt"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0">
+        <div class="fvpill">
+          <button class="fvb af" id="btn-fixed2">🔒 Fixed</button>
+          <button class="fvb" id="btn-variable2">📈 Variable</button>
+        </div>
+        <button id="evToggleBtn" title="Toggle EV tariff column" style="background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);font-family:'DM Sans',sans-serif;transition:all 0.15s">🚗 EV off</button>
+      </div>
     </div>
 
     <!-- 3-COL CARDS -->
     <div class="cgrid">
-      <div class="fv-col-header">
-        <div class="fvpill" style="transform:scale(0.9)">
-          <button class="fvb af" id="btn-fixed2">🔒 Fixed</button>
-          <button class="fvb" id="btn-variable2">📈 Variable</button>
-        </div>
-      </div>
-      <div class="ev-col-header">
-        <div class="ev-col-lbl">🚗 EV Tariff <span class="evtime">midnight–5am</span></div>
-      </div>
+      <div class="fv-col-header" style="display:none"></div>
+      <div id="evColHeader" style="display:none"></div>
 
       <div class="rc" id="card-std"></div>
       <div class="rc" id="card-e7"></div>
       <div class="rc ev-card" id="card-ev"></div>
     </div>
 
-    <div class="vat-note">All figures include 5% VAT · Direct Debit rates</div>
+    <!-- PCT EXTENSION -->
+    <div id="pctSection" style="display:none;margin-bottom:9px">
+      <div style="height:1px;background:var(--bdr);margin-bottom:9px"></div>
+      <div class="cgrid" id="pctGrid"></div>
+    </div>
 
-    <!-- WHAT WOULD IT TAKE -->
-    <div class="wwit" id="wwit">
-      <div class="wwit-title">📐 What would it take?</div>
-      <div class="wwit-body" id="wwit-body"></div>
+    <!-- EV CHARGING COST BOX -->
+    <div id="evCostBox" style="display:none;margin-bottom:9px">
+      <div style="background:var(--grnl);border:1.5px solid #6ee7b7;border-radius:var(--r);padding:12px 15px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:#065f35;margin-bottom:10px">🚗 Cost of charging your EV — annual &amp; monthly</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px" id="evCostGrid"></div>
+        <div style="font-size:10px;color:#065f35;margin-top:8px;opacity:0.8">Based on <span id="evCostKwh"></span> kWh EV charging per year · rates at current tariff selection</div>
+      </div>
     </div>
 
     <!-- CHART -->
@@ -506,6 +529,7 @@ input[type="number"]:focus {
       <div style="position:relative;width:100%;height:220px">
         <canvas id="beChart"></canvas>
       </div>
+      <div class="vat-note" style="margin-top:8px;margin-bottom:0">All figures include 5% VAT · Direct Debit rates</div>
     </div>
 
   </div>
@@ -518,6 +542,7 @@ input[type="number"]:focus {
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -679,6 +704,7 @@ function beEV(t, ev, total) {
 
 function fmt0(v) { return '\u00a3' + Math.round(v); }
 function fmtPm(v) { return '\u00a3' + (v/12).toFixed(2); }
+function fmtPm0(v) { return '\u00a3' + Math.round(v/12); }
 function fmtP(v) { return v.toFixed(3) + 'p'; }
 function fmtPv(v) { return (v*VAT).toFixed(2) + 'p'; }
 
@@ -687,46 +713,25 @@ function rcard(id, cfg) {
   var el = document.getElementById(id);
   el.className = 'rc' + (id==='card-ev' ? ' ev-card' : '') + (cfg.win ? ' win' : '');
   var h = cfg.win ? '<div class="wpill">\u2713 Best option</div>' : '';
-  h += '<div class="pbadge ' + cfg.bc + '">' + cfg.profile + '</div>';
-  h += '<div class="ctn">' + cfg.name + '</div>';
+  h += '<div style="margin-bottom:8px">';
+  h += '<div class="pbadge ' + cfg.bc + '" style="margin-bottom:3px">' + cfg.profile + '</div>';
+  h += '<div style="font-size:9.5px;color:var(--gmid);font-weight:500;line-height:1.2">' + cfg.name + '</div>';
+  h += '</div>';
   h += '<div class="can">' + fmt0(cfg.cost) + '<span style="font-size:11px;color:var(--gmid)">/yr</span></div>';
   h += '<div class="cmo">\u2248 ' + fmtPm(cfg.cost) + '/mo</div>';
-  h += '<div class="crates">';
+  var ratesId = 'rates-' + id;
+  h += '<details class="rates-details" style="margin-top:8px">';
+  h += '<summary style="font-size:10px;color:var(--gmid);cursor:pointer;list-style:none;display:flex;align-items:center;gap:5px;user-select:none">';
+  h += '<span style="font-size:9px">▶</span> Rates &amp; standing charge</summary>';
+  h += '<div class="crates" style="margin-top:6px">';
   cfg.rates.forEach(function(r) {
     h += '<div class="rr"><span>' + r[0] + '</span><span class="rv">' + r[1] + '</span></div>';
   });
-  h += '</div>';
+  h += '</div></details>';
   el.innerHTML = h;
 }
 
-// ── RENDER WWIT ROW ───────────────────────────────────────────────────────
-function wwRow(cfg) {
-  var cls = cfg.hasUsage ? (cfg.above ? 'above' : 'below') : '';
-  var h = '<div class="be-row ' + cls + '">';
-  h += '<div class="be-top">';
-  h += '<span class="be-label">' + cfg.title + '</span>';
-  if (cfg.hasUsage) {
-    h += '<span class="be-verdict ' + (cfg.above ? 'vabove' : 'vbelow') + '">' +
-         (cfg.above ? '\u2713 Works for you' : '\u2717 Not worth it') + '</span>';
-  } else {
-    h += '<span class="be-verdict vnone">Enter usage to see</span>';
-  }
-  h += '</div>';
-  h += '<div class="be-nums">';
-  h += '<div class="be-num"><div class="be-num-val">' + cfg.actual + '</div><div class="be-num-lbl">Your off-peak kWh</div></div>';
-  h += '<div class="be-num"><div class="be-num-val">' + cfg.needed + '</div><div class="be-num-lbl">Break-even kWh</div></div>';
-  h += '<div class="be-num"><div class="be-num-val">' + cfg.pct + '</div><div class="be-num-lbl">Break-even %</div></div>';
-  h += '</div>';
-  if (cfg.hasUsage) {
-    var scls = cfg.above ? 'saves' : 'costs';
-    var stxt = cfg.above
-      ? 'Saves ' + fmt0(Math.abs(cfg.saving)) + '/yr vs standard'
-      : 'Costs ' + fmt0(Math.abs(cfg.saving)) + '/yr more than standard';
-    h += '<div class="be-saving ' + scls + '">' + stxt + '</div>';
-  }
-  h += '</div>';
-  return h;
-}
+// wwRow removed — replaced by pctCard
 
 // ── CALCULATE ─────────────────────────────────────────────────────────────
 function calculate() {
@@ -734,7 +739,7 @@ function calculate() {
   var dayK = parseFloat(document.getElementById('dayKwh').value)  || 0;
   var nigK = parseFloat(document.getElementById('nightKwh').value) || 0;
   var evK  = parseFloat(document.getElementById('evKwh').value)   || 0;
-  var totK = dayK + nigK;
+  var totK = dayK + nigK + evK;  // total includes EV charging for fair comparison
   var hasUsage = totK > 0;
 
   // Night bar
@@ -762,11 +767,15 @@ function calculate() {
   var ti = getTariff(r);
   var t = ti.t, ev = ti.ev;
 
-  var stdCost = calcStd(t, dayK, nigK);
-  var e7Cost  = calcE7(t, dayK, nigK);
-  var evCost  = calcEV(ev, dayK, nigK, evK);
+  // All three tariffs include EV charging kWh — charged at each tariff's appropriate rate
+  // Standard: EV kWh at flat rate (no off-peak benefit)
+  // E7: EV kWh at night rate (assumed overnight — same window as EV tariff)
+  // EV: EV kWh at off-peak rate
+  var stdCost = calcStd(t, dayK, nigK + evK);         // evK at flat rate
+  var e7Cost  = calcE7(t, dayK, nigK + evK);           // evK at E7 night rate
+  var evCost  = calcEV(ev, dayK, nigK, evK);           // evK at EV off-peak rate
 
-  var allC = [stdCost, e7Cost, evCost];
+  var allC = evOn ? [stdCost, e7Cost, evCost] : [stdCost, e7Cost];
   var minC = Math.min.apply(null, allC);
 
   // Cards
@@ -805,11 +814,11 @@ function calculate() {
   var winIdx = allC.indexOf(minC);
   var ban = document.getElementById('sBanner');
   if (saving > 1) {
-    ban.classList.add('show');
+    ban.style.display = 'block';
     document.getElementById('sAmt').textContent = fmt0(saving)+'/yr';
-    document.getElementById('sTxt').innerHTML = '<strong>' + names[winIdx] + '</strong><br>is cheapest vs the most expensive option';
+    document.getElementById('sTxt').innerHTML = '<strong>' + names[winIdx] + '</strong> is cheapest';
   } else {
-    ban.classList.remove('show');
+    ban.style.display = 'none';
   }
 
   // Break-even calcs
@@ -819,7 +828,29 @@ function calculate() {
   var totOffPeak = nigK + evK;
   var beEVpct = (beEVkwh/totK*100);
 
-  document.getElementById('nbBe').textContent = 'E7 break-even: ' + beE7pct.toFixed(1) + '% at night';
+  document.getElementById('nbBe').textContent = 'Break-even: ' + beE7pct.toFixed(1) + '% at night';
+  // Update marker position
+  var markerEl = document.getElementById('nbMarker');
+  var markerLbl = document.getElementById('nbMarkerLbl');
+  var zoneEl = document.getElementById('nbZone');
+  if (markerEl) {
+    markerEl.style.left = Math.min(beE7pct, 99) + '%';
+    markerLbl.textContent = beE7pct.toFixed(1) + '%';
+  }
+  if (zoneEl && hasUsage) {
+    var custPctBar = (nigK/totK)*100;
+    var diff = custPctBar - beE7pct;
+    if (Math.abs(diff) < 1) {
+      zoneEl.textContent = 'Right at break-even';
+      zoneEl.style.color = 'var(--amb)';
+    } else if (diff > 0) {
+      zoneEl.textContent = '+' + diff.toFixed(1) + '% above — E7 works';
+      zoneEl.style.color = 'var(--grn)';
+    } else {
+      zoneEl.textContent = Math.abs(diff).toFixed(1) + '% below — Standard better';
+      zoneEl.style.color = 'var(--red)';
+    }
+  }
 
   // WWIT
   var e7Above = nigK >= beE7kwh;
@@ -827,45 +858,94 @@ function calculate() {
   var e7Saving = stdCost - e7Cost;
   var evSaving = stdCost - evCost;
 
-  var wwHtml = wwRow({
-    title: 'Economy 7 Profile vs Standard',
-    hasUsage: true,
-    above: e7Above,
-    actual: Math.round(nigK),
-    needed: Math.round(beE7kwh),
-    pct: beE7pct.toFixed(1)+'%',
-    saving: e7Saving
-  });
+  // EV charging cost on each tariff (just the evK kWh portion)
+  var evCostOnStd = evK > 0 ? (t.gdu/100 * evK * VAT) : 0;
+  var evCostOnE7  = evK > 0 ? (t.e7n/100 * evK * VAT) : 0;
+  var evCostOnEV  = evK > 0 ? (ev.op/100  * evK * VAT) : 0;
 
-  var evTitle = evK > 0
-    ? 'EV Tariff vs Standard (home night + EV charging)'
-    : 'EV Tariff vs Standard';
-  wwHtml += wwRow({
-    title: evTitle,
-    hasUsage: true,
-    above: evAbove,
-    actual: Math.round(totOffPeak),
-    needed: Math.round(beEVkwh),
-    pct: beEVpct.toFixed(1)+'%',
-    saving: evSaving
-  });
+  // PCT SECTION
+  var custNightPct = totK > 0 ? (nigK/totK*100).toFixed(1) : null;
+  var custEVPct    = totK > 0 ? (totOffPeak/totK*100).toFixed(1) : null;
+  var dayPct       = totK > 0 ? (dayK/totK*100).toFixed(1) : null;
+  var evDayPct     = totK > 0 ? (dayK/totK*100).toFixed(1) : null;
 
-  if (evK > 0) {
-    var evNoCarK = nigK;
-    var evNoCarAbove = evNoCarK >= beEVkwh;
-    var evNoCarSaving = stdCost - calcEV(ev, dayK, nigK, 0);
-    wwHtml += wwRow({
-      title: 'EV Tariff vs Standard (without EV charging)',
-      hasUsage: true,
-      above: evNoCarAbove,
-      actual: Math.round(evNoCarK),
-      needed: Math.round(beEVkwh),
-      pct: beEVpct.toFixed(1)+'%',
-      saving: evNoCarSaving
-    });
+  function pctCard(cfg) {
+    var cls = 'pct-card' + (cfg.verdict === 'win' ? ' pct-win' : cfg.verdict === 'lose' ? ' pct-lose' : '');
+    var h = '<div class="' + cls + '">';
+    if (cfg.isStd) {
+      h += '<div class="pct-row"><div class="pct-item"><div class="pct-val">100%</div><div class="pct-lbl">flat rate, any time</div></div></div>';
+      h += '<div class="pct-be" style="color:var(--gmid);font-style:italic">no night rate</div>';
+    } else {
+      h += '<div class="pct-row">';
+      h += '<div class="pct-item"><div class="pct-val" style="color:#d97706">' + (cfg.dayPct||'—') + '%</div><div class="pct-lbl"><span style="width:7px;height:7px;border-radius:50%;background:#d97706;display:inline-block"></span>day</div></div>';
+      h += '<div class="pct-item"><div class="pct-val" style="color:var(--p)">' + (cfg.nightPct||'—') + '%</div><div class="pct-lbl"><span style="width:7px;height:7px;border-radius:50%;background:var(--p);display:inline-block"></span>' + (cfg.evLabel ? 'off-peak' : 'night') + '</div></div>';
+      if (cfg.evLabel && cfg.evPct) {
+        h += '<div class="pct-item"><div class="pct-val" style="color:var(--grn)">' + cfg.evPct + '%</div><div class="pct-lbl"><span style="width:7px;height:7px;border-radius:50%;background:var(--grn);display:inline-block"></span>EV</div></div>';
+      }
+      h += '</div>';
+      h += '<div class="pct-be">Break-even: <strong>' + cfg.bePct + '</strong> at night</div>';
+      if (cfg.verdict !== 'none') {
+        var vcls = cfg.verdict === 'win' ? 'vabove' : 'vbelow';
+        var vtxt = cfg.verdict === 'win' ? '✓ Works for you' : '✗ Not worth it';
+        var scol = cfg.verdict === 'win' ? 'var(--grn)' : 'var(--red)';
+        var stxt = cfg.verdict === 'win' ? 'Saves ' + fmt0(Math.abs(cfg.saving)) + '/yr' : 'Costs ' + fmt0(Math.abs(cfg.saving)) + '/yr extra';
+        h += '<div class="pct-verdict ' + vcls + '">' + vtxt + '</div>';
+        h += '<div class="pct-saving" style="color:' + scol + '">' + stxt + '</div>';
+      }
+    }
+    h += '</div>';
+    return h;
   }
 
-  document.getElementById('wwit-body').innerHTML = wwHtml;
+  var pctHtml = '';
+  // col 1 — Standard
+  pctHtml += pctCard({ isStd: true });
+  // col 2 — E7
+  pctHtml += pctCard({
+    dayPct: dayPct, nightPct: custNightPct,
+    bePct: beE7pct.toFixed(1) + '%',
+    verdict: custNightPct !== null ? (e7Above ? 'win' : 'lose') : 'none',
+    saving: e7Saving
+  });
+  // col 3 — EV (only if evOn)
+  if (evOn) {
+    var evNightPct = evK > 0 ? (nigK/totK*100).toFixed(1) : custNightPct;
+    var evKpct = evK > 0 ? (evK/totK*100).toFixed(1) : null;
+    pctHtml += pctCard({
+      dayPct: dayPct, nightPct: evNightPct, evPct: evKpct, evLabel: true,
+      bePct: beEVpct.toFixed(1) + '%',
+      verdict: custEVPct !== null ? (evAbove ? 'win' : 'lose') : 'none',
+      saving: evSaving
+    });
+  } else {
+    pctHtml += '<div></div>';
+  }
+
+  var pctSection = document.getElementById('pctSection');
+  pctSection.style.display = 'block';
+  document.getElementById('pctGrid').innerHTML = pctHtml;
+
+  // EV charging cost box
+  var evCostBox = document.getElementById('evCostBox');
+  if (evOn && evK > 0) {
+    evCostBox.style.display = 'block';
+    document.getElementById('evCostKwh').textContent = Math.round(evK);
+    function evCostCol(label, annual, highlight) {
+      var h = '<div style="text-align:center;background:white;border-radius:var(--rs);padding:10px 8px;border:1.5px solid ' + (highlight ? 'var(--grn)' : '#d1fae5') + '">';
+      h += '<div style="font-size:10px;color:#065f35;font-weight:600;margin-bottom:4px">' + label + '</div>';
+      h += '<div style="font-size:18px;font-weight:700;color:' + (highlight ? 'var(--grn)' : '#1a1a2e') + '">' + fmt0(annual) + '/yr</div>';
+      h += '<div style="font-size:11px;color:#064e3b;margin-top:2px">' + fmtPm0(annual) + '/mo</div>';
+      h += '</div>';
+      return h;
+    }
+    var cheapestEV = Math.min(evCostOnStd, evCostOnE7, evCostOnEV);
+    document.getElementById('evCostGrid').innerHTML =
+      evCostCol('Standard rate', evCostOnStd, Math.abs(evCostOnStd - cheapestEV) < 0.01) +
+      evCostCol('Economy 7 night rate', evCostOnE7, Math.abs(evCostOnE7 - cheapestEV) < 0.01) +
+      evCostCol('EV off-peak rate', evCostOnEV, Math.abs(evCostOnEV - cheapestEV) < 0.01);
+  } else {
+    evCostBox.style.display = 'none';
+  }
 
   // CHART
   renderChart(dayK, nigK, evK, beE7kwh, beEVkwh, totK);
@@ -876,23 +956,26 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
   if (chartInst) { chartInst.destroy(); chartInst = null; }
 
   var totOffPeak = nigK + evK;
-  var labels = evK > 0
-    ? ['Standard\n(all day)', 'Economy 7\nProfile', 'EV Tariff\n(+ EV charging)']
-    : ['Standard\n(all day)', 'Economy 7\nProfile', 'EV Tariff'];
-
-  var dayData   = [totK,  dayK,  dayK];
-  var nightData = [0,     nigK,  nigK];
-  var evData    = [0,     0,     evK];
+  // Always 3 bars — EV bar greyed/empty when off to match column reservation
+  var evLabel = evOn ? (evK > 0 ? 'EV Tariff\n(+ charging)' : 'EV Tariff') : 'EV Tariff\n(off)';
+  var labels    = ['Standard\n(flat rate)', 'Economy 7\nProfile', evLabel];
+  // Standard: all usage at one flat rate — day + night + EV all in one bar
+  // E7: day in day colour, night+EV in night colour (all at night rate)
+  // EV: day in day colour, night in night colour, EV in green
+  var dayData   = [totK,          dayK,         evOn ? dayK  : 0];
+  var nightData = [0,             nigK + evK,   evOn ? nigK  : 0];
+  var evData    = [0,             0,            evOn ? evK   : 0];
+  var evGreyed  = !evOn;
 
   var beE7Pct = beE7/totK*100;
   var beEVPct = beEV/totK*100;
 
   document.getElementById('chartLegend').innerHTML =
-    '<div class="cleg"><div class="cleg-sq" style="background:#7c3aed"></div>Night usage (home)</div>' +
-    (evK > 0 ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV charging (off-peak)</div>' : '') +
-    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day usage</div>' +
-    '<div class="cleg"><div class="cleg-dash" style="border-color:#7c3aed"></div>E7 break-even: need <strong>' + beE7Pct.toFixed(1) + '% of electricity at night</strong></div>' +
-    '<div class="cleg"><div class="cleg-dash" style="border-color:#059669"></div>EV break-even: need ' + beEVPct.toFixed(1) + '% off-peak</div>';
+    '<div class="cleg"><div class="cleg-sq" style="background:#7c3aed"></div>Night (home)</div>' +
+    (evK > 0 ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV charging</div>' : '') +
+    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day</div>' +
+    '<div class="cleg"><div class="cleg-dash" style="border-color:#7c3aed"></div>E7 break-even: ' + Math.round(beE7) + ' kWh at night</div>' +
+    (evOn ? '<div class="cleg"><div class="cleg-dash" style="border-color:#059669"></div>EV break-even: ' + Math.round(beEV) + ' kWh off-peak</div>' : '');
 
   var beLinePlugin = {
     id: 'beLines',
@@ -901,35 +984,59 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
       var yScale = chart.scales.y;
       var xScale = chart.scales.x;
 
-      function drawLine(pct, color) {
+      function drawLine(pct, color, label) {
         var yPx = yScale.getPixelForValue(pct);
         ctx.save();
         ctx.beginPath();
-        ctx.setLineDash([5,4]);
+        ctx.setLineDash([6,4]);
+        ctx.strokeStyle = 'white';
+        ctx.lineWidth = 3;
+        ctx.moveTo(xScale.left, yPx);
+        ctx.lineTo(xScale.right, yPx);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.setLineDash([6,4]);
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 1.5;
         ctx.moveTo(xScale.left, yPx);
         ctx.lineTo(xScale.right, yPx);
         ctx.stroke();
         ctx.restore();
       }
-      drawLine(beE7Pct, '#7c3aed');
-      drawLine(beEVPct, '#059669');
+      // Only draw lines across E7 and EV bars (not Standard)
+      var xLeft = xScale.getPixelForValue(0.5); // start after first bar
+      var xRight = xScale.right;
+      function drawLineScoped(pct, color) {
+        var yPx = yScale.getPixelForValue(pct);
+        ctx.save();
+        ctx.beginPath(); ctx.setLineDash([6,4]);
+        ctx.strokeStyle = 'white'; ctx.lineWidth = 3;
+        ctx.moveTo(xLeft, yPx); ctx.lineTo(xRight, yPx); ctx.stroke();
+        ctx.beginPath(); ctx.setLineDash([6,4]);
+        ctx.strokeStyle = color; ctx.lineWidth = 1.5;
+        ctx.moveTo(xLeft, yPx); ctx.lineTo(xRight, yPx); ctx.stroke();
+        ctx.restore();
+      }
+      drawLineScoped(beE7, '#7c3aed');
+      if (evOn) drawLineScoped(beEV, '#059669');
     }
   };
 
+  Chart.register(ChartDataLabels);
   chartInst = new Chart(document.getElementById('beChart'), {
     type: 'bar',
-    plugins: [beLinePlugin],
+    plugins: [beLinePlugin, ChartDataLabels],
     data: {
       labels: labels,
       datasets: [
-        { label:'Night', data: nightData.map(function(d){ return totK>0?(d/totK*100):0; }),
-          backgroundColor:'#7c3aed', borderRadius:3, stack:'s' },
-        { label:'EV charging', data: evData.map(function(d){ return totK>0?(d/totK*100):0; }),
+        { label:'Night', data: nightData,
+          backgroundColor: nightData.map(function(d,i){ return (i===2 && evGreyed) ? 'rgba(124,58,237,0.15)' : '#7c3aed'; }),
+          borderRadius:3, stack:'s' },
+        { label:'EV charging', data: evData,
           backgroundColor:'#059669', borderRadius:3, stack:'s' },
-        { label:'Day', data: dayData.map(function(d,i){ return totK>0?(d/totK*100):0; }),
-          backgroundColor:'#f59e0b', borderRadius:3, stack:'s' }
+        { label:'Day', data: dayData,
+          backgroundColor: dayData.map(function(d,i){ return (i===2 && evGreyed) ? 'rgba(245,158,11,0.15)' : '#f59e0b'; }),
+          borderRadius:3, stack:'s' }
       ]
     },
     options: {
@@ -937,10 +1044,19 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
       maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
+        datalabels: {
+          display: function(ctx) { return ctx.dataset.data[ctx.dataIndex] > 0; },
+          color: 'white',
+          font: { size: 10, weight: '600' },
+          formatter: function(v) { return Math.round(v) + ' kWh'; },
+          anchor: 'center',
+          align: 'center',
+          clamp: true
+        },
         tooltip: {
           callbacks: {
             label: function(ctx) {
-              return ' ' + ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(1) + '%';
+              return ' ' + ctx.dataset.label + ': ' + Math.round(ctx.parsed.y) + ' kWh';
             }
           }
         }
@@ -953,9 +1069,25 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
         },
         y: {
           stacked: true,
-          min: 0, max: 100,
-          ticks: { callback: function(v){ return v+'%'; }, font: { size: 11 } },
-          title: { display: true, text: '% of total usage', font: { size: 10 } }
+          min: 0,
+          ticks: { callback: function(v){ return v; }, font: { size: 11 } },
+          title: { display: true, text: 'kWh', font: { size: 10 }, color: '#64748b' }
+        },
+        y2: {
+          type: 'linear',
+          position: 'right',
+          min: 0,
+          stacked: false,
+          ticks: {
+            callback: function(v){ return v; },
+            font: { size: 11 },
+            includeBounds: false
+          },
+          grid: { drawOnChartArea: false },
+          afterBuildTicks: function(axis) {
+            var left = axis.chart.scales.y;
+            if (left) axis.ticks = left.ticks.map(function(t){ return {value: t.value}; });
+          }
         }
       }
     }
@@ -983,11 +1115,14 @@ function setLock(unlocked) {
 
 function updateBundle() {
   var n = svc(), o = n-1;
-  document.getElementById('bundleText').textContent =
-    n===1 ? 'Energy only \u2014 1 service'
-          : 'Energy + '+o+' other'+(o>1?'s':'')+' \u2014 '+n+' services';
-  var tier = n>=3 ? 'Saver / Double Gold' : n===2 ? 'Fixed 79 / Gold' : 'Fixed Start / Value';
-  document.getElementById('bundleTier').textContent = tier;
+  // bundleText removed
+  var fixedNames = ['Fixed Start', 'Fixed 79', 'Fixed Saver'];
+  var varNames   = ['Value', 'Gold', 'Dbl Gold'];
+  var idx = n >= 3 ? 2 : n === 2 ? 1 : 0;
+  var tf = document.getElementById('bundleTierFixed');
+  var tv = document.getElementById('bundleTierVar');
+  if (tf) tf.textContent = 'Fixed: ' + fixedNames[idx];
+  if (tv) tv.textContent = 'Variable: ' + varNames[idx];
 }
 
 // ── REGION ────────────────────────────────────────────────────────────────
@@ -1002,9 +1137,21 @@ document.getElementById('regionSelect').addEventListener('change', function() {
 });
 
 // ── INPUTS ────────────────────────────────────────────────────────────────
+var splitTimer = null;
+function updateSplitDisplay() {
+  var d = parseFloat(document.getElementById('dayKwh').value) || 0;
+  var n = parseFloat(document.getElementById('nightKwh').value) || 0;
+  var t = d + n;
+  // split display removed
+}
+
 ['dayKwh','nightKwh','evKwh'].forEach(function(id) {
   document.getElementById(id).addEventListener('input', function() {
-    if (id !== 'evKwh') clearPresets();
+    if (id !== 'evKwh') {
+      clearPresets();
+      clearTimeout(splitTimer);
+      splitTimer = setTimeout(updateSplitDisplay, 3000);
+    }
     calculate();
   });
 });
@@ -1024,10 +1171,15 @@ function clearPresets() {
     clearPresets();
     this.classList.add('on');
     calculate();
+    // Auto-collapse accordion after 3s
+    setTimeout(function() {
+      var det = document.getElementById('usageEstDetails');
+      if (det && det.open) det.removeAttribute('open');
+    }, 3000);
   });
 });
 
-// ── FV TOGGLE (synced between top and results) ────────────────────────────
+// ── FV TOGGLE ────────────────────────────────────────────────────────────
 function setFV(v) {
   state.fv = v;
   ['btn-fixed','btn-fixed2'].forEach(function(id) {
@@ -1038,7 +1190,7 @@ function setFV(v) {
     var el = document.getElementById(id);
     if (el) el.className = 'fvb' + (v==='variable' ? ' av' : '');
   });
-  document.getElementById('svtNote').classList.toggle('show', v==='variable');
+  var sn = document.getElementById('svtNote'); if(sn) sn.classList.toggle('show', v==='variable');
   calculate();
 }
 ['btn-fixed','btn-fixed2'].forEach(function(id) {
@@ -1050,7 +1202,42 @@ function setFV(v) {
   if (el) el.addEventListener('click', function(){ setFV('variable'); });
 });
 
+// ── EV TOGGLE ─────────────────────────────────────────────────────────────
+var evOn = false;
+var evFirstOn = true;
+document.getElementById('evToggleBtn').addEventListener('click', function() {
+  evOn = !evOn;
+  this.textContent = evOn ? '🚗 EV on' : '🚗 EV off';
+  this.style.background = evOn ? 'rgba(0,166,81,0.25)' : 'rgba(255,255,255,0.1)';
+  this.style.borderColor = evOn ? 'rgba(0,166,81,0.7)' : 'rgba(255,255,255,0.25)';
+  this.style.color = evOn ? '#a7f3d0' : 'rgba(255,255,255,0.5)';
+  document.getElementById('card-ev').style.display = evOn ? '' : 'none';
+  document.getElementById('evColHeader').style.opacity = evOn ? '1' : '0.4';
+  var loEv = document.getElementById('lo-ev');
+  loEv.style.opacity = evOn ? '1' : '0';
+  loEv.style.pointerEvents = evOn ? '' : 'none';
+  // Pre-fill 3000 kWh on first enable if field is empty
+  if (evOn && evFirstOn) {
+    var evField = document.getElementById('evKwh');
+    if (!evField.value) evField.value = 3000;
+    evFirstOn = false;
+  }
+  calculate();
+});
+
 // ── INIT ──────────────────────────────────────────────────────────────────
+// Presets details toggle arrow
+var det = document.getElementById('usageEstDetails');
+if (det) {
+  det.addEventListener('toggle', function() {
+    var arr = document.getElementById('estimSummaryArrow');
+    if (arr) arr.style.transform = det.open ? 'rotate(90deg)' : '';
+  });
+}
+// EV off by default — hide card and input
+document.getElementById('card-ev').style.display = 'none';
+// lo-ev starts at opacity:0 from HTML
+updateBundle();
 setLock(false);
 calculate();
 
