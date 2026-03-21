@@ -459,7 +459,9 @@ input[type="number"]:focus, input.num-input:focus {
         <div class="isfx">kWh / year</div>
       </div>
       <div class="igrp" id="lo-ev" style="opacity:0;pointer-events:none;transition:opacity 0.2s">
-        <label class="ilbl"><span class="dot dev"></span> 🚗 EV charging <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span></label>
+        <label class="ilbl">
+          <span class="dot dev"></span> 🚗 EV charging <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span>
+        </label>
         <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="e.g. 1,800">
         <div class="isfx">kWh / year</div>
       </div>
@@ -526,7 +528,13 @@ input[type="number"]:focus, input.num-input:focus {
         <button class="fvb" id="btn-variable2">📈 Variable</button>
       </div>
       <div style="flex:1;display:flex;justify-content:center">
-        <button id="evToggleBtn" title="Toggle EV tariff column" style="background:#f0f0f0;border:1.5px solid #d0d0d0;border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:700;color:#999;font-family:'DM Sans',sans-serif;transition:all 0.15s">🚗 EV off</button>
+        <div style="display:flex;align-items:center;gap:4px;position:relative">
+          <button id="evToggleBtn" title="Toggle EV tariff column" style="background:#f0f0f0;border:1.5px solid #d0d0d0;border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:700;color:#999;font-family:'DM Sans',sans-serif;transition:all 0.15s">🚗 EV off</button>
+          <span id="evBeTooltipTrig" style="background:var(--p);color:white;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif">?</span>
+          <span id="evBeTooltip" style="display:none;position:absolute;top:calc(100% + 8px);left:0;background:#1a1a2e;color:white;font-size:11px;font-weight:400;line-height:1.5;padding:10px 13px;border-radius:8px;white-space:normal;width:260px;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,0.35)">
+            <span id="evBeTooltipText">Select a region to see EV break-even</span>
+          </span>
+        </div>
       </div>
       <div style="display:flex;align-items:center;gap:5px">
         <span style="font-size:9.5px;color:var(--gmid)">VAT <span style="font-size:8px">(rates)</span></span>
@@ -865,12 +873,11 @@ function calculate() {
   var ti = getTariff(r);
   var t = ti.t, ev = ti.ev;
 
-  // All three tariffs include EV charging kWh — charged at each tariff's appropriate rate
-  // Standard: EV kWh at flat rate (no off-peak benefit)
-  // E7: EV kWh at DAY rate — without EV tariff there's no off-peak benefit for EV charging
-  // EV: EV kWh at off-peak rate (the whole point of the EV tariff)
+  // Standard: EV kWh at flat rate — no night rate exists, all usage billed equally
+  // E7: EV kWh at night rate — customer charges overnight within the 7hr window
+  // EV: EV kWh at off-peak rate — 5hr midnight–5am window
   var stdCost = calcStd(t, dayK, nigK + evKeff);
-  var e7Cost  = calcE7(t, dayK + evKeff, nigK);
+  var e7Cost  = calcE7(t, dayK, nigK + evKeff);
   var evCost  = calcEV(ev, dayK, nigK, evKeff);
 
   var allC = evOn ? [stdCost, e7Cost, evCost] : [stdCost, e7Cost];
@@ -926,6 +933,23 @@ function calculate() {
   var beEVkwh = beEV(t, ev, totK);
   var totOffPeak = nigK + evKeff;
   var beEVpct = (beEVkwh/totK*100);
+  var gdsc_t = t.gdsc, gdu_t = t.gdu, ev_t = ev; // for tooltip
+  // Update EV tooltip with break-even in weekly kWh and miles
+  var evTipEl = document.getElementById('evBeTooltipText');
+  if (evTipEl && r > 0) {
+    var beWeekKwh = Math.round(beEVkwh / 52);
+    var beWeekMi3 = Math.round(beEVkwh * 3 / 52);
+    var beWeekMi4 = Math.round(beEVkwh * 4 / 52);
+    var regionName = (document.getElementById('regionSelect').options[document.getElementById('regionSelect').selectedIndex]||{text:''}).text;
+    regionName = regionName.indexOf('·') > -1 ? regionName.split('·')[1].trim() : regionName;
+    var evKwh = parseNum('evKwh');
+    var evSavingNow = evKwh > 0 ? Math.round(((gdsc_t/100)*365 + (gdu_t/100)*(dayK+nigK+evKeff) - (ev_t.sc/100)*365 - (ev_t.pk/100)*dayK - (ev_t.op/100)*(nigK+evKeff)) * VAT) : null;
+    evTipEl.innerHTML = '<strong style="color:#a5b4fc">EV tariff vs Standard — ' + regionName + '</strong><br>' +
+      'Needs <strong>' + Math.round(beEVkwh).toLocaleString('en-GB') + ' kWh/yr</strong> overnight EV charging to break even.<br>' +
+      'Approx <strong>' + beWeekKwh + ' kWh/week</strong> &mdash; roughly <strong>' + beWeekMi3 + '&ndash;' + beWeekMi4 + ' miles/week</strong>.' +
+      (evSavingNow !== null && evKwh > 0 ? '<br>At current EV usage: ' + (evSavingNow > 0 ? '<strong style="color:#6ee7b7">saves £' + evSavingNow + '/yr</strong>' : '<span style="color:#fca5a5">costs £' + Math.abs(evSavingNow) + '/yr extra</span>') : '') +
+      '<br><br><span style="opacity:0.65;font-size:10px">Rough guide: 100 miles/week ≈ ' + Math.round(100/3.5*52) + ' kWh/yr &middot; 3&ndash;4 miles per kWh</span>';
+  }
 
   document.getElementById('nbBe').textContent = 'Break-even: ' + Math.round(beE7pct) + '% at night';
   // Update marker position
@@ -992,6 +1016,9 @@ function calculate() {
         h += '<div class="pct-saving" style="color:' + scol + '">' + stxt + '</div>';
       }
     }
+    if (cfg.fixedNote) {
+      h += '<div style="font-size:9.5px;color:var(--p);margin-top:6px;padding-top:6px;border-top:1px solid var(--bdr)">🔒 E7 profile can be fixed — protects against variable rate rises</div>';
+    }
     h += '</div>';
     return h;
   }
@@ -1004,7 +1031,8 @@ function calculate() {
     dayPct: dayPct, nightPct: custNightPct,
     bePct: Math.round(beE7pct) + '%',
     verdict: custNightPct !== null ? (e7Above ? 'win' : 'lose') : 'none',
-    saving: e7Saving
+    saving: e7Saving,
+    fixedNote: state.fv === 'fixed'
   });
   // col 3 — EV (only if evOn)
   if (evOn) {
@@ -1053,8 +1081,8 @@ function calculate() {
   var e7ScPerKwh = totK > 0 ? ((t.e7sc/100)*365*VAT / totK) : 0;
   var evScPerKwh = totK > 0 ? ((ev.sc/100)*365*VAT / totK) : 0;
   var stdDayCost  = (t.gdu/100 * totK * VAT) + (t.gdsc/100)*365*VAT;  // full std cost
-  var e7DayCost   = (t.e7d/100 * (dayK + evKeff)) * VAT + (t.e7sc/100)*365*VAT;
-  var e7NightCost = (t.e7n/100 * nigK) * VAT;
+  var e7DayCost   = (t.e7d/100 * dayK) * VAT + (t.e7sc/100)*365*VAT;
+  var e7NightCost = (t.e7n/100 * (nigK + evKeff)) * VAT;
   var evDayCost   = (ev.pk/100 * dayK) * VAT + (ev.sc/100)*365*VAT;
   var evNightCost = (ev.op/100 * nigK) * VAT;
   var evEvCost2   = (ev.op/100 * evKeff) * VAT;
@@ -1322,6 +1350,21 @@ document.getElementById('evToggleBtn').addEventListener('click', function() {
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────
+// EV break-even tooltip hover — inside DOMContentLoaded so element exists
+var evTrig = document.getElementById('evBeTooltipTrig');
+if (evTrig) {
+  evTrig.addEventListener('mouseenter', function() {
+    document.getElementById('evBeTooltip').style.display = 'block';
+  });
+  evTrig.addEventListener('mouseleave', function() {
+    document.getElementById('evBeTooltip').style.display = 'none';
+  });
+  evTrig.addEventListener('click', function() {
+    var tt = document.getElementById('evBeTooltip');
+    tt.style.display = tt.style.display === 'none' ? 'block' : 'none';
+  });
+}
+
 // Presets details toggle arrow
 var det = document.getElementById('usageEstDetails');
 if (det) {
