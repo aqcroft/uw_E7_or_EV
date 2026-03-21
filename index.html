@@ -556,6 +556,7 @@ input[type="number"]:focus, input.num-input:focus {
 <script>
 // ── GLOBAL STATE (must be outside DOMContentLoaded for onclick access) ──────
 var VAT_GLOBAL = 1.05;
+var ratesOpen = false;
 var vatInc = true;
 
 function toggleVAT() {
@@ -574,8 +575,7 @@ function toggleVAT() {
     });
   });
   // Update footer note
-  var vn = document.getElementById('vatNote');
-  if (vn) vn.textContent = vatInc ? 'All figures include 5% VAT · Direct Debit rates' : 'All figures exclude VAT · Direct Debit rates';
+  // footer note stays fixed — VAT toggle only affects rates accordion
   // Recalculate costs (VAT affects displayed costs)
   if (typeof calculate === 'function') calculate();
 }
@@ -770,6 +770,28 @@ function rcard(id, cfg) {
   });
   h += '</div></details>';
   el.innerHTML = h;
+  // Sync accordion open state and attach toggle listener
+  var det = el.querySelector('.rates-details');
+  if (det) {
+    if (ratesOpen) det.setAttribute('open', '');
+    det.addEventListener('toggle', function() {
+      if (det.open) {
+        ratesOpen = true;
+        // Open all other rate accordions too
+        ['card-std','card-e7','card-ev'].forEach(function(cid) {
+          var other = document.getElementById('det-' + cid);
+          if (other && !other.open) other.setAttribute('open', '');
+        });
+      } else {
+        // Only close all if user explicitly closes
+        ratesOpen = false;
+        ['card-std','card-e7','card-ev'].forEach(function(cid) {
+          var other = document.getElementById('det-' + cid);
+          if (other && other.open) other.removeAttribute('open');
+        });
+      }
+    }, {once: false});
+  }
 }
 
 // wwRow removed — replaced by pctCard
@@ -850,8 +872,7 @@ function calculate() {
       ['Standing charge', ev.sc],
       ['Peak rate (5am–midnight)', ev.pk],
       ['Off-peak (midnight–5am)', ev.op],
-      evK > 0 ? ['EV charging kWh', evK] : null
-    ].filter(Boolean)
+    ]
   });
 
   // Savings banner
