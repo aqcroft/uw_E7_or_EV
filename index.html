@@ -462,8 +462,10 @@ input[type="number"]:focus, input.num-input:focus {
         <label class="ilbl">
           <span class="dot dev"></span> 🚗 EV charging <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span>
         </label>
-        <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="e.g. 1,800">
-        <div class="isfx">kWh / year</div>
+        <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="e.g. 2,500">
+        <div class="isfx">kWh / year &nbsp;·&nbsp;
+          <span style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted" id="milesToggle">or enter miles</span>
+        </div>
       </div>
     </div>
 
@@ -530,7 +532,7 @@ input[type="number"]:focus, input.num-input:focus {
       <div style="flex:1;display:flex;justify-content:center">
         <div style="display:flex;align-items:center;gap:4px;position:relative">
           <button id="evToggleBtn" title="Toggle EV tariff column" style="background:#f0f0f0;border:1.5px solid #d0d0d0;border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:700;color:#999;font-family:'DM Sans',sans-serif;transition:all 0.15s">🚗 EV off</button>
-          <span id="evBeTooltipTrig" style="background:var(--p);color:white;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif">?</span>
+          <span id="evBeTooltipTrig" style="background:#cbd5e1;color:white;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif">?</span>
           <span id="evBeTooltip" style="display:none;position:absolute;top:calc(100% + 8px);left:0;background:#1a1a2e;color:white;font-size:11px;font-weight:400;line-height:1.5;padding:10px 13px;border-radius:8px;white-space:normal;width:260px;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,0.35)">
             <span id="evBeTooltipText">Select a region to see EV break-even</span>
           </span>
@@ -586,6 +588,30 @@ input[type="number"]:focus, input.num-input:focus {
     <div style="font-size:13px;line-height:1.6">Select a region to begin.<br>All other inputs will unlock once a region is chosen.</div>
   </div>
 
+
+<!-- MILES MODAL -->
+<div id="milesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:var(--r);padding:20px;width:min(320px,90vw);box-shadow:0 8px 32px rgba(0,0,0,0.25);position:relative">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--p);margin-bottom:12px">🚗 Miles → kWh converter</div>
+    <div style="font-size:12px;color:var(--gmid);margin-bottom:10px">Enter annual or weekly mileage to calculate EV charging kWh</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div>
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);display:block;margin-bottom:4px">Annual miles</label>
+        <input type="text" inputmode="numeric" class="num-input" id="evMilesAnnual" placeholder="e.g. 8,000" style="font-size:14px;padding:8px 10px">
+      </div>
+      <div>
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);display:block;margin-bottom:4px">Weekly miles</label>
+        <input type="text" inputmode="numeric" class="num-input" id="evMilesWeekly" placeholder="e.g. 150" style="font-size:14px;padding:8px 10px">
+      </div>
+    </div>
+    <div id="milesModalResult" style="display:none;background:var(--ppal);border-radius:var(--rs);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--p)"></div>
+    <div style="display:flex;gap:8px">
+      <button id="milesModalUse" style="flex:1;padding:9px;background:var(--p);color:white;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none">Use this figure</button>
+      <button id="milesModalClose" style="flex:1;padding:9px;background:var(--glit);color:var(--gmid);border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Close</button>
+    </div>
+    <div style="font-size:9.5px;color:var(--gmid);margin-top:8px;text-align:center">Based on 3.5 miles per kWh average EV efficiency</div>
+  </div>
+</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -937,18 +963,17 @@ function calculate() {
   // Update EV tooltip with break-even in weekly kWh and miles
   var evTipEl = document.getElementById('evBeTooltipText');
   if (evTipEl && r > 0) {
-    var beWeekKwh = Math.round(beEVkwh / 52);
-    var beWeekMi3 = Math.round(beEVkwh * 3 / 52);
-    var beWeekMi4 = Math.round(beEVkwh * 4 / 52);
+    var beWeekMi = Math.round(beEVkwh * 3.5 / 52 / 10) * 10;
+    var beAnnualMi = Math.round(beEVkwh * 3.5 / 100) * 100;
     var regionName = (document.getElementById('regionSelect').options[document.getElementById('regionSelect').selectedIndex]||{text:''}).text;
     regionName = regionName.indexOf('·') > -1 ? regionName.split('·')[1].trim() : regionName;
     var evKwh = parseNum('evKwh');
     var evSavingNow = evKwh > 0 ? Math.round(((gdsc_t/100)*365 + (gdu_t/100)*(dayK+nigK+evKeff) - (ev_t.sc/100)*365 - (ev_t.pk/100)*dayK - (ev_t.op/100)*(nigK+evKeff)) * VAT) : null;
     evTipEl.innerHTML = '<strong style="color:#a5b4fc">EV tariff vs Standard — ' + regionName + '</strong><br>' +
       'Needs <strong>' + Math.round(beEVkwh).toLocaleString('en-GB') + ' kWh/yr</strong> overnight EV charging to break even.<br>' +
-      'Approx <strong>' + beWeekKwh + ' kWh/week</strong> &mdash; roughly <strong>' + beWeekMi3 + '&ndash;' + beWeekMi4 + ' miles/week</strong>.' +
+      'Approx <strong>' + beWeekMi + ' miles/week</strong> (' + beAnnualMi.toLocaleString('en-GB') + ' miles/yr).' +
       (evSavingNow !== null && evKwh > 0 ? '<br>At current EV usage: ' + (evSavingNow > 0 ? '<strong style="color:#6ee7b7">saves £' + evSavingNow + '/yr</strong>' : '<span style="color:#fca5a5">costs £' + Math.abs(evSavingNow) + '/yr extra</span>') : '') +
-      '<br><br><span style="opacity:0.65;font-size:10px">Rough guide: 100 miles/week ≈ ' + Math.round(100/3.5*52) + ' kWh/yr &middot; 3&ndash;4 miles per kWh</span>';
+      '<br><br><span style="opacity:0.65;font-size:10px">Based on 3.5 miles per kWh average efficiency</span>';
   }
 
   document.getElementById('nbBe').textContent = 'Break-even: ' + Math.round(beE7pct) + '% at night';
@@ -1340,16 +1365,75 @@ document.getElementById('evToggleBtn').addEventListener('click', function() {
   var loEv = document.getElementById('lo-ev');
   loEv.style.opacity = evOn ? '1' : '0';
   loEv.style.pointerEvents = evOn ? '' : 'none';
+  var evQBtn = document.getElementById('evBeTooltipTrig');
+  if (evQBtn) { evQBtn.style.display = evOn ? 'inline-flex' : 'none'; evQBtn.style.background = 'var(--p)'; }
   // Pre-fill 3000 kWh on first enable if field is empty
   if (evOn && evFirstOn) {
     var evField = document.getElementById('evKwh');
-    if (!evField.value) evField.value = (3000).toLocaleString('en-GB');
+    if (!evField.value) evField.value = (2500).toLocaleString('en-GB');
     evFirstOn = false;
   }
   calculate();
 });
 
 // ── INIT ──────────────────────────────────────────────────────────────────
+// Miles → kWh converter
+// Miles modal
+var milesToggle = document.getElementById('milesToggle');
+var milesModal   = document.getElementById('milesModal');
+var milesModalKwh = 0;
+
+function updateMilesModal(annual, weekly) {
+  if (annual > 0 || weekly > 0) {
+    var totalMiles = annual > 0 ? annual : weekly * 52;
+    milesModalKwh = Math.round(totalMiles / 3.5);
+    var annDisplay = annual > 0 ? annual : weekly * 52;
+    var wkDisplay  = weekly > 0 ? weekly : Math.round(annual / 52 / 10) * 10;
+    document.getElementById('milesModalResult').style.display = 'block';
+    document.getElementById('milesModalResult').innerHTML =
+      '<strong>' + Math.round(annDisplay).toLocaleString('en-GB') + ' miles/yr</strong> ' +
+      '(' + wkDisplay.toLocaleString('en-GB') + ' miles/week) ' +
+      '= <strong>' + milesModalKwh.toLocaleString('en-GB') + ' kWh/yr</strong>';
+    document.getElementById('milesModalUse').style.display = 'block';
+  } else {
+    document.getElementById('milesModalResult').style.display = 'none';
+    document.getElementById('milesModalUse').style.display = 'none';
+    milesModalKwh = 0;
+  }
+}
+
+if (milesToggle) {
+  milesToggle.addEventListener('click', function() {
+    milesModal.style.display = 'flex';
+    document.getElementById('evMilesAnnual').focus();
+  });
+}
+document.getElementById('milesModalClose').addEventListener('click', function() {
+  milesModal.style.display = 'none';
+});
+document.getElementById('milesModal').addEventListener('click', function(e) {
+  if (e.target === this) this.style.display = 'none';
+});
+document.getElementById('milesModalUse').addEventListener('click', function() {
+  if (milesModalKwh > 0) {
+    document.getElementById('evKwh').value = milesModalKwh.toLocaleString('en-GB');
+    milesModal.style.display = 'none';
+    calculate();
+  }
+});
+document.getElementById('evMilesAnnual').addEventListener('input', function() {
+  fmtNumInput(this);
+  var annual = parseFloat(this.value.replace(/,/g,'')) || 0;
+  if (annual > 0) document.getElementById('evMilesWeekly').value = Math.round(annual/52/10)*10 > 0 ? (Math.round(annual/52/10)*10).toLocaleString('en-GB') : '';
+  updateMilesModal(annual, 0);
+});
+document.getElementById('evMilesWeekly').addEventListener('input', function() {
+  fmtNumInput(this);
+  var weekly = parseFloat(this.value.replace(/,/g,'')) || 0;
+  if (weekly > 0) document.getElementById('evMilesAnnual').value = (Math.round(weekly*52/100)*100).toLocaleString('en-GB');
+  updateMilesModal(0, weekly);
+});
+
 // EV break-even tooltip hover — inside DOMContentLoaded so element exists
 var evTrig = document.getElementById('evBeTooltipTrig');
 if (evTrig) {
