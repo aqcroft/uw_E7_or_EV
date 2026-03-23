@@ -453,6 +453,7 @@ input[type="number"]:focus, input.num-input:focus {
         <label class="ilbl"><span class="dot dd"></span> Day <span style="font-weight:400;text-transform:none;font-size:9px">(7am–midnight)</span></label>
         <input type="text" inputmode="numeric" class="num-input" id="dayKwh" placeholder="e.g. 2,262">
         <div class="isfx">kWh / year</div>
+        <div style="margin-top:5px;font-size:10.5px"><span id="billModalTrigger" style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted">🔢 Not sure? Use the annual bill calculator</span></div>
       </div>
       <div class="igrp">
         <label class="ilbl"><span class="dot dn"></span> Night <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–7am)</span></label>
@@ -460,20 +461,14 @@ input[type="number"]:focus, input.num-input:focus {
         <div class="isfx">kWh / year</div>
       </div>
       <div class="igrp" id="lo-ev" style="opacity:0;pointer-events:none;transition:opacity 0.2s">
-        <label class="ilbl">
-          <span class="dot dev"></span> 🚗 EV charging <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span>
-        </label>
+        <label class="ilbl" style="white-space:nowrap"><span class="dot dev"></span> 🚗 EV <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span></label>
         <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="e.g. 2,500">
-        <div class="isfx">kWh / year &nbsp;·&nbsp;
-          <span style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted" id="milesToggle">use the EV mileage kWh calculator</span>
-        </div>
+        <div class="isfx">kWh / year</div>
+        <div style="margin-top:5px;font-size:10.5px"><span style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted" id="milesToggle">🔢 Not sure? Use the EV kWh calculator</span></div>
       </div>
     </div>
 
     <div style="margin-top:12px">
-      <div style="margin-bottom:8px;font-size:10.5px;color:var(--gmid)">
-        Have a bill? <span id="billModalTrigger" style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted">Use the annual bill calculator</span>
-      </div>
       <details id="usageEstDetails">
         <summary style="font-size:10.5px;color:var(--gmid);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:6px">
           <span id="estimSummaryArrow" style="font-size:10px;transition:transform 0.2s">▶</span>
@@ -592,6 +587,51 @@ input[type="number"]:focus, input.num-input:focus {
       <div class="vat-note" id="vatNote" style="margin-top:8px;margin-bottom:0">All figures include 5% VAT · Direct Debit rates</div>
     </div>
 
+    <!-- GAS SECTION -->
+    <div id="gasSection" style="margin-top:9px">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+        <span style="font-size:11px;font-weight:600;color:var(--gmid)">⛽ Add gas to see full dual-fuel picture</span>
+        <button id="gasToggleBtn" style="background:#f0f0f0;border:1.5px solid #d0d0d0;border-radius:20px;padding:4px 14px;cursor:pointer;font-size:11px;font-weight:700;color:#999;font-family:'DM Sans',sans-serif;transition:all 0.15s">Gas off</button>
+      </div>
+      <div id="gasContent" style="display:none">
+        <div style="background:var(--glit);border-radius:var(--r);padding:10px 14px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <label style="font-size:11px;font-weight:600;color:var(--gmid)">Annual gas usage</label>
+            <div style="display:flex;align-items:center;gap:6px">
+              <input type="text" inputmode="numeric" class="num-input" id="gasKwhInput" placeholder="e.g. 11,500" style="width:120px;font-size:13px;padding:6px 10px">
+              <span style="font-size:11px;color:var(--gmid)">kWh / year</span>
+            </div>
+            <div style="margin-left:auto;font-size:10px;color:var(--p);font-weight:600" id="gasDualFuelNote"></div>
+          </div>
+        </div>
+        <div id="gasFvWrap" style="display:none;margin-bottom:8px">
+          <div class="fvpill">
+            <button class="fvb af" id="gas-btn-fixed">🔒 Fixed</button>
+            <button class="fvb" id="gas-btn-variable">📈 Variable</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="gasCards"></div>
+        <div style="font-size:10px;color:var(--gmid);margin-top:6px;text-align:right">⚠ Variable gas rates: Jan 2026 · Fixed rates current</div>
+
+        <!-- GAS COST CHART -->
+        <div id="gasChartWrap" style="display:none;margin-top:12px">
+          <div class="chart-title"><span class="chart-title-txt">🔥 Gas Annual Cost — Fixed vs Variable</span></div>
+          <div style="position:relative;width:100%;height:140px">
+            <canvas id="gasChart"></canvas>
+          </div>
+        </div>
+
+        <!-- COMBINED CHART -->
+        <div id="combinedChartWrap" style="display:none;margin-top:12px">
+          <div class="chart-title"><span class="chart-title-txt">⚡🔥 Combined Annual Cost — Electricity + Gas</span></div>
+          <div style="position:relative;width:100%;height:160px">
+            <canvas id="combinedChart"></canvas>
+          </div>
+          <div style="font-size:10px;color:var(--gmid);margin-top:4px;text-align:right">Based on selected electricity tariff above + gas fixed/variable</div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div id="emptyState" style="text-align:center;padding:40px 20px;color:var(--gmid)">
@@ -604,22 +644,22 @@ input[type="number"]:focus, input.num-input:focus {
 <div id="billModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
   <div style="background:white;border-radius:var(--r);padding:20px;width:min(340px,92vw);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
     <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--p);margin-bottom:4px">📋 Annual bill calculator</div>
-    <div style="font-size:11.5px;color:var(--gmid);margin-bottom:14px">Enter your annual total kWh from your bill, plus one month's day/night reading — we'll work out your annual day/night split proportionally.</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-      <div>
-        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);display:block;margin-bottom:4px">Annual total</label>
-        <input type="text" inputmode="numeric" class="num-input" id="annualTotal" placeholder="e.g. 4,200" style="font-size:14px;padding:8px 10px">
-        <div style="font-size:9px;color:var(--gmid);margin-top:3px">kWh / year</div>
-      </div>
+    <div style="font-size:11.5px;color:var(--gmid);margin-bottom:14px">Enter your <strong>annual</strong> total kWh from your bill, plus <strong>one month's</strong> day/night reading — we'll work out your annual day/night split proportionally.</div>
+    <div style="margin-bottom:10px">
+      <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);display:block;margin-bottom:4px">📋 Annual Estimated Consumption</label>
+      <input type="text" inputmode="numeric" class="num-input" id="annualTotal" placeholder="e.g. 4,200" style="font-size:15px;padding:9px 12px;width:100%">
+      <div style="font-size:9px;color:var(--gmid);margin-top:3px">kWh / year</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
       <div>
         <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);display:block;margin-bottom:4px"><span class="dot dd" style="display:inline-block"></span> Day</label>
         <input type="text" inputmode="numeric" class="num-input" id="monthlyDay" placeholder="e.g. 189" style="font-size:14px;padding:8px 10px">
-        <div style="font-size:9px;color:var(--gmid);margin-top:3px">kWh that month</div>
+        <div style="font-size:9px;color:var(--gmid);margin-top:3px">kWh / month</div>
       </div>
       <div>
         <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);display:block;margin-bottom:4px"><span class="dot dn" style="display:inline-block"></span> Night</label>
         <input type="text" inputmode="numeric" class="num-input" id="monthlyNight" placeholder="e.g. 137" style="font-size:14px;padding:8px 10px">
-        <div style="font-size:9px;color:var(--gmid);margin-top:3px">kWh that month</div>
+        <div style="font-size:9px;color:var(--gmid);margin-top:3px">kWh / month</div>
       </div>
     </div>
     <div id="billModalResult" style="display:none;background:var(--ppal);border-radius:var(--rs);padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--p)"></div>
@@ -752,103 +792,104 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ── TARIFF DATA (DD, ex-VAT) ──────────────────────────────────────────────
 var FS = {
-  10:{gdsc:49.511,gdu:28.112,e7sc:49.725,e7d:38.717,e7n:9.126},
-  11:{gdsc:48.967,gdu:26.848,e7sc:48.452,e7d:36.970,e7n:8.896},
-  12:{gdsc:40.019,gdu:28.091,e7sc:39.639,e7d:38.590,e7n:9.049},
-  13:{gdsc:64.784,gdu:29.451,e7sc:64.056,e7d:40.186,e7n:9.911},
-  14:{gdsc:54.611,gdu:27.096,e7sc:54.259,e7d:37.331,e7n:9.041},
-  15:{gdsc:58.988,gdu:27.023,e7sc:58.257,e7d:37.210,e7n:8.896},
-  16:{gdsc:42.974,gdu:27.826,e7sc:42.333,e7d:37.971,e7n:9.357},
-  17:{gdsc:53.300,gdu:28.635,e7sc:53.965,e7d:37.274,e7n:12.286},
-  18:{gdsc:58.767,gdu:27.737,e7sc:59.330,e7d:37.827,e7n:9.537},
-  19:{gdsc:50.045,gdu:28.362,e7sc:50.314,e7d:39.033,e7n:9.099},
-  20:{gdsc:48.201,gdu:27.828,e7sc:48.192,e7d:38.342,e7n:9.011},
-  21:{gdsc:52.648,gdu:28.145,e7sc:51.724,e7d:38.835,e7n:9.090},
-  22:{gdsc:53.239,gdu:28.148,e7sc:53.629,e7d:38.814,e7n:8.956},
-  23:{gdsc:59.051,gdu:27.116,e7sc:58.436,e7d:37.327,e7n:9.143}
+  10:{gsc:25.513,gu:6.847,gdsc:49.511,gdu:28.112,e7sc:49.725,e7d:38.717,e7n:9.126},
+  11:{gsc:25.517,gu:6.78,gdsc:48.967,gdu:26.848,e7sc:48.452,e7d:36.970,e7n:8.896},
+  12:{gsc:25.565,gu:7.088,gdsc:40.019,gdu:28.091,e7sc:39.639,e7d:38.590,e7n:9.049},
+  13:{gsc:25.512,gu:6.871,gdsc:64.784,gdu:29.451,e7sc:64.056,e7d:40.186,e7n:9.911},
+  14:{gsc:25.512,gu:6.863,gdsc:54.611,gdu:27.096,e7sc:54.259,e7d:37.331,e7n:9.041},
+  15:{gsc:25.512,gu:6.872,gdsc:58.988,gdu:27.023,e7sc:58.257,e7d:37.210,e7n:8.896},
+  16:{gsc:25.514,gu:6.823,gdsc:42.974,gdu:27.826,e7sc:42.333,e7d:37.971,e7n:9.357},
+  17:{gsc:25.958,gu:6.94,gdsc:53.300,gdu:28.635,e7sc:53.965,e7d:37.274,e7n:12.286},
+  18:{gsc:25.591,gu:6.845,gdsc:58.767,gdu:27.737,e7sc:59.330,e7d:37.827,e7n:9.537},
+  19:{gsc:25.506,gu:6.968,gdsc:50.045,gdu:28.362,e7sc:50.314,e7d:39.033,e7n:9.099},
+  20:{gsc:24.938,gu:6.942,gdsc:48.201,gdu:27.828,e7sc:48.192,e7d:38.342,e7n:9.011},
+  21:{gsc:25.504,gu:7.003,gdsc:52.648,gdu:28.145,e7sc:51.724,e7d:38.835,e7n:9.090},
+  22:{gsc:25.501,gu:7.053,gdsc:53.239,gdu:28.148,e7sc:53.629,e7d:38.814,e7n:8.956},
+  23:{gsc:25.513,gu:6.858,gdsc:59.051,gdu:27.116,e7sc:58.436,e7d:37.327,e7n:9.143}
 };
 var F79 = {
-  10:{gdsc:47.032,gdu:27.682,e7sc:47.247,e7d:38.023,e7n:9.126},
-  11:{gdsc:46.489,gdu:26.436,e7sc:45.974,e7d:36.304,e7n:8.896},
-  12:{gdsc:37.534,gdu:27.670,e7sc:37.155,e7d:37.914,e7n:9.049},
-  13:{gdsc:62.305,gdu:28.989,e7sc:61.579,e7d:39.443,e7n:9.911},
-  14:{gdsc:52.132,gdu:26.676,e7sc:51.781,e7d:36.652,e7n:9.041},
-  15:{gdsc:56.509,gdu:26.600,e7sc:55.779,e7d:36.527,e7n:8.896},
-  16:{gdsc:40.495,gdu:27.406,e7sc:39.856,e7d:37.295,e7n:9.357},
-  17:{gdsc:50.778,gdu:28.195,e7sc:51.442,e7d:36.564,e7n:12.286},
-  18:{gdsc:56.281,gdu:27.304,e7sc:56.843,e7d:37.130,e7n:9.537},
-  19:{gdsc:47.566,gdu:27.928,e7sc:47.834,e7d:38.336,e7n:9.099},
-  20:{gdsc:45.776,gdu:27.404,e7sc:45.767,e7d:37.659,e7n:9.011},
-  21:{gdsc:50.169,gdu:27.713,e7sc:49.247,e7d:38.138,e7n:9.090},
-  22:{gdsc:50.760,gdu:27.716,e7sc:51.150,e7d:38.118,e7n:8.956},
-  23:{gdsc:56.573,gdu:26.692,e7sc:55.959,e7d:36.640,e7n:9.143}
+  10:{gsc:23.034,gu:6.743,gdsc:47.032,gdu:27.682,e7sc:47.247,e7d:38.023,e7n:9.126},
+  11:{gsc:23.039,gu:6.676,gdsc:46.489,gdu:26.436,e7sc:45.974,e7d:36.304,e7n:8.896},
+  12:{gsc:23.08,gu:6.982,gdsc:37.534,gdu:27.670,e7sc:37.155,e7d:37.914,e7n:9.049},
+  13:{gsc:23.033,gu:6.763,gdsc:62.305,gdu:28.989,e7sc:61.579,e7d:39.443,e7n:9.911},
+  14:{gsc:23.033,gu:6.757,gdsc:52.132,gdu:26.676,e7sc:51.781,e7d:36.652,e7n:9.041},
+  15:{gsc:23.033,gu:6.764,gdsc:56.509,gdu:26.600,e7sc:55.779,e7d:36.527,e7n:8.896},
+  16:{gsc:23.036,gu:6.72,gdsc:40.495,gdu:27.406,e7sc:39.856,e7d:37.295,e7n:9.357},
+  17:{gsc:23.436,gu:6.833,gdsc:50.778,gdu:28.195,e7sc:51.442,e7d:36.564,e7n:12.286},
+  18:{gsc:23.105,gu:6.738,gdsc:56.281,gdu:27.304,e7sc:56.843,e7d:37.130,e7n:9.537},
+  19:{gsc:23.027,gu:6.861,gdsc:47.566,gdu:27.928,e7sc:47.834,e7d:38.336,e7n:9.099},
+  20:{gsc:22.514,gu:6.836,gdsc:45.776,gdu:27.404,e7sc:45.767,e7d:37.659,e7n:9.011},
+  21:{gsc:23.025,gu:6.895,gdsc:50.169,gdu:27.713,e7sc:49.247,e7d:38.138,e7n:9.090},
+  22:{gsc:23.022,gu:6.945,gdsc:50.760,gdu:27.716,e7sc:51.150,e7d:38.118,e7n:8.956},
+  23:{gsc:23.034,gu:6.751,gdsc:56.573,gdu:26.692,e7sc:55.959,e7d:36.640,e7n:9.143}
 };
 var FSav = {
-  10:{gdsc:43.118,gdu:25.619,e7sc:43.332,e7d:34.696,e7n:9.126},
-  11:{gdsc:42.575,gdu:24.460,e7sc:42.062,e7d:33.110,e7n:8.896},
-  12:{gdsc:33.610,gdu:25.652,e7sc:33.234,e7d:34.672,e7n:9.049},
-  13:{gdsc:58.391,gdu:26.768,e7sc:57.667,e7d:35.872,e7n:9.911},
-  14:{gdsc:48.219,gdu:24.662,e7sc:47.868,e7d:33.389,e7n:9.041},
-  15:{gdsc:52.595,gdu:24.573,e7sc:51.867,e7d:33.253,e7n:8.896},
-  16:{gdsc:36.581,gdu:25.389,e7sc:35.946,e7d:34.052,e7n:9.357},
-  17:{gdsc:46.796,gdu:26.080,e7sc:47.457,e7d:33.154,e7n:12.286},
-  18:{gdsc:52.356,gdu:25.228,e7sc:52.915,e7d:33.780,e7n:9.537},
-  19:{gdsc:43.652,gdu:25.848,e7sc:43.920,e7d:34.989,e7n:9.099},
-  20:{gdsc:41.948,gdu:25.369,e7sc:41.939,e7d:34.378,e7n:9.011},
-  21:{gdsc:46.255,gdu:25.637,e7sc:45.336,e7d:34.788,e7n:9.090},
-  22:{gdsc:46.846,gdu:25.638,e7sc:47.235,e7d:34.775,e7n:8.956},
-  23:{gdsc:52.659,gdu:24.658,e7sc:52.047,e7d:33.343,e7n:9.143}
+  10:{gsc:19.12,gu:6.24,gdsc:43.118,gdu:25.619,e7sc:43.332,e7d:34.696,e7n:9.126},
+  11:{gsc:19.125,gu:6.177,gdsc:42.575,gdu:24.460,e7sc:42.062,e7d:33.110,e7n:8.896},
+  12:{gsc:19.156,gu:6.473,gdsc:33.610,gdu:25.652,e7sc:33.234,e7d:34.672,e7n:9.049},
+  13:{gsc:19.119,gu:6.245,gdsc:58.391,gdu:26.768,e7sc:57.667,e7d:35.872,e7n:9.911},
+  14:{gsc:19.12,gu:6.247,gdsc:48.219,gdu:24.662,e7sc:47.868,e7d:33.389,e7n:9.041},
+  15:{gsc:19.119,gu:6.249,gdsc:52.595,gdu:24.573,e7sc:51.867,e7d:33.253,e7n:8.896},
+  16:{gsc:19.122,gu:6.225,gdsc:36.581,gdu:25.389,e7sc:35.946,e7d:34.052,e7n:9.357},
+  17:{gsc:19.454,gu:6.32,gdsc:46.796,gdu:26.080,e7sc:47.457,e7d:33.154,e7n:12.286},
+  18:{gsc:19.179,gu:6.225,gdsc:52.356,gdu:25.228,e7sc:52.915,e7d:33.780,e7n:9.537},
+  19:{gsc:19.113,gu:6.35,gdsc:43.652,gdu:25.848,e7sc:43.920,e7d:34.989,e7n:9.099},
+  20:{gsc:18.686,gu:6.328,gdsc:41.948,gdu:25.369,e7sc:41.939,e7d:34.378,e7n:9.011},
+  21:{gsc:19.111,gu:6.379,gdsc:46.255,gdu:25.637,e7sc:45.336,e7d:34.788,e7n:9.090},
+  22:{gsc:19.108,gu:6.424,gdsc:46.846,gdu:25.638,e7sc:47.235,e7d:34.775,e7n:8.956},
+  23:{gsc:19.12,gu:6.236,gdsc:52.659,gdu:24.658,e7sc:52.047,e7d:33.343,e7n:9.143}
 };
 var VV = {
-  10:{gdsc:46.848,gdu:26.555,e7sc:47.158,e7d:39.490,e7n:5.772},
-  11:{gdsc:47.648,gdu:25.608,e7sc:47.074,e7d:38.171,e7n:5.605},
-  12:{gdsc:44.733,gdu:25.712,e7sc:44.280,e7d:37.393,e7n:6.911},
-  13:{gdsc:67.497,gdu:27.704,e7sc:66.730,e7d:38.212,e7n:9.911},
-  14:{gdsc:51.374,gdu:25.702,e7sc:50.986,e7d:38.495,e7n:5.426},
-  15:{gdsc:57.900,gdu:25.473,e7sc:57.138,e7d:36.200,e7n:8.050},
-  16:{gdsc:49.604,gdu:27.092,e7sc:48.900,e7d:37.528,e7n:9.357},
-  17:{gdsc:58.977,gdu:27.011,e7sc:59.766,e7d:35.455,e7n:12.286},
-  18:{gdsc:54.744,gdu:25.887,e7sc:55.491,e7d:35.696,e7n:9.537},
-  19:{gdsc:46.212,gdu:26.922,e7sc:46.573,e7d:39.729,e7n:6.121},
-  20:{gdsc:43.393,gdu:26.501,e7sc:43.414,e7d:39.036,e7n:6.316},
-  21:{gdsc:50.105,gdu:26.839,e7sc:49.142,e7d:39.319,e7n:6.605},
-  22:{gdsc:52.349,gdu:26.818,e7sc:52.809,e7d:39.073,e7n:6.794},
-  23:{gdsc:56.741,gdu:25.416,e7sc:56.106,e7d:38.318,e7n:5.149}
+  10:{gsc:32.952,gu:5.586,gdsc:46.848,gdu:26.555,e7sc:47.158,e7d:39.490,e7n:5.772},
+  11:{gsc:33.031,gu:5.514,gdsc:47.648,gdu:25.608,e7sc:47.074,e7d:38.171,e7n:5.605},
+  12:{gsc:33.796,gu:5.741,gdsc:44.733,gdu:25.712,e7sc:44.280,e7d:37.393,e7n:6.911},
+  13:{gsc:33.664,gu:5.658,gdsc:67.497,gdu:27.704,e7sc:66.730,e7d:38.212,e7n:9.911},
+  14:{gsc:33.311,gu:5.574,gdsc:51.374,gdu:25.702,e7sc:50.986,e7d:38.495,e7n:5.426},
+  15:{gsc:33.396,gu:5.651,gdsc:57.900,gdu:25.473,e7sc:57.138,e7d:36.200,e7n:8.050},
+  16:{gsc:33.42,gu:5.614,gdsc:49.604,gdu:27.092,e7sc:48.900,e7d:37.528,e7n:9.357},
+  17:{gsc:33.464,gu:5.608,gdsc:58.977,gdu:27.011,e7sc:59.766,e7d:35.455,e7n:12.286},
+  18:{gsc:33.489,gu:5.608,gdsc:54.744,gdu:25.887,e7sc:55.491,e7d:35.696,e7n:9.537},
+  19:{gsc:32.892,gu:5.548,gdsc:46.212,gdu:26.922,e7sc:46.573,e7d:39.729,e7n:6.121},
+  20:{gsc:32.777,gu:5.715,gdsc:43.393,gdu:26.501,e7sc:43.414,e7d:39.036,e7n:6.316},
+  21:{gsc:33.538,gu:5.816,gdsc:50.105,gdu:26.839,e7sc:49.142,e7d:39.319,e7n:6.605},
+  22:{gsc:32.922,gu:5.854,gdsc:52.349,gdu:26.818,e7sc:52.809,e7d:39.073,e7n:6.794},
+  23:{gsc:33.371,gu:5.619,gdsc:56.741,gdu:25.416,e7sc:56.106,e7d:38.318,e7n:5.149}
 };
 var VG = {
-  10:{gdsc:44.369,gdu:26.555,e7sc:44.679,e7d:39.490,e7n:5.772},
-  11:{gdsc:45.169,gdu:25.608,e7sc:44.596,e7d:38.171,e7n:5.605},
-  12:{gdsc:42.254,gdu:25.712,e7sc:41.801,e7d:37.393,e7n:6.911},
-  13:{gdsc:65.018,gdu:27.704,e7sc:64.251,e7d:38.212,e7n:9.911},
-  14:{gdsc:48.895,gdu:25.702,e7sc:48.508,e7d:38.495,e7n:5.426},
-  15:{gdsc:55.421,gdu:25.473,e7sc:54.659,e7d:36.200,e7n:8.050},
-  16:{gdsc:47.125,gdu:27.092,e7sc:46.421,e7d:37.528,e7n:9.357},
-  17:{gdsc:56.498,gdu:27.011,e7sc:57.287,e7d:35.455,e7n:12.286},
-  18:{gdsc:52.265,gdu:25.887,e7sc:53.012,e7d:35.696,e7n:9.537},
-  19:{gdsc:43.733,gdu:26.922,e7sc:44.094,e7d:39.729,e7n:6.121},
-  20:{gdsc:40.914,gdu:26.501,e7sc:40.936,e7d:39.036,e7n:6.316},
-  21:{gdsc:47.626,gdu:26.839,e7sc:46.663,e7d:39.319,e7n:6.605},
-  22:{gdsc:49.870,gdu:26.818,e7sc:50.330,e7d:39.073,e7n:6.794},
-  23:{gdsc:54.262,gdu:25.416,e7sc:53.627,e7d:38.318,e7n:5.149}
+  10:{gsc:30.473,gu:5.586,gdsc:44.369,gdu:26.555,e7sc:44.679,e7d:39.490,e7n:5.772},
+  11:{gsc:30.552,gu:5.514,gdsc:45.169,gdu:25.608,e7sc:44.596,e7d:38.171,e7n:5.605},
+  12:{gsc:31.317,gu:5.741,gdsc:42.254,gdu:25.712,e7sc:41.801,e7d:37.393,e7n:6.911},
+  13:{gsc:31.185,gu:5.658,gdsc:65.018,gdu:27.704,e7sc:64.251,e7d:38.212,e7n:9.911},
+  14:{gsc:30.832,gu:5.574,gdsc:48.895,gdu:25.702,e7sc:48.508,e7d:38.495,e7n:5.426},
+  15:{gsc:30.917,gu:5.651,gdsc:55.421,gdu:25.473,e7sc:54.659,e7d:36.200,e7n:8.050},
+  16:{gsc:30.941,gu:5.614,gdsc:47.125,gdu:27.092,e7sc:46.421,e7d:37.528,e7n:9.357},
+  17:{gsc:30.985,gu:5.608,gdsc:56.498,gdu:27.011,e7sc:57.287,e7d:35.455,e7n:12.286},
+  18:{gsc:31.01,gu:5.608,gdsc:52.265,gdu:25.887,e7sc:53.012,e7d:35.696,e7n:9.537},
+  19:{gsc:30.413,gu:5.548,gdsc:43.733,gdu:26.922,e7sc:44.094,e7d:39.729,e7n:6.121},
+  20:{gsc:30.298,gu:5.715,gdsc:40.914,gdu:26.501,e7sc:40.936,e7d:39.036,e7n:6.316},
+  21:{gsc:31.059,gu:5.816,gdsc:47.626,gdu:26.839,e7sc:46.663,e7d:39.319,e7n:6.605},
+  22:{gsc:30.443,gu:5.854,gdsc:49.870,gdu:26.818,e7sc:50.330,e7d:39.073,e7n:6.794},
+  23:{gsc:30.892,gu:5.619,gdsc:54.262,gdu:25.416,e7sc:53.627,e7d:38.318,e7n:5.149}
 };
 var VDG = {
-  10:{gdsc:40.455,gdu:26.555,e7sc:40.765,e7d:39.490,e7n:5.772},
-  11:{gdsc:41.255,gdu:25.608,e7sc:40.682,e7d:38.171,e7n:5.605},
-  12:{gdsc:38.340,gdu:25.712,e7sc:37.887,e7d:37.393,e7n:6.911},
-  13:{gdsc:61.104,gdu:27.704,e7sc:60.338,e7d:38.212,e7n:9.911},
-  14:{gdsc:44.981,gdu:25.702,e7sc:44.594,e7d:38.495,e7n:5.426},
-  15:{gdsc:51.507,gdu:25.473,e7sc:50.745,e7d:36.200,e7n:8.050},
-  16:{gdsc:43.211,gdu:27.092,e7sc:42.508,e7d:37.528,e7n:9.357},
-  17:{gdsc:52.584,gdu:27.011,e7sc:53.373,e7d:35.455,e7n:12.286},
-  18:{gdsc:48.351,gdu:25.887,e7sc:49.098,e7d:35.696,e7n:9.537},
-  19:{gdsc:39.819,gdu:26.922,e7sc:40.180,e7d:39.729,e7n:6.121},
-  20:{gdsc:37.000,gdu:26.501,e7sc:37.022,e7d:39.036,e7n:6.316},
-  21:{gdsc:43.712,gdu:26.839,e7sc:42.749,e7d:39.319,e7n:6.605},
-  22:{gdsc:45.956,gdu:26.818,e7sc:46.416,e7d:39.073,e7n:6.794},
-  23:{gdsc:50.348,gdu:25.416,e7sc:49.713,e7d:38.318,e7n:5.149}
+  10:{gsc:26.559,gu:5.586,gdsc:40.455,gdu:26.555,e7sc:40.765,e7d:39.490,e7n:5.772},
+  11:{gsc:26.638,gu:5.514,gdsc:41.255,gdu:25.608,e7sc:40.682,e7d:38.171,e7n:5.605},
+  12:{gsc:27.403,gu:5.741,gdsc:38.340,gdu:25.712,e7sc:37.887,e7d:37.393,e7n:6.911},
+  13:{gsc:27.271,gu:5.658,gdsc:61.104,gdu:27.704,e7sc:60.338,e7d:38.212,e7n:9.911},
+  14:{gsc:26.918,gu:5.574,gdsc:44.981,gdu:25.702,e7sc:44.594,e7d:38.495,e7n:5.426},
+  15:{gsc:27.003,gu:5.651,gdsc:51.507,gdu:25.473,e7sc:50.745,e7d:36.200,e7n:8.050},
+  16:{gsc:27.027,gu:5.614,gdsc:43.211,gdu:27.092,e7sc:42.508,e7d:37.528,e7n:9.357},
+  17:{gsc:27.071,gu:5.608,gdsc:52.584,gdu:27.011,e7sc:53.373,e7d:35.455,e7n:12.286},
+  18:{gsc:27.096,gu:5.608,gdsc:48.351,gdu:25.887,e7sc:49.098,e7d:35.696,e7n:9.537},
+  19:{gsc:26.499,gu:5.548,gdsc:39.819,gdu:26.922,e7sc:40.180,e7d:39.729,e7n:6.121},
+  20:{gsc:26.384,gu:5.715,gdsc:37.000,gdu:26.501,e7sc:37.022,e7d:39.036,e7n:6.316},
+  21:{gsc:27.145,gu:5.816,gdsc:43.712,gdu:26.839,e7sc:42.749,e7d:39.319,e7n:6.605},
+  22:{gsc:26.529,gu:5.854,gdsc:45.956,gdu:26.818,e7sc:46.416,e7d:39.073,e7n:6.794},
+  23:{gsc:26.978,gu:5.619,gdsc:50.348,gdu:25.416,e7sc:49.713,e7d:38.318,e7n:5.149}
 };
 var EVV  = {10:{sc:47.152,pk:37.808,op:8.095},11:{sc:47.076,pk:36.367,op:8.095},12:{sc:44.280,pk:36.535,op:8.095},13:{sc:66.732,pk:39.526,op:8.095},14:{sc:50.984,pk:36.562,op:8.095},15:{sc:57.142,pk:36.166,op:8.095},16:{sc:48.901,pk:38.441,op:8.095},17:{sc:59.767,pk:38.489,op:8.095},18:{sc:55.488,pk:36.740,op:8.095},19:{sc:46.572,pk:38.299,op:8.095},20:{sc:43.415,pk:37.747,op:8.095},21:{sc:49.143,pk:38.239,op:8.095},22:{sc:52.810,pk:38.130,op:8.095},23:{sc:56.106,pk:36.184,op:8.095}};
 var EVG  = {10:{sc:47.152,pk:33.946,op:7.619},11:{sc:47.076,pk:32.614,op:7.619},12:{sc:44.280,pk:32.803,op:7.619},13:{sc:66.732,pk:35.299,op:7.619},14:{sc:50.984,pk:32.747,op:7.619},15:{sc:57.142,pk:32.307,op:7.619},16:{sc:48.901,pk:34.511,op:7.619},17:{sc:59.767,pk:34.424,op:7.619},18:{sc:55.488,pk:32.858,op:7.619},19:{sc:46.572,pk:34.408,op:7.619},20:{sc:43.415,pk:33.935,op:7.619},21:{sc:49.143,pk:34.321,op:7.619},22:{sc:52.810,pk:34.176,op:7.619},23:{sc:56.106,pk:32.336,op:7.619}};
+
 var EVDG = {10:{sc:47.152,pk:30.498,op:6.571},11:{sc:47.076,pk:29.270,op:6.571},12:{sc:44.280,pk:29.480,op:6.571},13:{sc:66.732,pk:31.499,op:6.571},14:{sc:50.984,pk:29.344,op:6.571},15:{sc:57.142,pk:28.860,op:6.571},16:{sc:48.901,pk:30.996,op:6.571},17:{sc:59.767,pk:30.780,op:6.571},18:{sc:55.488,pk:29.389,op:6.571},19:{sc:46.572,pk:30.930,op:6.571},20:{sc:43.415,pk:30.534,op:6.571},21:{sc:49.143,pk:30.818,op:6.571},22:{sc:52.810,pk:30.638,op:6.571},23:{sc:56.106,pk:28.900,op:6.571}};
 
 var PRESETS = {
@@ -858,6 +899,9 @@ var PRESETS = {
 };
 
 var VAT = 1.05;
+var DUAL_FUEL_DISC = 12.38; // ex-VAT per fuel per year
+var gasOn = false;
+var gasKwh = 0;
 var state = {
   region: 0,
   services: {broadband:false,mobile1:false,mobile2:false,insurance:false},
@@ -867,6 +911,19 @@ var chartInst = null;
 
 // ── HELPERS ──────────────────────────────────────────────────────────────
 function svc() { return 1 + Object.values(state.services).filter(Boolean).length; }
+
+function getGasTariff(r) {
+  var ti = getTariff(r);
+  var fixedObj = ti.t;
+  var n = Object.values(state.services).filter(Boolean).length + 1;
+  var varObj = n >= 3 ? VDG[r] : n === 2 ? VG[r] : VV[r];
+  return {
+    fixed:     { gsc: fixedObj.gsc, gsu: fixedObj.gu },
+    fixedName: ti.name,
+    variable:  { gsc: varObj.gsc, gsu: varObj.gu },
+    varName:   n >= 3 ? 'Double Gold' : n === 2 ? 'Gold' : 'Value'
+  };
+}
 
 function getTariff(r) {
   var n = svc();
@@ -1082,12 +1139,21 @@ function calculate() {
   // Standard: EV kWh at flat rate — no night rate exists, all usage billed equally
   // E7: EV kWh at night rate — customer charges overnight within the 7hr window
   // EV: EV kWh at off-peak rate — 5hr midnight–5am window
-  var stdCost = calcStd(t, dayK, nigK + evKeff);
-  var e7Cost  = calcE7(t, dayK, nigK + evKeff);
-  var evCost  = calcEV(ev, dayK, nigK, evKeff);
+  var dualDisc = gasOn ? DUAL_FUEL_DISC * VAT : 0;
+  var stdCost = calcStd(t, dayK, nigK + evKeff) - dualDisc;
+  var e7Cost  = calcE7(t, dayK, nigK + evKeff) - dualDisc;
+  var evCost  = calcEV(ev, dayK, nigK, evKeff) - dualDisc;
 
   var allC = evOn ? [stdCost, e7Cost, evCost] : [stdCost, e7Cost];
   var minC = Math.min.apply(null, allC);
+  // Store for combined gas+elec chart
+  var _scStd = (t.gdsc/100)*365*VAT;
+  var _scE7  = (t.e7sc/100)*365*VAT;
+  var _scEV  = (ev.sc/100)*365*VAT;
+  window._lastElecCosts = {
+    std: stdCost, e7: e7Cost, ev: evOn ? evCost : null,
+    stdSC: _scStd, e7SC: _scE7, evSC: _scEV
+  };
 
   // Savings banner
   var maxC = Math.max.apply(null, allC);
@@ -1240,6 +1306,12 @@ function calculate() {
   document.getElementById('emptyState').style.display = 'none';
   renderChart(dayK, nigK, evKeff, beE7kwh, beEVkwh, totK);
   renderCostChart(stdCost, e7Cost, evCost, scStd_c, scE7_c, scEV_c, homeStd_c, homeE7_c, homeEV_c, evCostOnStd_c, evCostOnE7_c, evCostOnEV_c);
+  if (gasOn && gasKwh > 0) renderGas();
+  else {
+    // Hide gas charts if gas toggled off
+    var gcw = document.getElementById('gasChartWrap'); if (gcw) gcw.style.display = 'none';
+    var ccw = document.getElementById('combinedChartWrap'); if (ccw) ccw.style.display = 'none';
+  }
   } catch(e) { console.error('calculate() error:', e); }
 }
 
@@ -1264,9 +1336,9 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
   var beEVPct = beEV/totK*100;
 
   document.getElementById('chartLegend').innerHTML =
-    '<div class="cleg"><div class="cleg-sq" style="background:#7c3aed"></div>Night (home)</div>' +
-    (evK > 0 ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV charging</div>' : '') +
-    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day</div>' +
+    '<div class="cleg"><div class="cleg-sq" style="background:#f59e0b"></div>Day usage</div>' +
+    '<div class="cleg"><div class="cleg-sq" style="background:#7c3aed"></div>Night usage</div>' +
+    (evOn ? '<div class="cleg"><div class="cleg-sq" style="background:#059669"></div>EV</div>' : '') +
     '<div class="cleg"><div class="cleg-dash" style="border-color:#b4a0e8"></div>E7 break-even: ' + Math.round(beE7).toLocaleString('en-GB') + ' kWh at night</div>' +
     (evOn ? '<div class="cleg"><div class="cleg-dash" style="border-color:#6ee7b7"></div>EV break-even: ' + Math.round(beEV).toLocaleString('en-GB') + ' kWh off-peak</div>' : '');
 
@@ -1332,7 +1404,7 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
             generateLabels: function(chart) {
               return [
                 { text: 'Standing charge', fillStyle: '#4782b4', strokeStyle: '#4782b4', pointStyle: 'rect' },
-                { text: 'Home usage',      fillStyle: '#b91c1c', strokeStyle: '#b91c1c', pointStyle: 'rect' },
+                { text: 'Home usage',      fillStyle: 'rgba(185,28,28,0.7)', strokeStyle: 'rgba(185,28,28,0.7)', pointStyle: 'rect' },
                 { text: 'EV charging',     fillStyle: '#059669', strokeStyle: '#059669', pointStyle: 'rect' }
               ];
             }
@@ -1398,12 +1470,12 @@ function renderCostChart(stdCost, e7Cost, evCost, scStd, scE7, scEV, homeStd, ho
   // Always 3 bars — EV greyed when off (matches kWh chart)
   var labels   = ['Standard', 'Economy 7', evOn ? 'EV Tariff' : 'EV Tariff\n(off)'];
   var greyedSC   = 'rgba(71,130,180,0.15)';
-  var greyedHome = 'rgba(185,28,28,0.15)';
+  var greyedHome = 'rgba(185,28,28,0.08)';
   var scData   = [scStd,   scE7,   evOn ? scEV   : 0];
   var homeData = [homeStd, homeE7, evOn ? homeEV : 0];
   var evData   = [evStd,   evE7,   evOn ? evEV   : 0];
   var scBg     = ['#4782b4','#4782b4', evOn ? '#4782b4' : greyedSC];
-  var homeBg   = ['#b91c1c','#b91c1c', evOn ? '#b91c1c' : greyedHome];
+  var homeBg   = ['rgba(185,28,28,0.7)','rgba(185,28,28,0.7)', evOn ? 'rgba(185,28,28,0.7)' : greyedHome];
   costChartInst = new Chart(document.getElementById('costChart'), {
     type: 'bar',
     plugins: [ChartDataLabels],
@@ -1426,7 +1498,7 @@ function renderCostChart(stdCost, e7Cost, evCost, scStd, scE7, scEV, homeStd, ho
             generateLabels: function() {
               var items = [
                 { text: 'Standing charge', fillStyle: '#4782b4', strokeStyle: '#4782b4', pointStyle: 'rect', hidden: false },
-                { text: 'Home usage',      fillStyle: '#b91c1c', strokeStyle: '#b91c1c', pointStyle: 'rect', hidden: false },
+                { text: 'Home usage',      fillStyle: 'rgba(185,28,28,0.7)', strokeStyle: 'rgba(185,28,28,0.7)', pointStyle: 'rect', hidden: false },
                 { text: 'EV charging',     fillStyle: '#059669', strokeStyle: '#059669', pointStyle: 'rect', hidden: false },
               ];
               return items;
@@ -1448,6 +1520,309 @@ function renderCostChart(stdCost, e7Cost, evCost, scStd, scE7, scEV, homeStd, ho
     }
   });
   } catch(e) { console.error('renderCostChart error:', e); }
+}
+
+// ── GAS ───────────────────────────────────────────────────────────────────
+var gasRatesOpen = false;
+var gasSelectedCard = 'gas-card-fixed';
+
+function selectGasCard(id) {
+  gasSelectedCard = id;
+  // Update cards
+  ['gas-card-fixed','gas-card-variable'].forEach(function(cid) {
+    var el = document.getElementById(cid);
+    if (!el) return;
+    if (cid === id) {
+      el.style.boxShadow = '0 0 0 2.5px var(--p)';
+      el.style.borderColor = 'var(--p)';
+    } else {
+      el.style.boxShadow = '';
+      el.style.borderColor = 'var(--bdr)';
+    }
+  });
+  // Update pill buttons
+  var fixBtn = document.getElementById('gas-btn-fixed');
+  var varBtn = document.getElementById('gas-btn-variable');
+  if (fixBtn && varBtn) {
+    if (id === 'gas-card-fixed') {
+      fixBtn.className = 'fvb af'; varBtn.className = 'fvb';
+    } else {
+      fixBtn.className = 'fvb'; varBtn.className = 'fvb av';
+    }
+  }
+}
+var gasBdOpen = false;
+var gasMode = "fixed";
+
+function calcGas(g, kwh) {
+  return ((g.gsc/100)*365 + (g.gsu/100)*kwh) * VAT;
+}
+
+function renderGasCard(cfg) {
+  var isCheapest = Math.abs(cfg.cost - cfg.cheapest) < 0.01;
+  var isMostExp  = Math.abs(cfg.cost - cfg.mostExp) < 0.01 && cfg.mostExp !== cfg.cheapest;
+  var borderCol  = isCheapest ? 'var(--grn)' : 'var(--bdr)';
+  var cardId = 'gas-card-' + (cfg.profile === 'Fixed' ? 'fixed' : 'variable');
+  var h = '<div class="rc" id="' + cardId + '" data-cardid="' + cardId + '" style="position:relative;border-color:' + borderCol + ';cursor:pointer">';
+  if (isCheapest) h += '<div class="wpill">\u2713 Best option</div>';
+  // Profile badge
+  h += '<div style="margin-bottom:6px"><div class="pbadge ' + cfg.bc + '" style="margin-bottom:3px">' + cfg.profile + '</div>';
+  h += '<div style="font-size:9.5px;color:var(--gmid);font-weight:500">' + cfg.name + '</div></div>';
+  // Cost
+  h += '<div class="can">' + fmt0(cfg.cost) + '<span style="font-size:11px;color:var(--gmid)">/yr</span></div>';
+  h += '<div class="cmo">\u2248 ' + fmtPm(cfg.cost) + '/mo</div>';
+  // Saving line
+  h += '<div style="min-height:36px;margin-top:6px">';
+  var diff = cfg.mostExp - cfg.cost;
+  if (isCheapest && diff > 1) {
+    h += '<div style="font-size:13px;font-weight:700;color:var(--grn)">\u2713 saves ' + fmt0(diff) + '/yr</div>';
+    h += '<div style="font-size:11px;color:var(--grn)">' + fmtPm(diff) + '/mo cheaper</div>';
+  } else if (isMostExp) {
+    h += '<div style="font-size:12px;font-weight:600;color:var(--red)">most expensive</div>';
+  }
+  h += '</div>';
+  // Rates accordion
+  h += '<details class="gas-rates" style="margin-top:4px">';
+  h += '<summary style="font-size:10px;color:var(--gmid);cursor:pointer;list-style:none;display:flex;align-items:center;gap:5px;user-select:none">';
+  h += '<span style="font-size:9px">\u25BA</span> Rates &amp; standing charges</summary>';
+  h += '<div class="crates" style="margin-top:6px">';
+  h += '<div class="rr"><span>Standing charge</span><span class="rv" data-raw="' + cfg.g.gsc + '">' + (vatInc ? (cfg.g.gsc*VAT).toFixed(2) : cfg.g.gsc.toFixed(3)) + 'p/day</span></div>';
+  h += '<div class="rr"><span>Unit rate</span><span class="rv" data-raw="' + cfg.g.gsu + '">' + (vatInc ? (cfg.g.gsu*VAT).toFixed(2) : cfg.g.gsu.toFixed(3)) + 'p/kWh</span></div>';
+  h += '</div></details>';
+  // Cost breakdown accordion
+  var scCost   = (cfg.g.gsc/100)*365*VAT;
+  var usageCost = (cfg.g.gsu/100)*cfg.kwh*VAT;
+  h += '<details class="gas-bd" style="margin-top:4px"' + (gasBdOpen ? ' open' : '') + '>';
+  h += '<summary style="font-size:10px;color:var(--gmid);cursor:pointer;list-style:none;display:flex;align-items:center;gap:5px;user-select:none">';
+  h += '<span class="gas-bd-arrow" style="font-size:9px;transition:transform 0.15s' + (gasBdOpen ? ';transform:rotate(90deg)' : '') + '">\u25BA</span> Cost breakdown</summary>';
+  h += '<div class="crates" style="margin-top:6px">';
+  h += '<div class="rr"><span>\uD83D\uDCC5 Standing charge</span><span>' + fmt0(scCost) + '/yr</span></div>';
+  h += '<div class="rr"><span>\uD83D\uDD25 Usage</span><span>' + fmt0(usageCost) + '/yr</span></div>';
+  if (cfg.discApplied) {
+    h += '<div class="rr" style="border-top:1px solid var(--bdr);padding-top:4px;margin-top:2px"><span style="color:var(--gmid)">Dual fuel discount</span><span style="color:var(--grn);font-weight:700">-' + fmt0(DUAL_FUEL_DISC * VAT) + '/yr</span></div>';
+  }
+  if (cfg.vsLabel && diff > 1) {
+    h += '<div class="rr" style="border-top:1px solid var(--bdr);padding-top:4px;margin-top:2px"><span style="color:var(--gmid)">' + cfg.vsLabel + '</span><span style="font-weight:700;color:' + (isCheapest ? 'var(--grn)' : 'var(--dk)') + '">' + fmt0(diff) + ' cheaper</span></div>';
+  }
+  h += '</div></details>';
+  h += '</div>';
+  return h;
+}
+
+function renderGas() {
+  var r = state.region;
+  var kwh = gasKwh;
+  if (!r || kwh <= 0) return;
+  var gt = getGasTariff(r);
+  var disc = DUAL_FUEL_DISC * VAT; // dual fuel discount per fuel inc VAT
+  var fixedCost    = calcGas(gt.fixed,    kwh) - disc;
+  var variableCost = calcGas(gt.variable, kwh) - disc;
+  var cheapest = Math.min(fixedCost, variableCost);
+  var mostExp  = Math.max(fixedCost, variableCost);
+
+  document.getElementById('gasCards').innerHTML =
+    renderGasCard({ profile: 'Fixed', bc: 'bs', name: gt.fixedName, g: gt.fixed,
+      cost: fixedCost, cheapest: cheapest, mostExp: mostExp,
+      kwh: kwh, discApplied: true, vsLabel: 'vs Variable' }) +
+    renderGasCard({ profile: 'Variable', bc: 'be7', name: gt.varName + ' · variable', g: gt.variable,
+      cost: variableCost, cheapest: cheapest, mostExp: mostExp,
+      kwh: kwh, discApplied: true, vsLabel: 'vs Fixed' });
+
+  // Attach click listeners to gas cards
+  document.querySelectorAll('#gasCards .rc[data-cardid]').forEach(function(el) {
+    el.addEventListener('click', function() { selectGasCard(this.getAttribute('data-cardid')); });
+  });
+  // Apply current selection state
+  selectGasCard(gasSelectedCard);
+
+  // Render gas charts
+  renderGasCharts(gt, kwh, fixedCost, variableCost, disc);
+
+  // Render combined chart
+  if (window._lastElecCosts) {
+    var ec = window._lastElecCosts;
+    var elecSC = {
+      std: (ec.stdSC || 0),
+      e7:  (ec.e7SC  || 0),
+      ev:  (ec.evSC  || 0)
+    };
+    var gasSC = {
+      fixed:    (gt.fixed.gsc/100)*365*VAT,
+      variable: (gt.variable.gsc/100)*365*VAT
+    };
+    renderCombinedChart(
+      { std: ec.std, e7: ec.e7, ev: ec.ev },
+      { fixed: fixedCost, variable: variableCost },
+      elecSC, gasSC
+    );
+  }
+
+  // Dual fuel note
+  var note = document.getElementById('gasDualFuelNote');
+  if (note) note.textContent = '\u2713 Dual fuel discount applied (-\u00a3' + Math.round(disc) + '/yr per fuel)';
+
+  // Sync gas rates accordions
+  document.querySelectorAll('.gas-rates').forEach(function(det) {
+    det.addEventListener('toggle', function() {
+      gasRatesOpen = det.open;
+      document.querySelectorAll('.gas-rates').forEach(function(o) {
+        if (o !== det) { gasRatesOpen ? o.setAttribute('open','') : o.removeAttribute('open'); }
+      });
+    });
+  });
+  // Sync gas bd accordions
+  document.querySelectorAll('.gas-bd').forEach(function(det) {
+    det.addEventListener('toggle', function() {
+      gasBdOpen = det.open;
+      document.querySelectorAll('.gas-bd').forEach(function(o) {
+        if (o !== det) {
+          gasBdOpen ? o.setAttribute('open','') : o.removeAttribute('open');
+          var arr = o.querySelector('.gas-bd-arrow');
+          if (arr) arr.style.transform = gasBdOpen ? 'rotate(90deg)' : '';
+        }
+      });
+    });
+  });
+}
+
+// ── GAS CHARTS ────────────────────────────────────────────────────────────
+var gasChartInst = null;
+var combinedChartInst = null;
+
+function renderGasCharts(gt, kwh, fixedCost, variableCost, disc) {
+  var fSC    = (gt.fixed.gsc/100)*365*VAT;
+  var fUsage = fixedCost - fSC;
+  var vSC    = (gt.variable.gsc/100)*365*VAT;
+  var vUsage = variableCost - vSC;
+
+  var gcWrap = document.getElementById('gasChartWrap');
+  if (gcWrap) gcWrap.style.display = 'block';
+  if (gasChartInst) { gasChartInst.destroy(); gasChartInst = null; }
+
+  var gasTotalPlugin = {
+    id: 'gasTotals',
+    afterDatasetsDraw: function(chart) {
+      var ctx = chart.ctx;
+      var meta = chart.getDatasetMeta(chart.data.datasets.length - 1);
+      [fixedCost, variableCost].forEach(function(total, i) {
+        if (!meta.data[i]) return;
+        var bar = meta.data[i];
+        ctx.save();
+        ctx.font = '700 11px DM Sans, sans-serif';
+        ctx.fillStyle = '#1a1a2e';
+        ctx.textAlign = 'center';
+        ctx.fillText('£' + Math.round(total).toLocaleString('en-GB'), bar.x, bar.y - 7);
+        ctx.restore();
+      });
+    }
+  };
+
+  gasChartInst = new Chart(document.getElementById('gasChart'), {
+    type: 'bar',
+    plugins: [ChartDataLabels, gasTotalPlugin],
+    data: {
+      labels: ['Fixed', 'Variable'],
+      datasets: [
+        { label: 'Standing charge', data: [fSC,    vSC],    backgroundColor: '#9ca3af', stack: 's', borderRadius: 0 },
+        { label: 'Usage',           data: [fUsage, vUsage], backgroundColor: '#4782b4', stack: 's', borderRadius: 3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 22 } },
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { font: { size: 10 }, padding: 8, usePointStyle: true } },
+        datalabels: { display: false },
+        tooltip: { callbacks: { label: function(ctx) { return ' ' + ctx.dataset.label + ': £' + Math.round(ctx.parsed.y).toLocaleString('en-GB'); }}}
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { stacked: true, ticks: { callback: function(v){ return '£' + v.toLocaleString('en-GB'); }, font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+function renderCombinedChart(elecCosts, gasCosts, elecSC, gasSC) {
+  var r = state.region;
+  if (!r) return;
+
+  var ccWrap = document.getElementById('combinedChartWrap');
+  if (ccWrap) ccWrap.style.display = 'block';
+  if (combinedChartInst) { combinedChartInst.destroy(); combinedChartInst = null; }
+
+  // Pick cheapest electricity option
+  var elecOptions = [
+    { cost: elecCosts.std, sc: elecSC.std, label: 'Standard' },
+    { cost: elecCosts.e7,  sc: elecSC.e7,  label: 'E7' }
+  ];
+  if (evOn && elecCosts.ev) elecOptions.push({ cost: elecCosts.ev, sc: elecSC.ev, label: 'EV' });
+  elecOptions.sort(function(a,b){ return a.cost - b.cost; });
+  var bestElec = elecOptions[0];
+
+  // Two bars: best elec + fixed gas, best elec + variable gas
+  var totalFixed = bestElec.cost + gasCosts.fixed;
+  var totalVar   = bestElec.cost + gasCosts.variable;
+
+  var scFixed = bestElec.sc + gasSC.fixed;
+  var scVar   = bestElec.sc + gasSC.variable;
+
+  var eUsageFixed = bestElec.cost - bestElec.sc;
+  var eUsageVar   = bestElec.cost - bestElec.sc;
+  var gUsageFixed = gasCosts.fixed  - gasSC.fixed;
+  var gUsageVar   = gasCosts.variable - gasSC.variable;
+
+  var totals = [totalFixed, totalVar];
+  var labels = [bestElec.label + ' Elec + Fixed Gas', bestElec.label + ' Elec + Variable Gas'];
+
+  var combinedTotalPlugin = {
+    id: 'combinedTotals',
+    afterDatasetsDraw: function(chart) {
+      var ctx = chart.ctx;
+      var meta = chart.getDatasetMeta(chart.data.datasets.length - 1);
+      totals.forEach(function(total, i) {
+        if (!meta.data[i]) return;
+        var bar = meta.data[i];
+        ctx.save();
+        ctx.font = '700 11px DM Sans, sans-serif';
+        ctx.fillStyle = '#1a1a2e';
+        ctx.textAlign = 'center';
+        ctx.fillText('£' + Math.round(total).toLocaleString('en-GB'), bar.x, bar.y - 7);
+        ctx.restore();
+      });
+    }
+  };
+
+  combinedChartInst = new Chart(document.getElementById('combinedChart'), {
+    type: 'bar',
+    plugins: [ChartDataLabels, combinedTotalPlugin],
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Standing charges', data: [scFixed, scVar],          backgroundColor: '#9ca3af',             stack: 's', borderRadius: 0 },
+        { label: 'Electricity usage', data: [eUsageFixed, eUsageVar], backgroundColor: 'rgba(185,28,28,0.7)', stack: 's', borderRadius: 0 },
+        { label: 'Gas usage',         data: [gUsageFixed, gUsageVar], backgroundColor: '#4782b4',             stack: 's', borderRadius: 3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 22 } },
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { font: { size: 10 }, padding: 8, usePointStyle: true } },
+        datalabels: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return ' ' + ctx.dataset.label + ': £' + Math.round(ctx.parsed.y).toLocaleString('en-GB'); },
+            footer: function(items) { return 'Total: £' + Math.round(totals[items[0].dataIndex]).toLocaleString('en-GB') + '/yr'; }
+          }
+        }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 10 } } },
+        y: { stacked: true, ticks: { callback: function(v){ return '£' + v.toLocaleString('en-GB'); }, font: { size: 10 } } }
+      }
+    }
+  });
 }
 
 // ── LOCK/UNLOCK ───────────────────────────────────────────────────────────
@@ -1720,6 +2095,39 @@ document.getElementById('card-ev').style.display = 'none';
 updateBundle();
 setLock(false);
 calculate();
+// Gas Fixed/Variable pill listeners
+var gasBtnFixed = document.getElementById('gas-btn-fixed');
+var gasBtnVariable = document.getElementById('gas-btn-variable');
+if (gasBtnFixed) gasBtnFixed.addEventListener('click', function() { selectGasCard('gas-card-fixed'); });
+if (gasBtnVariable) gasBtnVariable.addEventListener('click', function() { selectGasCard('gas-card-variable'); });
+
+// Gas toggle
+document.getElementById('gasToggleBtn').addEventListener('click', function() {
+  gasOn = !gasOn;
+  this.textContent = gasOn ? 'Gas on' : 'Gas off';
+  this.style.background = gasOn ? 'var(--grnl)' : '#f0f0f0';
+  this.style.borderColor = gasOn ? 'var(--grn)' : '#d0d0d0';
+  this.style.color = gasOn ? '#065f35' : '#999';
+  document.getElementById('gasContent').style.display = gasOn ? 'block' : 'none';
+  calculate();
+  if (gasOn && gasKwh > 0) renderGas();
+  else {
+    // Hide gas charts if gas toggled off
+    var gcw = document.getElementById('gasChartWrap'); if (gcw) gcw.style.display = 'none';
+    var ccw = document.getElementById('combinedChartWrap'); if (ccw) ccw.style.display = 'none';
+  }
+});
+
+// Gas usage input
+var gasInput = document.getElementById('gasKwhInput');
+if (gasInput) {
+  gasInput.addEventListener('input', function() {
+    fmtNumInput(this);
+    gasKwh = parseFloat(this.value.replace(/,/g,'')) || 0;
+    if (gasOn && gasKwh > 0 && state.region) renderGas();
+  });
+}
+
 }); // end DOMContentLoaded
 </script>
 </body>
