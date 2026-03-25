@@ -445,7 +445,7 @@ input[type="number"]:focus, input.num-input:focus {
 
   <!-- USAGE -->
   <div class="card locked-overlay" id="lo-usage">
-    <div class="ct">🔢 Electricity Usage <span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0"><button id="clearUsageBtn" style="font-size:10px;padding:2px 9px;border-radius:12px;border:1.5px solid var(--bdr);background:white;color:var(--gmid);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">✕ Clear</button></span></div>
+    <div class="ct">⚡ Annual Electricity Usage <span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0"><button id="clearUsageBtn" style="font-size:10px;padding:2px 9px;border-radius:12px;border:1.5px solid var(--bdr);background:white;color:var(--gmid);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">✕ Clear</button></span></div>
 
     <!-- Column headers -->
     <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px">
@@ -456,6 +456,12 @@ input[type="number"]:focus, input.num-input:focus {
           <div id="evTogglePill" style="position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:white;box-shadow:0 1px 2px rgba(0,0,0,0.25);transition:left 0.2s"></div>
         </div>
         <span>🚗 EV tariff</span>
+        <div style="position:relative;display:inline-flex">
+          <span id="evBeTooltipTrig" style="background:#cbd5e1;color:white;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif">?</span>
+          <span id="evBeTooltip" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:#1a1a2e;color:white;font-size:11px;font-weight:400;line-height:1.5;padding:10px 13px;border-radius:8px;white-space:normal;width:260px;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,0.35)">
+            <span id="evBeTooltipText">Select a region to see EV break-even</span>
+          </span>
+        </div>
       </div>
     </div>
 
@@ -500,17 +506,17 @@ input[type="number"]:focus, input.num-input:focus {
     <!-- EV row -->
     <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px">
       <div class="igrp" id="stdEvGrp" style="opacity:0.35">
-        <label class="ilbl"><span class="dot dev"></span> EV charging</label>
+        <label class="ilbl"><span style="font-size:11px">🔌</span> EV charging</label>
         <input type="text" class="num-input" id="stdEvKwh" placeholder="" disabled readonly style="background:var(--glit);color:var(--gmid);border-color:var(--glit);cursor:default">
         <div class="isfx">kWh / year</div>
       </div>
       <div class="igrp" id="e7EvGrp" style="opacity:0.35">
-        <label class="ilbl"><span class="dot dev"></span> EV overnight</label>
+        <label class="ilbl"><span style="font-size:11px">🔌</span> EV overnight</label>
         <input type="text" class="num-input" id="e7EvKwh" placeholder="" disabled readonly style="background:var(--glit);color:var(--gmid);border-color:var(--glit);cursor:default">
         <div class="isfx">added to night rate</div>
       </div>
       <div class="igrp" id="lo-ev" style="opacity:0.35">
-        <label class="ilbl"><span class="dot dev"></span> EV charging</label>
+        <label class="ilbl"><span style="font-size:11px">🔌</span> EV charging</label>
         <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="" disabled>
         <div class="isfx">kWh / year</div>
       </div>
@@ -578,33 +584,7 @@ input[type="number"]:focus, input.num-input:focus {
       </div>
     </div>
 
-    <!-- E7 column: "Don't have a bill" accordion — sits under Day/Night calc link -->
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px">
-      <div></div>
-      <div>
-        <details id="estimAccordion" style="font-size:10.5px">
-          <summary style="color:var(--gmid);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:5px;padding:3px 0">
-            <span id="estimArrow" style="font-size:9px;transition:transform 0.2s;display:inline-block">▶</span>
-            <span>Don't have a bill? Use typical estimates</span>
-          </summary>
-          <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
-            <button class="preset" id="preset-low" style="text-align:left">
-              <div class="pl">Low</div>
-              <div class="ps">2,200 kWh · Day 1,560 · Night 640</div>
-            </button>
-            <button class="preset" id="preset-medium" style="text-align:left">
-              <div class="pl">Medium</div>
-              <div class="ps">3,900 kWh · Day 2,900 · Night 1,000</div>
-            </button>
-            <button class="preset" id="preset-high" style="text-align:left">
-              <div class="pl">High</div>
-              <div class="ps">6,700 kWh · Day 4,900 · Night 1,800</div>
-            </button>
-          </div>
-        </details>
-      </div>
-      <div></div>
-    </div>
+
 
     <!-- Mismatch warning -->
     <div id="mismatchWarn" style="display:none;margin-top:6px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:5px 10px;font-size:10.5px;color:#92400e;align-items:center;gap:8px">
@@ -633,15 +613,7 @@ input[type="number"]:focus, input.num-input:focus {
         <button class="fvb af" id="btn-fixed2">🔒 Fixed</button>
         <button class="fvb" id="btn-variable2">📈 Variable</button>
       </div>
-      <div style="flex:1;display:flex;justify-content:center">
-        <div style="display:flex;align-items:center;gap:4px;position:relative">
-          <button id="evToggleBtn" title="Toggle EV tariff column" style="background:#f0f0f0;border:1.5px solid #d0d0d0;border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:700;color:#999;font-family:'DM Sans',sans-serif;transition:all 0.15s">🚗 EV off</button>
-          <span id="evBeTooltipTrig" style="background:#cbd5e1;color:white;border-radius:50%;width:16px;height:16px;display:none;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'DM Sans',sans-serif">?</span>
-          <span id="evBeTooltip" style="display:none;position:absolute;top:calc(100% + 8px);left:0;background:#1a1a2e;color:white;font-size:11px;font-weight:400;line-height:1.5;padding:10px 13px;border-radius:8px;white-space:normal;width:260px;z-index:500;box-shadow:0 4px 20px rgba(0,0,0,0.35)">
-            <span id="evBeTooltipText">Select a region to see EV break-even</span>
-          </span>
-        </div>
-      </div>
+      <div style="flex:1"></div>
       <div style="display:flex;align-items:center;gap:5px">
         <span style="font-size:9.5px;color:var(--gmid)">VAT <span style="font-size:8px">(rates)</span></span>
         <span id="globalVatTog" onclick="toggleVAT()" style="display:inline-flex;width:32px;height:17px;border-radius:10px;background:var(--p);cursor:pointer;align-items:center;padding:2px;transition:background 0.2s">
@@ -725,30 +697,6 @@ input[type="number"]:focus, input.num-input:focus {
     <div style="font-size:13px;line-height:1.6">Select a region to begin.<br>All other inputs will unlock once a region is chosen.</div>
   </div>
 
-
-<!-- PRESETS MODAL -->
-<div id="presetsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
-  <div style="background:white;border-radius:var(--r);padding:20px;width:min(340px,92vw);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
-    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--p);margin-bottom:4px">📊 Typical estimates</div>
-    <div style="font-size:11.5px;color:var(--gmid);margin-bottom:14px">Select a profile to pre-fill usage figures. You can adjust them afterwards.</div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
-      <button class="preset" id="preset-low" style="text-align:left">
-        <div class="pl">Low</div>
-        <div class="ps">2,200 kWh elec · 7,500 kWh gas · 1 bed</div>
-      </button>
-      <button class="preset" id="preset-medium" style="text-align:left">
-        <div class="pl">Medium</div>
-        <div class="ps">3,900 kWh elec · 11,500 kWh gas · 2–3 bed</div>
-      </button>
-      <button class="preset" id="preset-high" style="text-align:left">
-        <div class="pl">High</div>
-        <div class="ps">6,700 kWh elec · 17,000 kWh gas · 4+ bed</div>
-      </button>
-    </div>
-    <button id="presetsModalClose" style="width:100%;padding:9px;background:var(--glit);color:var(--gmid);border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Close</button>
-  </div>
-</div>
-
 <!-- BILL MODAL -->
 <div id="billModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
   <div style="background:white;border-radius:var(--r);padding:20px;width:min(340px,92vw);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
@@ -776,6 +724,27 @@ input[type="number"]:focus, input.num-input:focus {
       <button id="billModalUse" style="flex:1;padding:9px;background:var(--p);color:white;border:none;border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none">Use these figures</button>
       <button id="billModalClose" style="flex:1;padding:9px;background:var(--glit);color:var(--gmid);border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Close</button>
     </div>
+    <!-- Presets accordion -->
+    <details id="estimAccordion" style="margin-top:10px">
+      <summary style="font-size:10.5px;color:var(--gmid);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:5px;padding:4px 0;border-top:1px solid var(--bdr);padding-top:10px">
+        <span id="estimArrow" style="font-size:9px;transition:transform 0.2s;display:inline-block">▶</span>
+        <span>Don't have a bill to hand? Use typical estimates</span>
+      </summary>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+        <button class="preset" id="preset-low">
+          <div class="pl">Low</div>
+          <div class="ps">2,200 kWh · Day 1,560 · Night 640</div>
+        </button>
+        <button class="preset" id="preset-medium">
+          <div class="pl">Medium</div>
+          <div class="ps">3,900 kWh · Day 2,900 · Night 1,000</div>
+        </button>
+        <button class="preset" id="preset-high">
+          <div class="pl">High</div>
+          <div class="ps">6,700 kWh · Day 4,900 · Night 1,800</div>
+        </button>
+      </div>
+    </details>
   </div>
 </div>
 
@@ -830,6 +799,18 @@ input[type="number"]:focus, input.num-input:focus {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
+// ── GLOBAL HELPERS ────────────────────────────────────────────────────────
+var totalKwhManual = false;
+function autoFillTotal() {
+  var d = parseFloat((document.getElementById('dayKwh').value||'').replace(/,/g,''))||0;
+  var n = parseFloat((document.getElementById('nightKwh').value||'').replace(/,/g,''))||0;
+  var evEl = document.getElementById('evKwh');
+  var e = (typeof evOn !== 'undefined' && evOn && evEl) ? (parseFloat((evEl.value||'').replace(/,/g,''))||0) : 0;
+  var tot = d + n + e;
+  var el = document.getElementById('totalKwh');
+  if (el) el.value = tot > 0 ? tot.toLocaleString('en-GB') : '';
+}
+
 // ── GLOBAL STATE (must be outside DOMContentLoaded for onclick access) ──────
 var VAT_GLOBAL = 1.05;
 var ratesOpen = false;
@@ -1213,31 +1194,31 @@ function calculate() {
   try {
   var r    = state.region;
   function parseNum(id) { return parseFloat((document.getElementById(id).value||'').replace(/,/g,'')) || 0; }
-  var stdTotK = parseNum('totalKwh');   // standard: user-entered total
-  var dayK = parseNum('dayKwh');        // E7/EV day
-  var nigK = parseNum('nightKwh');      // E7/EV night
+  var dayK = parseNum('dayKwh');
+  var nigK = parseNum('nightKwh');
   var evK  = parseNum('evKwh');
   var evKeff = evOn ? evK : 0;
-  // For standard: use totalKwh if entered, else fall back to dayK+nigK
-  var stdUsedK = stdTotK > 0 ? stdTotK + evKeff : dayK + nigK + evKeff;
-  var totK = dayK + nigK + evKeff;      // E7/EV total
-  var hasUsage = (stdTotK > 0 || dayK > 0 || nigK > 0);
+  var stdTotK = dayK + nigK;            // standard always = day + night
+  var stdUsedK = stdTotK + evKeff;
+  var totK = stdUsedK;
+  var hasUsage = (dayK > 0 || nigK > 0);
 
   // Night bar
   var nbWrap = document.getElementById('nbWrap');
   if (hasUsage) {
-    var nightPct = totK > 0 ? (nigK/totK)*100 : 0;
-    var evOffPeakPct = totK > 0 ? (evKeff/totK)*100 : 0;
+    var nightOffPeakKwh = nigK + evKeff;
+    var nightOffPeakPct = totK > 0 ? (nightOffPeakKwh/totK)*100 : 0;
+    var evOffPeakPct = totK > 0 ? (nightOffPeakKwh/totK)*100 : 0;
     nbWrap.style.display = 'block';
-    // E7 bar — night usage
-    document.getElementById('nbFill').style.width = Math.min(nightPct,100)+'%';
-    document.getElementById('nbPct').textContent = 'Night usage: ' + Math.round(nightPct) + '%';
+    // E7 bar — night + EV in cheap bucket
+    document.getElementById('nbFill').style.width = Math.min(nightOffPeakPct,100)+'%';
+    document.getElementById('nbPct').textContent = 'Night bucket: ' + Math.round(nightOffPeakPct) + '%';
     // EV bar — show when EV on
     var nbEVRow = document.getElementById('nbEVRow');
     if (nbEVRow) nbEVRow.style.display = evOn ? 'block' : 'none';
     if (evOn && evKeff > 0) {
       document.getElementById('nbEVFill').style.width = Math.min(evOffPeakPct,100)+'%';
-      document.getElementById('nbEVPct').textContent = 'EV off-peak: ' + Math.round(evOffPeakPct) + '%';
+      document.getElementById('nbEVPct').textContent = 'Off-peak bucket: ' + Math.round(evOffPeakPct) + '%';
     }
     var tkd = document.getElementById('totalKwhDisplay'); if(tkd) tkd.textContent = '— total ' + Math.round(totK).toLocaleString('en-GB') + ' kWh';
   } else {
@@ -1278,7 +1259,7 @@ function calculate() {
   // Savings banner
   var maxC = Math.max.apply(null, allC);
   var saving = maxC - minC;
-  var names = ['Standard on '+ti.name, 'Economy 7 on '+ti.name, ti.evName+' EV tariff'];
+  var names = ['Standard on '+ti.name, 'Economy 7 on '+ti.name, ti.evName+' tariff'];
   var winIdx = allC.indexOf(minC);
   var ban = document.getElementById('sBanner');
   if (saving > 1) {
@@ -1423,14 +1404,7 @@ function calculate() {
   var evNightCost = (ev.op/100 * nigK) * VAT;
   var evEvCost2   = (ev.op/100 * evKeff) * VAT;
 
-  // Mismatch warning — when standard total doesn't match day+night
-  var mismatchEl = document.getElementById('mismatchWarn');
-  if (mismatchEl) {
-    var e7sum = dayK + nigK;
-    var stdEntered = parseNum('totalKwh');
-    var showMismatch = totalKwhManual && stdEntered > 0 && e7sum > 0 && Math.abs(stdEntered - e7sum) > 1;
-    mismatchEl.style.display = showMismatch ? 'flex' : 'none';
-  }
+  // Mismatch warning removed — totalKwh is readonly auto-fill
 
   // Update usage totals display
   var _stdTot = stdTotK > 0 ? stdTotK + evKeff : dayK + nigK + evKeff;
@@ -1547,7 +1521,7 @@ function renderChart(dayK, nigK, evK, beE7, beEV, totK) {
               return [
                 { text: 'Standing charge', fillStyle: '#4782b4', strokeStyle: '#4782b4', pointStyle: 'rect' },
                 { text: 'Home usage',      fillStyle: 'rgba(185,28,28,0.7)', strokeStyle: 'rgba(185,28,28,0.7)', pointStyle: 'rect' },
-                { text: 'EV charging',     fillStyle: '#059669', strokeStyle: '#059669', pointStyle: 'rect' }
+                { text: '🔌 EV charging', fillStyle: '#059669', strokeStyle: '#059669', pointStyle: 'rect' }
               ];
             }
           }
@@ -1641,7 +1615,7 @@ function renderCostChart(stdCost, e7Cost, evCost, scStd, scE7, scEV, homeStd, ho
               var items = [
                 { text: 'Standing charge', fillStyle: '#4782b4', strokeStyle: '#4782b4', pointStyle: 'rect', hidden: false },
                 { text: 'Home usage',      fillStyle: 'rgba(185,28,28,0.7)', strokeStyle: 'rgba(185,28,28,0.7)', pointStyle: 'rect', hidden: false },
-                { text: 'EV charging',     fillStyle: '#059669', strokeStyle: '#059669', pointStyle: 'rect', hidden: false },
+                { text: '🔌 EV charging', fillStyle: '#059669', strokeStyle: '#059669', pointStyle: 'rect', hidden: false },
               ];
               return items;
             }
@@ -2128,8 +2102,8 @@ document.getElementById('evToggleBtn').addEventListener('click', function() {
   var evDayCol = document.getElementById('evDayCol');
   var evNightCol = document.getElementById('evNightCol');
   var totEvRow = document.getElementById('totEvRow');
-  if (evDayCol) evDayCol.style.opacity = evOn ? '1' : '0.35';
-  if (evNightCol) evNightCol.style.opacity = evOn ? '1' : '0.35';
+  if (evDayCol) evDayCol.style.opacity = evOn ? '0.65' : '0.35';
+  if (evNightCol) evNightCol.style.opacity = evOn ? '0.65' : '0.35';
   if (totEvRow) totEvRow.style.opacity = evOn ? '1' : '0.4';
   if (evOn) {
     // Populate day/night mirrors
@@ -2151,7 +2125,7 @@ document.getElementById('evToggleBtn').addEventListener('click', function() {
     evCalcLinkCol.style.opacity = evOn ? '1' : '0.4';
     evCalcLinkCol.style.pointerEvents = evOn ? '' : 'none';
   }
-  if (cardEv) cardEv.style.display = evOn ? '' : 'none';
+  var cardEv = document.getElementById('card-ev'); if (cardEv) cardEv.style.display = evOn ? '' : 'none';
   var evQBtn = document.getElementById('evBeTooltipTrig');
   if (evQBtn) { evQBtn.style.display = evOn ? 'inline-flex' : 'none'; }
   calculate();
@@ -2209,6 +2183,7 @@ document.getElementById('billModalUse').addEventListener('click', function() {
   if (billModalKwh.day > 0 || billModalKwh.night > 0) {
     document.getElementById('dayKwh').value   = billModalKwh.day.toLocaleString('en-GB');
     document.getElementById('nightKwh').value = billModalKwh.night.toLocaleString('en-GB');
+    autoFillTotal();
     billModalEl.style.display = 'none';
     calculate();
   }
