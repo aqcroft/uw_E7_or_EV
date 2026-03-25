@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -446,84 +445,171 @@ input[type="number"]:focus, input.num-input:focus {
 
   <!-- USAGE -->
   <div class="card locked-overlay" id="lo-usage">
-    <div class="ct">🔢 Electricity Usage <span id="totalKwhDisplay" style="font-weight:400;color:var(--gmid);text-transform:none;letter-spacing:0;font-size:10px;margin-left:4px"></span></div>
+    <div class="ct">🔢 Electricity Usage <span style="margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0"><button id="clearUsageBtn" style="font-size:10px;padding:2px 9px;border-radius:12px;border:1.5px solid var(--bdr);background:white;color:var(--gmid);cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600">✕ Clear</button></span></div>
 
-    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;align-items:start" id="usageGrid">
+    <!-- Column headers -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px">
+      <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;padding:5px 8px;border-radius:6px;text-align:center;background:#dbeafe;color:#1e40af">Standard</div>
+      <div style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;padding:5px 8px;border-radius:6px;text-align:center;background:#ede9fe;color:#4c1d95">Economy 7</div>
+      <div id="evColHdr" style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;padding:5px 8px;border-radius:6px;text-align:center;background:var(--glit);color:var(--gmid);border:1.5px dashed #cbd5e1;display:flex;align-items:center;justify-content:center;gap:6px">
+        <div id="evToggleBtn" style="width:28px;height:16px;border-radius:8px;background:#cbd5e1;position:relative;transition:background 0.2s;flex-shrink:0;display:inline-block;cursor:pointer">
+          <div id="evTogglePill" style="position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:white;box-shadow:0 1px 2px rgba(0,0,0,0.25);transition:left 0.2s"></div>
+        </div>
+        <span>🚗 EV tariff</span>
+      </div>
+    </div>
+
+    <!-- Day row -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px">
+      <div class="igrp">
+        <label class="ilbl" style="color:var(--gmid);opacity:0.5">Total annual usage</label>
+        <input type="text" inputmode="numeric" class="num-input" id="totalKwh" placeholder="auto-fills" readonly style="background:var(--glit);color:var(--gmid);border-color:var(--glit);cursor:default">
+        <div class="isfx">kWh / year · auto from E7</div>
+      </div>
       <div class="igrp">
         <label class="ilbl"><span class="dot dd"></span> Day <span style="font-weight:400;text-transform:none;font-size:9px">(7am–midnight)</span></label>
         <input type="text" inputmode="numeric" class="num-input" id="dayKwh" placeholder="e.g. 2,262">
         <div class="isfx">kWh / year</div>
-        <div style="margin-top:5px;font-size:10.5px"><span id="billModalTrigger" style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted">🔢 Not sure? Use the annual bill calculator</span></div>
       </div>
+      <div class="igrp" style="opacity:0.35" id="evDayCol">
+        <label class="ilbl"><span class="dot dd"></span> Day <span style="font-weight:400;text-transform:none;font-size:9px">(peak)</span></label>
+        <div id="evDayMirror" style="padding:7px 10px;border:1.5px solid var(--glit);border-radius:6px;font-size:14px;font-weight:500;color:var(--gmid);background:var(--glit);text-align:right;min-height:38px">
+          <span style="display:inline-block;width:55%;height:2px;background:var(--bdr);border-radius:2px;vertical-align:middle;margin-top:8px"></span>
+        </div>
+        <div class="isfx">mirrors day</div>
+      </div>
+    </div>
+
+    <!-- Night row -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px">
+      <div></div>
       <div class="igrp">
         <label class="ilbl"><span class="dot dn"></span> Night <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–7am)</span></label>
         <input type="text" inputmode="numeric" class="num-input" id="nightKwh" placeholder="e.g. 1,638">
         <div class="isfx">kWh / year</div>
       </div>
-      <div class="igrp" id="lo-ev" style="opacity:0;pointer-events:none;transition:opacity 0.2s">
-        <label class="ilbl" style="white-space:nowrap"><span class="dot dev"></span> 🚗 EV <span style="font-weight:400;text-transform:none;font-size:9px">(midnight–5am)</span></label>
-        <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="e.g. 2,500">
+      <div class="igrp" style="opacity:0.35" id="evNightCol">
+        <label class="ilbl"><span class="dot dn"></span> Home night</label>
+        <div id="evNightMirror" style="padding:7px 10px;border:1.5px solid var(--glit);border-radius:6px;font-size:14px;font-weight:500;color:var(--gmid);background:var(--glit);text-align:right;min-height:38px">
+          <span style="display:inline-block;width:55%;height:2px;background:var(--bdr);border-radius:2px;vertical-align:middle;margin-top:8px"></span>
+        </div>
+        <div class="isfx">mirrors night</div>
+      </div>
+    </div>
+
+    <!-- EV row -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:8px">
+      <div class="igrp" id="stdEvGrp" style="opacity:0.35">
+        <label class="ilbl"><span class="dot dev"></span> EV charging</label>
+        <input type="text" class="num-input" id="stdEvKwh" placeholder="" disabled readonly style="background:var(--glit);color:var(--gmid);border-color:var(--glit);cursor:default">
         <div class="isfx">kWh / year</div>
-        <div style="margin-top:5px;font-size:10.5px"><span style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted" id="milesToggle">🔢 Not sure? Use the EV kWh calculator</span></div>
+      </div>
+      <div class="igrp" id="e7EvGrp" style="opacity:0.35">
+        <label class="ilbl"><span class="dot dev"></span> EV overnight</label>
+        <input type="text" class="num-input" id="e7EvKwh" placeholder="" disabled readonly style="background:var(--glit);color:var(--gmid);border-color:var(--glit);cursor:default">
+        <div class="isfx">added to night rate</div>
+      </div>
+      <div class="igrp" id="lo-ev" style="opacity:0.35">
+        <label class="ilbl"><span class="dot dev"></span> EV charging</label>
+        <input type="text" inputmode="numeric" class="num-input" id="evKwh" placeholder="" disabled>
+        <div class="isfx">kWh / year</div>
       </div>
     </div>
 
-    <div style="margin-top:12px">
-      <details id="usageEstDetails">
-        <summary style="font-size:10.5px;color:var(--gmid);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:6px">
-          <span id="estimSummaryArrow" style="font-size:10px;transition:transform 0.2s">▶</span>
-          <span>Don't know your usage? Use a typical estimate</span>
-        </summary>
-        <div class="presets" style="margin-top:8px;margin-bottom:0">
-          <button class="preset" id="preset-low">
-            <div class="pl">Low</div>
-            <div class="ps">2,200 kWh · 1 bed</div>
-          </button>
-          <button class="preset" id="preset-medium">
-            <div class="pl">Medium</div>
-            <div class="ps">3,900 kWh · 2–3 bed</div>
-          </button>
-          <button class="preset" id="preset-high">
-            <div class="pl">High</div>
-            <div class="ps">6,700 kWh · 4+ bed</div>
-          </button>
-        </div>
-      </details>
+    <!-- Totals row -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:6px">
+      <div style="background:var(--glit);border-radius:6px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:9.5px;color:var(--gmid);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Total</span>
+        <span style="font-size:13px;font-weight:700;color:var(--dk)" id="totStdDisp">—</span>
+      </div>
+      <div style="background:var(--glit);border-radius:6px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:9.5px;color:var(--gmid);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Total</span>
+        <span style="font-size:13px;font-weight:700;color:var(--dk)" id="totE7Disp">—</span>
+      </div>
+      <div style="background:var(--glit);border-radius:6px;padding:6px 10px;display:flex;justify-content:space-between;align-items:center;opacity:0.4" id="totEvRow">
+        <span style="font-size:9.5px;color:var(--gmid);font-weight:600;text-transform:uppercase;letter-spacing:0.5px">Total</span>
+        <span style="font-size:13px;font-weight:700;color:var(--dk)" id="totEvDisp">—</span>
+      </div>
     </div>
 
-    <div id="nbWrap" style="display:none;margin-top:8px">
-      <!-- E7 bar -->
-      <div id="nbE7Row">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);margin-bottom:5px;display:flex;justify-content:space-between">
-          <span id="nbPct">Night usage: —</span>
-          <span id="nbBe" class="bel"></span>
-        </div>
-        <div style="position:relative;background:var(--glit);border-radius:6px;height:18px;overflow:visible">
-          <div id="nbFill" style="height:100%;background:var(--p);border-radius:6px;transition:width 0.3s;width:0%"></div>
-          <div id="nbMarker" style="position:absolute;top:-4px;bottom:-4px;width:2px;background:#1a1a2e;border-radius:2px;transition:left 0.3s;left:35%">
-            <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;font-weight:700;background:#1a1a2e;color:white;padding:1px 5px;border-radius:3px" id="nbMarkerLbl">35%</div>
+    <!-- Break-even bars row -->
+    <div id="nbWrap" style="display:none;margin-bottom:6px">
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        <div></div>
+        <div id="nbE7Row">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);margin-bottom:5px;display:flex;justify-content:space-between">
+            <span id="nbPct">Night: —</span><span id="nbBe" class="bel"></span>
+          </div>
+          <div style="position:relative;background:var(--glit);border-radius:6px;height:18px;overflow:visible">
+            <div id="nbFill" style="height:100%;background:var(--p);border-radius:6px;transition:width 0.3s;width:0%"></div>
+            <div id="nbMarker" style="position:absolute;top:-4px;bottom:-4px;width:2px;background:#1a1a2e;border-radius:2px;transition:left 0.3s;left:35%">
+              <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;font-weight:700;background:#1a1a2e;color:white;padding:1px 5px;border-radius:3px;opacity:0" id="nbMarkerLbl">35%</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--gmid);margin-top:4px">
+            <span>0%</span><span style="color:var(--dk);font-weight:600" id="nbZone"></span><span>100%</span>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--gmid);margin-top:4px">
-          <span>0%</span><span style="color:var(--dk);font-weight:600" id="nbZone"></span><span>100%</span>
-        </div>
-      </div>
-      <!-- EV bar — only when EV on -->
-      <div id="nbEVRow" style="display:none;margin-top:10px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);margin-bottom:5px;display:flex;justify-content:space-between">
-          <span id="nbEVPct">EV off-peak: —</span>
-          <span id="nbEVBe" class="bel"></span>
-        </div>
-        <div style="position:relative;background:var(--glit);border-radius:6px;height:18px;overflow:visible">
-          <div id="nbEVFill" style="height:100%;background:#059669;border-radius:6px;transition:width 0.3s;width:0%"></div>
-          <div id="nbEVMarker" style="position:absolute;top:-4px;bottom:-4px;width:2px;background:#1a1a2e;border-radius:2px;transition:left 0.3s;left:23%">
-            <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;font-weight:700;background:#1a1a2e;color:white;padding:1px 5px;border-radius:3px" id="nbEVMarkerLbl">23%</div>
+        <div id="nbEVRow" style="display:none">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--gmid);margin-bottom:5px;display:flex;justify-content:space-between">
+            <span id="nbEVPct">EV off-peak: —</span><span id="nbEVBe" class="bel"></span>
+          </div>
+          <div style="position:relative;background:var(--glit);border-radius:6px;height:18px;overflow:visible">
+            <div id="nbEVFill" style="height:100%;background:#059669;border-radius:6px;transition:width 0.3s;width:0%"></div>
+            <div id="nbEVMarker" style="position:absolute;top:-4px;bottom:-4px;width:2px;background:#1a1a2e;border-radius:2px;transition:left 0.3s;left:23%">
+              <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;font-weight:700;background:#1a1a2e;color:white;padding:1px 5px;border-radius:3px;opacity:0" id="nbEVMarkerLbl">23%</div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--gmid);margin-top:4px">
+            <span>0%</span><span style="color:#059669;font-weight:600" id="nbEVZone"></span><span>100%</span>
           </div>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--gmid);margin-top:4px">
-          <span>0%</span><span style="color:#059669;font-weight:600" id="nbEVZone"></span><span>100%</span>
-        </div>
       </div>
+    </div>
+
+    <!-- Tools row — aligned to columns -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:2px">
+      <div></div>
+      <div style="font-size:10.5px">
+        <span id="billModalTrigger" style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted">🔢 Day / Night calculator</span>
+      </div>
+      <div style="font-size:10.5px;opacity:0.4;pointer-events:none" id="evCalcLink">
+        <span id="milesToggle" style="color:var(--p);cursor:pointer;text-decoration:underline;text-decoration-style:dotted">🔢 EV kWh calculator</span>
+      </div>
+    </div>
+
+    <!-- E7 column: "Don't have a bill" accordion — sits under Day/Night calc link -->
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px">
+      <div></div>
+      <div>
+        <details id="estimAccordion" style="font-size:10.5px">
+          <summary style="color:var(--gmid);cursor:pointer;user-select:none;list-style:none;display:flex;align-items:center;gap:5px;padding:3px 0">
+            <span id="estimArrow" style="font-size:9px;transition:transform 0.2s;display:inline-block">▶</span>
+            <span>Don't have a bill? Use typical estimates</span>
+          </summary>
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+            <button class="preset" id="preset-low" style="text-align:left">
+              <div class="pl">Low</div>
+              <div class="ps">2,200 kWh · Day 1,560 · Night 640</div>
+            </button>
+            <button class="preset" id="preset-medium" style="text-align:left">
+              <div class="pl">Medium</div>
+              <div class="ps">3,900 kWh · Day 2,900 · Night 1,000</div>
+            </button>
+            <button class="preset" id="preset-high" style="text-align:left">
+              <div class="pl">High</div>
+              <div class="ps">6,700 kWh · Day 4,900 · Night 1,800</div>
+            </button>
+          </div>
+        </details>
+      </div>
+      <div></div>
+    </div>
+
+    <!-- Mismatch warning -->
+    <div id="mismatchWarn" style="display:none;margin-top:6px;background:#fef3c7;border:1px solid #fcd34d;border-radius:6px;padding:5px 10px;font-size:10.5px;color:#92400e;align-items:center;gap:8px">
+      ⚠ Standard total doesn't match day+night sum
+      <span id="mismatchFix" style="color:var(--p);cursor:pointer;text-decoration:underline;font-weight:600">Use E7 total</span>
     </div>
   </div>
 
@@ -639,6 +725,29 @@ input[type="number"]:focus, input.num-input:focus {
     <div style="font-size:13px;line-height:1.6">Select a region to begin.<br>All other inputs will unlock once a region is chosen.</div>
   </div>
 
+
+<!-- PRESETS MODAL -->
+<div id="presetsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:var(--r);padding:20px;width:min(340px,92vw);box-shadow:0 8px 32px rgba(0,0,0,0.25)">
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--p);margin-bottom:4px">📊 Typical estimates</div>
+    <div style="font-size:11.5px;color:var(--gmid);margin-bottom:14px">Select a profile to pre-fill usage figures. You can adjust them afterwards.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+      <button class="preset" id="preset-low" style="text-align:left">
+        <div class="pl">Low</div>
+        <div class="ps">2,200 kWh elec · 7,500 kWh gas · 1 bed</div>
+      </button>
+      <button class="preset" id="preset-medium" style="text-align:left">
+        <div class="pl">Medium</div>
+        <div class="ps">3,900 kWh elec · 11,500 kWh gas · 2–3 bed</div>
+      </button>
+      <button class="preset" id="preset-high" style="text-align:left">
+        <div class="pl">High</div>
+        <div class="ps">6,700 kWh elec · 17,000 kWh gas · 4+ bed</div>
+      </button>
+    </div>
+    <button id="presetsModalClose" style="width:100%;padding:9px;background:var(--glit);color:var(--gmid);border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Close</button>
+  </div>
+</div>
 
 <!-- BILL MODAL -->
 <div id="billModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
@@ -995,6 +1104,14 @@ function rcard(id, cfg) {
   // Cost headline
   h += '<div class="can">' + fmt0(cfg.cost) + '<span style="font-size:11px;color:var(--gmid)">/yr</span></div>';
   h += '<div class="cmo">\u2248 ' + fmtPm(cfg.cost) + '/mo</div>';
+  // EV overnight breakdown — show home night + EV split
+  if (cfg.nightKwh !== undefined && cfg.evKwh !== undefined && cfg.evKwh > 0) {
+    h += '<div style="font-size:9.5px;color:var(--gmid);margin-top:4px;background:var(--glit);border-radius:4px;padding:4px 7px;line-height:1.6">';
+    h += '\uD83C\uDF19 Home night: <strong>' + cfg.nightKwh.toLocaleString('en-GB') + ' kWh</strong><br>';
+    h += '\uD83D\uDE97 EV charging: <strong>' + cfg.evKwh.toLocaleString('en-GB') + ' kWh</strong><br>';
+    h += '\u21B3 Off-peak total: <strong>' + (cfg.nightKwh + cfg.evKwh).toLocaleString('en-GB') + ' kWh</strong>';
+    h += '</div>';
+  }
 
   // Saving / most expensive line — fixed height for column alignment
   h += '<div style="min-height:38px;margin-top:6px">';
@@ -1096,12 +1213,15 @@ function calculate() {
   try {
   var r    = state.region;
   function parseNum(id) { return parseFloat((document.getElementById(id).value||'').replace(/,/g,'')) || 0; }
-  var dayK = parseNum('dayKwh');
-  var nigK = parseNum('nightKwh');
+  var stdTotK = parseNum('totalKwh');   // standard: user-entered total
+  var dayK = parseNum('dayKwh');        // E7/EV day
+  var nigK = parseNum('nightKwh');      // E7/EV night
   var evK  = parseNum('evKwh');
-  var evKeff = evOn ? evK : 0;   // only include EV when toggled on
-  var totK = dayK + nigK + evKeff;
-  var hasUsage = totK > 0;
+  var evKeff = evOn ? evK : 0;
+  // For standard: use totalKwh if entered, else fall back to dayK+nigK
+  var stdUsedK = stdTotK > 0 ? stdTotK + evKeff : dayK + nigK + evKeff;
+  var totK = dayK + nigK + evKeff;      // E7/EV total
+  var hasUsage = (stdTotK > 0 || dayK > 0 || nigK > 0);
 
   // Night bar
   var nbWrap = document.getElementById('nbWrap');
@@ -1140,7 +1260,7 @@ function calculate() {
   // E7: EV kWh at night rate — customer charges overnight within the 7hr window
   // EV: EV kWh at off-peak rate — 5hr midnight–5am window
   var dualDisc = gasOn ? DUAL_FUEL_DISC * VAT : 0;
-  var stdCost = calcStd(t, dayK, nigK + evKeff) - dualDisc;
+  var stdCost = calcStd(t, stdUsedK, 0) - dualDisc;
   var e7Cost  = calcE7(t, dayK, nigK + evKeff) - dualDisc;
   var evCost  = calcEV(ev, dayK, nigK, evKeff) - dualDisc;
 
@@ -1234,6 +1354,7 @@ function calculate() {
     scCost: scEV_c, homeCost: homeEV_c, evChargeCost: evCostOnEV_c,
     vsLabel: 'vs ' + (stdCost >= e7Cost ? 'Standard' : 'E7'),
     beNote: beEVNoteRcard,
+    nightKwh: nigK, evKwh: evKeff,
     rates: [
       ['Standing charge', ev.sc],
       ['Peak rate (5am–midnight)', ev.pk],
@@ -1264,6 +1385,7 @@ function calculate() {
   if (markerEl) {
     markerEl.style.left = Math.min(beE7pct, 99) + '%';
     markerLbl.textContent = Math.round(beE7pct) + '%';
+    markerLbl.style.opacity = '1';
   }
   if (zoneEl && hasUsage) {
     var custPctBar = ((nigK + (evOn ? evK : 0))/totK)*100;
@@ -1300,6 +1422,26 @@ function calculate() {
   var evDayCost   = (ev.pk/100 * dayK) * VAT + (ev.sc/100)*365*VAT;
   var evNightCost = (ev.op/100 * nigK) * VAT;
   var evEvCost2   = (ev.op/100 * evKeff) * VAT;
+
+  // Mismatch warning — when standard total doesn't match day+night
+  var mismatchEl = document.getElementById('mismatchWarn');
+  if (mismatchEl) {
+    var e7sum = dayK + nigK;
+    var stdEntered = parseNum('totalKwh');
+    var showMismatch = totalKwhManual && stdEntered > 0 && e7sum > 0 && Math.abs(stdEntered - e7sum) > 1;
+    mismatchEl.style.display = showMismatch ? 'flex' : 'none';
+  }
+
+  // Update usage totals display
+  var _stdTot = stdTotK > 0 ? stdTotK + evKeff : dayK + nigK + evKeff;
+  var _e7Tot = dayK + nigK + evKeff;
+  var totStdEl = document.getElementById('totStdDisp');
+  var totE7El = document.getElementById('totE7Disp');
+  var totEvEl = document.getElementById('totEvDisp');
+  var totEvRow = document.getElementById('totEvRow');
+  if (totStdEl) totStdEl.textContent = _stdTot > 0 ? _stdTot.toLocaleString('en-GB') + ' kWh' : '—';
+  if (totE7El)  totE7El.textContent  = _e7Tot > 0  ? _e7Tot.toLocaleString('en-GB')  + ' kWh' : '—';
+  if (totEvEl)  totEvEl.textContent  = (evOn && _e7Tot > 0) ? _e7Tot.toLocaleString('en-GB') + ' kWh' : '—';
 
   // Show section BEFORE rendering charts so canvas has real dimensions
   document.getElementById('resSection').classList.add('show');
@@ -1892,6 +2034,21 @@ function fmtNumInput(el) {
     calculate();
   });
 });
+// Sync EV inputs across all three columns
+function syncEvInputs(val) {
+  ['stdEvKwh','e7EvKwh'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.value = val;
+  });
+  autoFillTotal();
+}
+// stdEvKwh and e7EvKwh are read-only mirrors — no input listeners needed
+// Also sync when evKwh changes
+document.getElementById('evKwh').addEventListener('input', function() {
+  fmtNumInput(this);
+  syncEvInputs(this.value);
+  calculate();
+});
 
 // ── PRESETS ───────────────────────────────────────────────────────────────
 function clearPresets() {
@@ -1940,23 +2097,63 @@ var evOn = false;
 var evFirstOn = true;
 document.getElementById('evToggleBtn').addEventListener('click', function() {
   evOn = !evOn;
-  this.textContent = evOn ? '🚗 EV on' : '🚗 EV off';
-  this.style.background = evOn ? 'var(--grnl)' : 'var(--glit)';
-  this.style.borderColor = evOn ? 'var(--grn)' : 'var(--bdr)';
-  this.style.color = evOn ? '#065f35' : 'var(--gmid)';
-  document.getElementById('card-ev').style.display = evOn ? '' : 'none';
-  // evColHeader removed from layout
-  var loEv = document.getElementById('lo-ev');
-  loEv.style.opacity = evOn ? '1' : '0';
-  loEv.style.pointerEvents = evOn ? '' : 'none';
-  var evQBtn = document.getElementById('evBeTooltipTrig');
-  if (evQBtn) { evQBtn.style.display = evOn ? 'inline-flex' : 'none'; evQBtn.style.background = 'var(--p)'; }
-  // Pre-fill 3000 kWh on first enable if field is empty
-  if (evOn && evFirstOn) {
-    var evField = document.getElementById('evKwh');
-    if (!evField.value) evField.value = (2500).toLocaleString('en-GB');
-    evFirstOn = false;
+  // Update pill toggle
+  var pill = document.getElementById('evTogglePill');
+  var track = document.getElementById('evToggleBtn');
+  var hdr = document.getElementById('evColHdr');
+  if (pill) pill.style.left = evOn ? '14px' : '2px';
+  if (track) track.style.background = evOn ? 'var(--grn)' : '#cbd5e1';
+  if (hdr) {
+    hdr.style.background = evOn ? 'var(--grnl)' : 'var(--glit)';
+    hdr.style.color = evOn ? '#065f35' : 'var(--gmid)';
+    hdr.style.borderStyle = evOn ? 'solid' : 'dashed';
+    hdr.style.borderColor = evOn ? 'var(--grn)' : '#cbd5e1';
   }
+  // Update column header
+
+  // EV row inputs
+  var evIds = ['stdEvKwh','e7EvKwh','evKwh'];
+  var evGrps = ['stdEvGrp','e7EvGrp','lo-ev'];
+  evIds.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    var grp = document.getElementById(evGrps[i]);
+    if (el) {
+      el.disabled = !evOn;
+      if (!evOn) el.value = '';
+      if (evOn) el.placeholder = 'e.g. 3,000';
+    }
+    if (grp) { grp.style.opacity = evOn ? '1' : '0.35'; grp.style.pointerEvents = evOn ? '' : 'none'; }
+  });
+  // EV tariff mirrors
+  var evDayCol = document.getElementById('evDayCol');
+  var evNightCol = document.getElementById('evNightCol');
+  var totEvRow = document.getElementById('totEvRow');
+  if (evDayCol) evDayCol.style.opacity = evOn ? '1' : '0.35';
+  if (evNightCol) evNightCol.style.opacity = evOn ? '1' : '0.35';
+  if (totEvRow) totEvRow.style.opacity = evOn ? '1' : '0.4';
+  if (evOn) {
+    // Populate day/night mirrors
+    var dv = document.getElementById('dayKwh').value || '';
+    var nv = document.getElementById('nightKwh').value || '';
+    var evDayMirror = document.getElementById('evDayMirror');
+    var evNightMirror = document.getElementById('evNightMirror');
+    if (evDayMirror) { evDayMirror.style.borderColor = 'var(--plite)'; evDayMirror.style.color = 'var(--p)'; evDayMirror.textContent = dv || '—'; }
+    if (evNightMirror) { evNightMirror.style.borderColor = 'var(--plite)'; evNightMirror.style.color = 'var(--p)'; evNightMirror.textContent = nv || '—'; }
+  } else {
+    ['evDayMirror','evNightMirror'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) { el.style.borderColor = 'var(--glit)'; el.style.color = 'var(--gmid)'; el.innerHTML = '<span style="display:inline-block;width:55%;height:2px;background:var(--bdr);border-radius:2px;vertical-align:middle;margin-top:8px"></span>'; }
+    });
+  }
+  // EV calc link column — active only when EV on
+  var evCalcLinkCol = document.getElementById('evCalcLink');
+  if (evCalcLinkCol) {
+    evCalcLinkCol.style.opacity = evOn ? '1' : '0.4';
+    evCalcLinkCol.style.pointerEvents = evOn ? '' : 'none';
+  }
+  if (cardEv) cardEv.style.display = evOn ? '' : 'none';
+  var evQBtn = document.getElementById('evBeTooltipTrig');
+  if (evQBtn) { evQBtn.style.display = evOn ? 'inline-flex' : 'none'; }
   calculate();
 });
 
@@ -1993,6 +2190,13 @@ function applyMonthly() {
 var billModalEl = document.getElementById('billModal');
 document.getElementById('billModalTrigger').addEventListener('click', function() {
   billModalEl.style.display = 'flex';
+  // Pre-populate from totalKwh if already filled
+  var tkEl = document.getElementById('totalKwh');
+  var annEl = document.getElementById('annualTotal');
+  if (tkEl && annEl && tkEl.value && !annEl.value) {
+    annEl.value = tkEl.value;
+    applyMonthly();
+  }
   document.getElementById('annualTotal').focus();
 });
 document.getElementById('billModalClose').addEventListener('click', function() {
@@ -2034,7 +2238,11 @@ document.getElementById('milesModal').addEventListener('click', function(e) {
 });
 document.getElementById('milesModalUse').addEventListener('click', function() {
   if (milesModalKwh > 0) {
-    document.getElementById('evKwh').value = milesModalKwh.toLocaleString('en-GB');
+    var evVal = milesModalKwh.toLocaleString('en-GB');
+    document.getElementById('evKwh').value = evVal;
+    // Sync to other EV columns
+    var s = document.getElementById('stdEvKwh'); if(s) s.value = evVal;
+    var e = document.getElementById('e7EvKwh');  if(e) e.value = evVal;
     milesModal.style.display = 'none';
     calculate();
   }
@@ -2127,6 +2335,47 @@ if (gasInput) {
     if (gasOn && gasKwh > 0 && state.region) renderGas();
   });
 }
+
+// Accordion arrow toggle
+var estimAccordion = document.getElementById('estimAccordion');
+if (estimAccordion) {
+  estimAccordion.addEventListener('toggle', function() {
+    var arrow = document.getElementById('estimArrow');
+    if (arrow) arrow.style.transform = this.open ? 'rotate(90deg)' : '';
+  });
+}
+
+// Clear usage button
+document.getElementById('clearUsageBtn').addEventListener('click', function() {
+  ['totalKwh','dayKwh','nightKwh','stdEvKwh','e7EvKwh','evKwh'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
+  totalKwhManual = false;
+  // Reset EV state
+  if (evOn) document.getElementById('evToggleBtn').click();
+  // Reset mirrors
+  ['evDayMirror','evNightMirror'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = '<span style="display:inline-block;width:55%;height:2px;background:var(--bdr);border-radius:2px;vertical-align:middle;margin-top:8px"></span>';
+  });
+  // Reset totals
+  ['totStdDisp','totE7Disp','totEvDisp'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.textContent = '—';
+  });
+  clearPresets();
+  document.getElementById('mismatchWarn').style.display = 'none';
+  calculate();
+});
+
+// Mismatch warning
+document.getElementById('mismatchFix').addEventListener('click', function() {
+  var d = parseFloat((document.getElementById('dayKwh').value||'').replace(/,/g,''))||0;
+  var n = parseFloat((document.getElementById('nightKwh').value||'').replace(/,/g,''))||0;
+  document.getElementById('totalKwh').value = (d+n).toLocaleString('en-GB');
+  totalKwhManual = false;
+  document.getElementById('mismatchWarn').style.display = 'none';
+  calculate();
+});
 
 }); // end DOMContentLoaded
 </script>
