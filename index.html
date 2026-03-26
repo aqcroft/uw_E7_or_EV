@@ -881,15 +881,15 @@ function updateMilesModal(annual, weeklyMiles) {
 document.addEventListener('DOMContentLoaded', function() {
 
 // ── TARIFF DATA (DD, ex-VAT) ──────────────────────────────────────────────
-var FS = {
+var FS = { // Fixed Start 80 — 1 service — DD ex-VAT — end 31 Mar 2027
   10:{gsc:25.513,gu:6.847,gdsc:49.511,gdu:28.112,e7sc:49.725,e7d:38.717,e7n:9.126},
-  11:{gsc:25.517,gu:6.78,gdsc:48.967,gdu:26.848,e7sc:48.452,e7d:36.970,e7n:8.896},
+  11:{gsc:25.517,gu:6.780,gdsc:48.967,gdu:26.848,e7sc:48.452,e7d:36.970,e7n:8.896},
   12:{gsc:25.565,gu:7.088,gdsc:40.019,gdu:28.091,e7sc:39.639,e7d:38.590,e7n:9.049},
   13:{gsc:25.512,gu:6.871,gdsc:64.784,gdu:29.451,e7sc:64.056,e7d:40.186,e7n:9.911},
   14:{gsc:25.512,gu:6.863,gdsc:54.611,gdu:27.096,e7sc:54.259,e7d:37.331,e7n:9.041},
   15:{gsc:25.512,gu:6.872,gdsc:58.988,gdu:27.023,e7sc:58.257,e7d:37.210,e7n:8.896},
   16:{gsc:25.514,gu:6.823,gdsc:42.974,gdu:27.826,e7sc:42.333,e7d:37.971,e7n:9.357},
-  17:{gsc:25.958,gu:6.94,gdsc:53.300,gdu:28.635,e7sc:53.965,e7d:37.274,e7n:12.286},
+  17:{gsc:25.958,gu:6.940,gdsc:53.300,gdu:28.635,e7sc:53.965,e7d:37.274,e7n:12.286},
   18:{gsc:25.591,gu:6.845,gdsc:58.767,gdu:27.737,e7sc:59.330,e7d:37.827,e7n:9.537},
   19:{gsc:25.506,gu:6.968,gdsc:50.045,gdu:28.362,e7sc:50.314,e7d:39.033,e7n:9.099},
   20:{gsc:24.938,gu:6.942,gdsc:48.201,gdu:27.828,e7sc:48.192,e7d:38.342,e7n:9.011},
@@ -897,14 +897,14 @@ var FS = {
   22:{gsc:25.501,gu:7.053,gdsc:53.239,gdu:28.148,e7sc:53.629,e7d:38.814,e7n:8.956},
   23:{gsc:25.513,gu:6.858,gdsc:59.051,gdu:27.116,e7sc:58.436,e7d:37.327,e7n:9.143}
 };
-var F79 = {
+var F79 = { // Fixed 80 — 2 services — DD ex-VAT — end 31 Mar 2027
   10:{gsc:23.034,gu:6.743,gdsc:47.032,gdu:27.682,e7sc:47.247,e7d:38.023,e7n:9.126},
   11:{gsc:23.039,gu:6.676,gdsc:46.489,gdu:26.436,e7sc:45.974,e7d:36.304,e7n:8.896},
-  12:{gsc:23.08,gu:6.982,gdsc:37.534,gdu:27.670,e7sc:37.155,e7d:37.914,e7n:9.049},
+  12:{gsc:23.080,gu:6.982,gdsc:37.534,gdu:27.670,e7sc:37.155,e7d:37.914,e7n:9.049},
   13:{gsc:23.033,gu:6.763,gdsc:62.305,gdu:28.989,e7sc:61.579,e7d:39.443,e7n:9.911},
   14:{gsc:23.033,gu:6.757,gdsc:52.132,gdu:26.676,e7sc:51.781,e7d:36.652,e7n:9.041},
   15:{gsc:23.033,gu:6.764,gdsc:56.509,gdu:26.600,e7sc:55.779,e7d:36.527,e7n:8.896},
-  16:{gsc:23.036,gu:6.72,gdsc:40.495,gdu:27.406,e7sc:39.856,e7d:37.295,e7n:9.357},
+  16:{gsc:23.036,gu:6.720,gdsc:40.495,gdu:27.406,e7sc:39.856,e7d:37.295,e7n:9.357},
   17:{gsc:23.436,gu:6.833,gdsc:50.778,gdu:28.195,e7sc:51.442,e7d:36.564,e7n:12.286},
   18:{gsc:23.105,gu:6.738,gdsc:56.281,gdu:27.304,e7sc:56.843,e7d:37.130,e7n:9.537},
   19:{gsc:23.027,gu:6.861,gdsc:47.566,gdu:27.928,e7sc:47.834,e7d:38.336,e7n:9.099},
@@ -913,21 +913,21 @@ var F79 = {
   22:{gsc:23.022,gu:6.945,gdsc:50.760,gdu:27.716,e7sc:51.150,e7d:38.118,e7n:8.956},
   23:{gsc:23.034,gu:6.751,gdsc:56.573,gdu:26.692,e7sc:55.959,e7d:36.640,e7n:9.143}
 };
-var FSav = {
-  10:{gsc:19.12,gu:6.24,gdsc:43.118,gdu:25.619,e7sc:43.332,e7d:34.696,e7n:9.126},
-  11:{gsc:19.125,gu:6.177,gdsc:42.575,gdu:24.460,e7sc:42.062,e7d:33.110,e7n:8.896},
-  12:{gsc:19.156,gu:6.473,gdsc:33.610,gdu:25.652,e7sc:33.234,e7d:34.672,e7n:9.049},
-  13:{gsc:19.119,gu:6.245,gdsc:58.391,gdu:26.768,e7sc:57.667,e7d:35.872,e7n:9.911},
-  14:{gsc:19.12,gu:6.247,gdsc:48.219,gdu:24.662,e7sc:47.868,e7d:33.389,e7n:9.041},
-  15:{gsc:19.119,gu:6.249,gdsc:52.595,gdu:24.573,e7sc:51.867,e7d:33.253,e7n:8.896},
-  16:{gsc:19.122,gu:6.225,gdsc:36.581,gdu:25.389,e7sc:35.946,e7d:34.052,e7n:9.357},
-  17:{gsc:19.454,gu:6.32,gdsc:46.796,gdu:26.080,e7sc:47.457,e7d:33.154,e7n:12.286},
-  18:{gsc:19.179,gu:6.225,gdsc:52.356,gdu:25.228,e7sc:52.915,e7d:33.780,e7n:9.537},
-  19:{gsc:19.113,gu:6.35,gdsc:43.652,gdu:25.848,e7sc:43.920,e7d:34.989,e7n:9.099},
-  20:{gsc:18.686,gu:6.328,gdsc:41.948,gdu:25.369,e7sc:41.939,e7d:34.378,e7n:9.011},
-  21:{gsc:19.111,gu:6.379,gdsc:46.255,gdu:25.637,e7sc:45.336,e7d:34.788,e7n:9.090},
-  22:{gsc:19.108,gu:6.424,gdsc:46.846,gdu:25.638,e7sc:47.235,e7d:34.775,e7n:8.956},
-  23:{gsc:19.12,gu:6.236,gdsc:52.659,gdu:24.658,e7sc:52.047,e7d:33.343,e7n:9.143}
+var FSav = { // Fixed Saver 80 — 3+ services — DD ex-VAT — end 31 Mar 2027
+  10:{gsc:19.120,gu:6.450,gdsc:43.118,gdu:26.478,e7sc:43.332,e7d:36.083,e7n:9.126},
+  11:{gsc:19.125,gu:6.385,gdsc:42.575,gdu:25.284,e7sc:42.062,e7d:34.441,e7n:8.896},
+  12:{gsc:19.156,gu:6.685,gdsc:33.610,gdu:26.493,e7sc:33.234,e7d:36.023,e7n:9.049},
+  13:{gsc:19.119,gu:6.461,gdsc:58.391,gdu:27.693,e7sc:57.667,e7d:37.360,e7n:9.911},
+  14:{gsc:19.120,gu:6.459,gdsc:48.219,gdu:25.501,e7sc:47.868,e7d:34.749,e7n:9.041},
+  15:{gsc:19.119,gu:6.464,gdsc:52.595,gdu:25.418,e7sc:51.867,e7d:34.617,e7n:8.896},
+  16:{gsc:19.122,gu:6.431,gdsc:36.581,gdu:26.229,e7sc:35.946,e7d:35.403,e7n:9.357},
+  17:{gsc:19.454,gu:6.534,gdsc:46.796,gdu:26.961,e7sc:47.457,e7d:34.575,e7n:12.286},
+  18:{gsc:19.179,gu:6.439,gdsc:52.356,gdu:26.093,e7sc:52.915,e7d:35.176,e7n:9.537},
+  19:{gsc:19.113,gu:6.563,gdsc:43.652,gdu:26.715,e7sc:43.920,e7d:36.383,e7n:9.099},
+  20:{gsc:18.686,gu:6.540,gdsc:41.948,gdu:26.217,e7sc:41.939,e7d:35.745,e7n:9.011},
+  21:{gsc:19.111,gu:6.594,gdsc:46.255,gdu:26.502,e7sc:45.336,e7d:36.184,e7n:9.090},
+  22:{gsc:19.108,gu:6.641,gdsc:46.846,gdu:26.504,e7sc:47.235,e7d:36.168,e7n:8.956},
+  23:{gsc:19.120,gu:6.451,gdsc:52.659,gdu:25.506,e7sc:52.047,e7d:34.716,e7n:9.143}
 };
 var VV = {
   10:{gsc:32.952,gu:5.586,gdsc:46.848,gdu:26.555,e7sc:47.158,e7d:39.490,e7n:5.772},
@@ -1018,7 +1018,7 @@ function getGasTariff(r) {
 function getTariff(r) {
   var n = svc();
   var fix = n>=3 ? FSav[r] : n===2 ? F79[r] : FS[r];
-  var fixName = n>=3 ? 'Fixed Saver 79' : n===2 ? 'Fixed 79' : 'Fixed Start 79';
+  var fixName = n>=3 ? 'Fixed Saver 80' : n===2 ? 'Fixed 80' : 'Fixed Start 79';
   var vari = n>=3 ? VDG[r] : n===2 ? VG[r] : VV[r];
   var varName = n>=3 ? 'Var. Double Gold' : n===2 ? 'Variable Gold' : 'Variable Value';
   var ev = n>=3 ? EVDG[r] : n===2 ? EVG[r] : EVV[r];
@@ -1963,7 +1963,7 @@ function setLock(unlocked) {
 function updateBundle() {
   var n = svc(), o = n-1;
   // bundleText removed
-  var fixedNames = ['Fixed Start', 'Fixed 79', 'Fixed Saver'];
+  var fixedNames = ['Fixed Start', 'Fixed 80', 'Fixed Saver'];
   var varNames   = ['Value', 'Gold', 'Dbl Gold'];
   var idx = n >= 3 ? 2 : n === 2 ? 1 : 0;
   var tf = document.getElementById('bundleTierFixed');
